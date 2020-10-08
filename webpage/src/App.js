@@ -3,8 +3,10 @@ import logo from './logo.svg';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import testBootstrap from './Components/testBootstrap';
+import firebase from '../../Backend_API/firebase/index';
 
 function App() {
+  console.log(firebase)
   return (
     <div className="App">
       <header className="App-header">
