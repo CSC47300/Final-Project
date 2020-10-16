@@ -1,14 +1,12 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import 'bootstrap/dist/css/bootstrap.css';
-import testBootstrap from './Components/testBootstrap';
-import NavBar from './Components/nav-bar';
+import NavBar from './Components/navigation';
 
 function App() {
   return (
     <div className="App">
-      <NavBar userName="Maui A"></NavBar>
+      <NavBar userName="Maui A" />
     </div>
   );
 }
