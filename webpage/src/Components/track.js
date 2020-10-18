@@ -6,6 +6,7 @@ class Track extends Component {
 
 
     render() {
+        const playing = this.props.playing ? "button pause" : "button play";
         return (
             <Container className="track">
                 <Row className="poster">
@@ -17,6 +18,7 @@ class Track extends Component {
                 </Row>
                 <Row className="">
                     <Col lg={2} className="">
+                        <button className="play-btn"></button>
                         <img className="track-art" src="https://i.imgur.com/p3vccAp.jpeg" alt="track-art" />
                     </Col>
                     <Col className="">
@@ -31,7 +33,7 @@ class Track extends Component {
                         </Row>
                     </Col>
                 </Row>
-            </Container>
+            </Container >
         )
     }
 }
