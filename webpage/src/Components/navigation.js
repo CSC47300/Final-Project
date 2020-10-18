@@ -18,7 +18,7 @@ class NavBar extends Component {
                 </Nav>
         } else mobile =
             <Nav className="container-fluid">
-                <Nav.Link href="#upload" className="">Upload</Nav.Link>
+                <Nav.Link href="#upload" className="ml-auto">Upload</Nav.Link>
                 <NavDropdown title={this.props.userName} className="">
                     <NavDropdown.Item href="#profile">Profile</NavDropdown.Item>
                     <NavDropdown.Item href="#settings">Settings</NavDropdown.Item>
