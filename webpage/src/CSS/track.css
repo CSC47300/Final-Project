@@ -1,0 +1,15 @@
+.track-art {
+    width: 100px;
+    height: 100px;
+}
+
+.user-avatar {
+    width: 15px;
+    height: 15px;
+}
+
+.audio-wave {
+    width: 600px;
+    height: 40px;
+    background-color: gray;
+}
