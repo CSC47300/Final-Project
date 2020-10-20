@@ -52,3 +52,7 @@
 .track-art:hover ~.play-btn{
     opacity: 100%;
 }
+
+.social-icon {
+    position: absolute;
+}
