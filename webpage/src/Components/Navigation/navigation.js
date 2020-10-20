@@ -1,13 +1,21 @@
 import React, { Component } from 'react';
-import { Navbar, Nav, NavDropdown, Form, FormControl, Button } from 'react-bootstrap';
+import { Navbar, Nav, NavDropdown, Container } from 'react-bootstrap';
 import "./navigation.css";
+import LoginModal from '../LoginModal/loginModal';
+import RegisterModal from '../RegisterModal/registerModal';
 
 class NavBar extends Component {
     constructor(props) {
         super(props);
     }
     render() {
-        let mobile;
+        let mobile, login;
+        login =
+            <Nav className="ml-auto login-container">
+                <LoginModal />
+                <RegisterModal />
+            </Nav>
+
         if (window.innerWidth < 768) {
             mobile =
                 <Nav className="container-fluid">
@@ -18,21 +26,26 @@ class NavBar extends Component {
                 </Nav>
         } else mobile =
             <Nav className="container-fluid">
-                <Nav.Link href="#upload" className="">Upload</Nav.Link>
+                <Nav.Link href="#upload" className="ml-auto">Upload</Nav.Link>
                 <NavDropdown title={this.props.userName} className="">
                     <NavDropdown.Item href="#profile">Profile</NavDropdown.Item>
                     <NavDropdown.Item href="#settings">Settings</NavDropdown.Item>
                     <NavDropdown.Item href="#logout">Logout</NavDropdown.Item>
                 </NavDropdown>
             </Nav>
+        let rightNav =
+            <>
+                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                <Navbar.Collapse className="justify-content-end">
+                    {mobile}
+                </Navbar.Collapse>
+            </>
+        let display = this.props.loggedIn ? rightNav : login;
         return (
             <div>
                 <Navbar className="main-nav" bg="dark" variant="dark" expand="md">
                     <Navbar.Brand href="#home">Newercloud</Navbar.Brand>
-                    <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                    <Navbar.Collapse className="justify-content-end">
-                        {mobile}
-                    </Navbar.Collapse>
+                    {display}
                 </Navbar>
             </div>
         )

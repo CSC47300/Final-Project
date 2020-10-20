@@ -10,11 +10,12 @@ import RegisterModal from './Components/RegisterModal/registerModal';
 function App() {
   return (
     <>
-    <div className="App">
-      <NavBar userName="Maui A" />
-    </div>
-    <LoginModal/>
-    <RegisterModal/>
+      <div className="App">
+        <NavBar userName="Maui A" />
+        <Track playing={false} />
+      </div>
+      <LoginModal />
+      <RegisterModal />
     </>
   );
 }
