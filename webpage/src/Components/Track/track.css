@@ -1,0 +1,54 @@
+.user-avatar {
+    width: 15px;
+    height: 15px;
+}
+
+.audio-wave {
+    width: 400px;
+    height: 40px;
+    background-color: gray;
+}
+
+.play-btn  {
+    z-index: 100;
+    box-sizing: border-box;
+    height: 5px;
+    margin: 20px;
+    margin-left: 38px;
+    margin-top: 28px;
+    right: 24px;
+    border-color: transparent transparent transparent #202020;
+    transition: 100ms all ease;
+    will-change: border-width;
+    cursor: pointer;
+    position: absolute;
+    border-style: solid;
+    background-color: transparent;
+    opacity: 0%;
+    padding-left: 25px;
+    border-width: 20px 0 20px 30px;
+}
+
+.play-btn:hover {
+    opacity: 100%;
+}
+
+.play-btn.pause {
+    border-style: double;
+    border-width: 0px 0 0px 43px;
+    height: 45px;
+}
+
+.track-art {
+    width: 100px;
+    height: 100px;
+    z-index: -1;
+}
+
+/* .track-art:hover {
+    opacity: 60%;
+} */
+
+.track-art:hover ~.play-btn{
+    opacity: 100%;
+}
