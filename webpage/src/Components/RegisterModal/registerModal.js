@@ -3,9 +3,9 @@ import ReactDOM from 'react-dom';
 import { Modal, Button, Form } from 'react-bootstrap';
 
 
-class LoginModal extends Component{
-  constructor(props,context){
-    super(props,context);
+class LoginModal extends Component {
+  constructor(props, context) {
+    super(props, context);
 
     this.state = {
       showModal: false
@@ -16,63 +16,63 @@ class LoginModal extends Component{
   }
 
   open() {
-    this.setState({showModal: true}, function(){
+    this.setState({ showModal: true }, function () {
     });
   }
 
-  close(){
-    this.setState({showModal: false});
+  close() {
+    this.setState({ showModal: false });
   }
 
   render() {
-    return(
+    return (
       <div>
-        <Button onClick={this.open}>Register</Button>
+        <Button className="login-btn" onClick={this.open}>Register</Button>
         <div>
           <Modal className="modal-container" id="register"
-            show={this.state.showModal} 
+            show={this.state.showModal}
             onHide={this.close}
             size='md'
             centered
-            >
-   
+          >
+
             <Modal.Body>
-            <form>
+              <form>
                 <h3>Register</h3>
 
                 <div className="form-group">
-                    <label>Username</label>
-                    <input type="text" className="form-control" placeholder="Username" />
+                  <label>Username</label>
+                  <input type="text" className="form-control" placeholder="Username" />
                 </div>
 
                 <div className="form-group">
-                    <label>Email address</label>
-                    <input type="email" className="form-control" placeholder="Enter email" />
+                  <label>Email address</label>
+                  <input type="email" className="form-control" placeholder="Enter email" />
                 </div>
 
                 <div className="form-group">
-                    <label>Password</label>
-                    <input type="password" className="form-control" placeholder="Enter password" />
+                  <label>Password</label>
+                  <input type="password" className="form-control" placeholder="Enter password" />
                 </div>
 
                 <div className="form-group">
-                    <label>Re-enter Password</label>
-                    <input type="password" className="form-control" placeholder="Re-enter password" />
+                  <label>Re-enter Password</label>
+                  <input type="password" className="form-control" placeholder="Re-enter password" />
                 </div>
-            </form>
+              </form>
             </Modal.Body>
-    
+
             <Modal.Footer>
-            <button type="submit" className="btn btn-primary btn-block">Sign Up</button>
-                <p className="forgot-password text-right">
-                    Already registered <a href="#">sign in?</a>
-                </p>
-            </Modal.Footer>         
-          </Modal> 
+              <button type="submit" className="btn btn-primary btn-block">Sign Up</button>
+              <p className="forgot-password text-right">
+                Already registered <a href="#">sign in?</a>
+              </p>
+            </Modal.Footer>
+          </Modal>
         </div>
-      </div>  
-     );
-    }
+      </div>
+    );
+  }
 }
 
 export default LoginModal;
