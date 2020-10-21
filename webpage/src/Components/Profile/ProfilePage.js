@@ -1,11 +1,12 @@
 import React, { Component, PropTypes } from 'react';
 import { Modal, Button, Form, Tabs, Image, Tab } from 'react-bootstrap';
 import './ProfilePage.css';
-import { MDBContainer, MDBRow, MDBCol } from "mdbreact";
+import { MDBIcon, MDBRow, MDBCol } from "mdbreact";
 
-class ProfilePage extends React.Component{
-  
-
+class ProfilePage extends Component{
+    constructor(props) {
+        super(props);
+    }
     render() {
         return (
             <div>
@@ -16,13 +17,22 @@ class ProfilePage extends React.Component{
           </MDBCol>
           <MDBCol xl="5" md="4">
               <div>
-              <h1>Emily Lang</h1>
+        <h1>Emily Lang {this.props.userName}</h1>
+              <p>
+                  <MDBIcon icon='quote-left' /> Lorem ipsum dolor sit amet,
+                  consectetur adipisicing elit. Quod eos id officiis hic tenetur
+                  quae quaerat ad velit ab. Lorem ipsum dolor sit amet,
+                  consectetur adipisicing elit. Dolore cum accusamus eveniet
+                  molestias voluptatum inventore laboriosam labore sit,
+                  aspernatur praesentium iste impedit quidem dolor veniam.
+                </p>
+              
                    <h6>email: google@gmail.com</h6>
                    <br></br>
                    <div style={{display:"flex",justifyContent:"space-between",width:"40%"}}>
-                       <h6>posts: 0</h6>
-                       <h6>followers : 0</h6>
-                       <h6>following: 0</h6>
+                       <h6>posts: 0 {this.props.posts}</h6>
+                       <h6>followers : 0 {this.props.followers}</h6>
+                       <h6>following: 0 {this.props.following}</h6>
                    </div>
 
                </div>
@@ -35,9 +45,6 @@ class ProfilePage extends React.Component{
             <Tabs defaultActiveKey="tracks" id="tab">
                     <Tab eventKey="tracks" title="Tracks">
                {/* <Sonnet /> */}
-                </Tab>
-                    <Tab eventKey="upload" title="Upload">
-                {/* <Sonnet /> */}
                 </Tab>
                     <Tab eventKey="settings" title="Settings">
                 {/* <Sonnet /> */}
