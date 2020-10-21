@@ -5,3 +5,6 @@
 .tall{
     min-height: 100vh;
 }
+.orange{
+    color: rgb(255, 153, 51);
+}

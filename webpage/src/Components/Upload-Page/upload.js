@@ -64,9 +64,11 @@ class Upload extends React.Component{
             <div class="col-4">
             <input type="file" onChange={this.imageSelectedHandler}  />
             </div>
-            <div class ="col-4">
-                 <img src="765-default-avatar copy.png" class="img-thumbnail"/>
-            </div>
+            <div class="form-row mt-4 justify-content-center">
+              <div class ="col-4">
+                  <img src="765-default-avatar copy.png" class="img-thumbnail"/>
+              </div>
+            </div>  
           </div>
           
           
@@ -87,8 +89,8 @@ class Upload extends React.Component{
         <div class="form-group row m-2">
           <div class="col">
             <div class="d-flex justify-content-center">
-              <div class="form-group row">
-                  <button type="submit" class="btn btn-primary">Upload</button>
+              <div class="form-group row mt-3">
+                  <button type="submit" class="btn btn-lg btn-success">Upload</button>
               </div>
             </div>
           </div>
