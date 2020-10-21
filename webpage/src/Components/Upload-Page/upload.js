@@ -65,7 +65,7 @@ class Upload extends React.Component{
             <input type="file" onChange={this.imageSelectedHandler}  />
             </div>
             <div class ="col-4">
-                 <img src="https://www.pngitem.com/middle/hxRbRT_profile-icon-png-default-profile-picture-png-transparent/" class="img-thumbnail"/>
+                 <img src="765-default-avatar copy.png" class="img-thumbnail"/>
             </div>
           </div>
           
