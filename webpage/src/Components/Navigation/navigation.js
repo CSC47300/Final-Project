@@ -21,7 +21,7 @@ class NavBar extends Component {
             mobile =
                 <Nav className="container-fluid">
                     <Nav.Link href="#upload">Upload</Nav.Link>
-                    <Nav.Link href="#profile">Profile</Nav.Link>
+                    <Nav.Link href="/profile">Profile</Nav.Link>
                     <Nav.Link href="#settings">Settings</Nav.Link>
                     <Nav.Link href="#logout">Logout</Nav.Link>
                 </Nav>
@@ -29,7 +29,7 @@ class NavBar extends Component {
             <Nav className="container-fluid">
                 <Nav.Link href="#upload" className="ml-auto">Upload</Nav.Link>
                 <NavDropdown title={this.props.userName} className="">
-                    <NavDropdown.Item href="#profile">Profile</NavDropdown.Item>
+                    <NavDropdown.Item href="/profile">Profile</NavDropdown.Item>
                     <NavDropdown.Item href="#settings">Settings</NavDropdown.Item>
                     <NavDropdown.Item href="#logout">Logout</NavDropdown.Item>
                 </NavDropdown>

@@ -12,7 +12,7 @@ function App() {
   return (
     <>
       <div className="App">
-        <NavBar userName="Maui A" />
+        <NavBar userName="Maui A" loggedIn={true}/>
         {/*<Track playing={false} />*/}
         <Router>
           <Route exact path='/profile' component={ProfilePage}/>
