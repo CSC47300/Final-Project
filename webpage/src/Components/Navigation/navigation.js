@@ -3,6 +3,7 @@ import { Navbar, Nav, NavDropdown, Container } from 'react-bootstrap';
 import "./navigation.css";
 import LoginModal from '../LoginModal/loginModal';
 import RegisterModal from '../RegisterModal/registerModal';
+import ProfilePage from '../Profile/ProfilePage';
 
 class NavBar extends Component {
     constructor(props) {
