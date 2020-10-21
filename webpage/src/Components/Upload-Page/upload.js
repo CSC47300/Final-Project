@@ -1,16 +1,32 @@
 import React, { Component } from 'react';
-import { Navbar, Nav, NavDropdown, Form, FormControl, Button, container, Row,FormCheck, Col} from 'react-bootstrap';
+import "./upload.css";
+import { Navbar, Nav, NavDropdown, Form, FormControl, Button, container, Row,FormCheck, Col, Image} from 'react-bootstrap';
+
+
 
 
 class Upload extends React.Component{
-    render() {
+    
+ 
+
+    // trackSelectedHandler = event => {
+        // selectedTrack: event.target.files
+    // }
+
+    // imageSelectedHandler = event => {
+        // selectedImage: event.target.files
+    // }
+    
+
+    render(){
+
         return(
 
-    <div class="Container-fluid h-100 bg-light">
+    <div class="container-fluid min-height bg-light">
 
-<div class="container h-100 bg-white">
+<div class="container tall bg-white">
            {/* In Page Nav-bar */}
-        <nav class="navbar navbar-expand-lg navbar-light ">
+        <nav class="navbar navbar-expand-lg navbar-light border-bottom border-secondary ">
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
     </button>
@@ -27,7 +43,7 @@ class Upload extends React.Component{
 
 
     {/* main containter   */}
-    <div class="container mt-4 w-75 p-3 border shadow">
+    <div class="container mt-5 w-75 p-3 border shadow">
         <div class="form">
           <div class="row pt-5 m-2">
             <div class="col">
@@ -36,9 +52,23 @@ class Upload extends React.Component{
           </div>
           <div class="form-row justify-content-center">
             <div class="col-4">
-              <input type="text" class="form-control" placeholder="Artist name"/>
+              <input type="file" onChange={this.trackSelectedHandler}/>
             </div>
           </div>
+          <div class="row pt-5 m-2">
+            <div class="col">
+                  <h5 class="card-title text-center">Select your Image</h5>
+            </div>
+          </div>
+          <div class="form-row justify-content-center">
+            <div class="col-4">
+            <input type="file" onChange={this.imageSelectedHandler}  />
+            </div>
+            <div class ="col-4">
+                 <img src="https://www.pngitem.com/middle/hxRbRT_profile-icon-png-default-profile-picture-png-transparent/" class="img-thumbnail"/>
+            </div>
+          </div>
+          
           
           <div class="form-group-row m-2">
             <div class="col"> 
@@ -64,16 +94,11 @@ class Upload extends React.Component{
           </div>
         </div>            
       </div>
-        <div class="text-center border-bottom border-light pb-5" >
+    </div>
+    <div class="text-center border-bottom border-light pb-5" >
          <small> By uploading, you confirm that your sounds comply with our Terms of Use and you don't infringe anyone else's rights.</small>
         </div>
     </div>
-    </div>
-
-
-
-
-
 
 
     </div>

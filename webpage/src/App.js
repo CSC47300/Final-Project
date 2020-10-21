@@ -5,7 +5,7 @@ import NavBar from './Components/Navigation/navigation';
 import Button from 'react-bootstrap/Button';
 import LoginModal from './Components/LoginModal/loginModal';
 import RegisterModal from './Components/RegisterModal/registerModal';
-import Upload from './Components/upload';
+import Upload from './Components/Upload-Page/upload';
 
 function App() {
   return (

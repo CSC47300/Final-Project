@@ -1,0 +1,7 @@
+.container-fluid {
+    min-height: 100vh;
+  }
+
+.tall{
+    min-height: 100vh;
+}
