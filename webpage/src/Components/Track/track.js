@@ -8,18 +8,19 @@ class Track extends Component {
 
     render() {
         const playBtn = !this.props.playing ? <BsPlayFill /> : <BsPauseFill className="pause-btn" />;
-        const post = this.props.userName === this.props.artistName ? "posted" : "reposted";
+        const post = this.props.userName === this.props.artistName ? "posted" : <>&nbsp;<BsArrowRepeat />reposted</>;
         return (
             <Container className="track">
                 <Row className="poster">
                     <Col className="">
                         <img className="user-avatar" src="https://i.imgur.com/p3vccAp.jpeg" alt="poster-avatar" />
-                        &nbsp;<a href={`#${this.props.userName}`}>{this.props.userName}</a> {post} a track 15 hours ago
+                        &nbsp;<a className="link" href={`#${this.props.userName}`}>{this.props.userName}</a>
+                        &nbsp;{post} a track {this.props.timeFrame} ago
                     </Col>
 
                 </Row>
-                <Row className="">
-                    <Col lg={2} className="">
+                <Row className="main-track">
+                    <Col lg={2} className="art-clm">
                         <img className="track-art" src={this.props.albumArt} alt="track-art" />
                         <button className="play-btn">
                             {playBtn}
@@ -27,28 +28,24 @@ class Track extends Component {
                     </Col>
                     <Col className="">
                         <Row><div>
-                            <a href={`#${this.props.artistName}`}>{this.props.artistName}</a>
+                            <a className="link artist" href={`#${this.props.artistName}`}>{this.props.artistName}</a>
                         </div></Row>
                         <Row><div>
-                            <a href={`#${this.props.songName}`}>{this.props.songName}</a>
+                            <a className="link song" href={`#${this.props.songName}`}>{this.props.songName}</a>
                         </div></Row>
                         <Row className="audio-wave"></Row>
                         <Row className="social">
-                            <Col md={1}><button className="social-icon">
+                            <div ><button className="social-icon like">
                                 <BsHeart /> {this.props.likes}
-                            </button></Col>
-                            <Col md={1}><button className="social-icon">
+                            </button></div>
+                            <div ><button className="social-icon repost">
                                 <BsArrowRepeat /> {this.props.reposts}
-                            </button></Col>
+                            </button></div>
                             <Col md={3}></Col>
-                            <Col md={1}>
-                                <div className="social-tag"><BsPlay /> {this.props.playCount}</div>
-                            </Col>
-                            <Col md={1}>
-                                <div className="social-tag">
-                                    <BsChatSquare /> {this.props.commentCount}
-                                </div>
-                            </Col>
+                            <div className="social-tag"><BsPlay /> {this.props.playCount}</div>
+                            <div className="social-tag">
+                                <BsChatSquare /> {this.props.commentCount}
+                            </div>
                         </Row>
                     </Col>
                 </Row>
