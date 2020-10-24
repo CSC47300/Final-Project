@@ -111,22 +111,7 @@ class Upload extends React.Component{
               </div>
             </div>  
           </div>
-          
-          
-          <div class="form-group-row m-2">
-            <div class="col"> 
-                    <div class="d-flex justify-content-center">
-                        <div class="form-group-row form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" name="inlineRadioOptions" id="privacy" value="private"/>
-                               <label class="form-check-label" for="privacy"> <small>Private</small></label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" name="inlineRadioOptions" id="privacy" value="public"/>
-                            <label class="form-check-label" for="privacy"><small>Public</small></label>
-                        </div>
-                    </div>
-            </div>
-        </div>   
+            
         <div class="form-group row m-2">
           <div class="col">
             <div class="d-flex justify-content-center">
