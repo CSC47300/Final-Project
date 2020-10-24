@@ -13,18 +13,46 @@ class Upload extends React.Component{
      };
 
     trackSelectedHandler = event => {
-        selectedTrack: event.target.files[0];
+        
+
+      const file = event.target.files[0];
+      if(event.target.files.length == 0){
+        this.setState({selected:null});
+      }
+      else{{
+
+      const fileType = file['type'];
+      const validSoundTypes = ['audio/mpeg','audio/wav','audio/ogg'];
+      if (!validSoundTypes.includes(fileType)) {
+          this.setState({selectedTrack:null});
+          window.alert("This is not an Sound file")
+        
+      }
+      else{{this.setState({selectedTrack: file});
+
+      }}
+      }}
+  
      }
 
      imageSelectedHandler = event => {
+
       const file = event.target.files[0];
+      if(event.target.files.length == 0){
+        this.setState({selectedImage:null});
+      }
+      else{{
+
       const fileType = file['type'];
       const validImageTypes = ['image/gif', 'image/jpeg', 'image/png'];
       if (!validImageTypes.includes(fileType)) {
-          alert("This is not an image file")
+          this.setState({selectedImage:null});
+          window.alert("This is not an Image file")
+        
       }
       else{{this.setState({selectedImage:  URL.createObjectURL(file)});
 
+      }}
       }}
   
     }
@@ -103,7 +131,7 @@ class Upload extends React.Component{
           <div class="col">
             <div class="d-flex justify-content-center">
               <div class="form-group row mt-3">
-                  <button type="submit" class="btn btn-lg btn-success">Upload</button>
+                  <button type="submit" value ="Submit" class="btn btn-lg btn-success">Upload</button>
               </div>
             </div>
           </div>
