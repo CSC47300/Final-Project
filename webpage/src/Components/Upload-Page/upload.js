@@ -1,22 +1,26 @@
 import React, { Component } from 'react';
 import "./upload.css";
 import { Navbar, Nav, NavDropdown, Form, FormControl, Button, container, Row,FormCheck, Col, Image} from 'react-bootstrap';
-
+/* eslint-disable no-unused-expressions */ 
 
 
 
 class Upload extends React.Component{
     
- 
+     state = {
+       selectedTrack: null,
+       selectedImage: "765-default-avatar copy.png"
+     };
 
-    // trackSelectedHandler = event => {
-        // selectedTrack: event.target.files
-    // }
+    trackSelectedHandler = event => {
+        selectedTrack: event.target.files;
+     }
 
-    // imageSelectedHandler = event => {
-        // selectedImage: event.target.files
-    // }
+     imageSelectedHandler = event => {
+        this.setState({selectedImage:  URL.createObjectURL(event.target.files[0])});
+     }
     
+   
 
     render(){
 
@@ -52,7 +56,7 @@ class Upload extends React.Component{
           </div>
           <div class="form-row justify-content-center">
             <div class="col-4">
-              <input type="file" onChange={this.trackSelectedHandler}/>
+              <input type="file" onChange={this.trackSelectedHandler} required/>
             </div>
           </div>
           <div class="row pt-5 m-2">
@@ -62,11 +66,11 @@ class Upload extends React.Component{
           </div>
           <div class="form-row justify-content-center">
             <div class="col-4">
-            <input type="file" onChange={this.imageSelectedHandler}  />
+            <input type="file" onChange={this.imageSelectedHandler} required/>
             </div>
             <div class="form-row mt-4 justify-content-center">
               <div class ="col-4">
-                  <img src="765-default-avatar copy.png" class="img-thumbnail"/>
+                  <img src = {this.state.selectedImage} class="img-thumbnail"/>
               </div>
             </div>  
           </div>
