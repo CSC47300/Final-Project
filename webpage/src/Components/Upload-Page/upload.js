@@ -13,12 +13,21 @@ class Upload extends React.Component{
      };
 
     trackSelectedHandler = event => {
-        selectedTrack: event.target.files;
+        selectedTrack: event.target.files[0];
      }
 
      imageSelectedHandler = event => {
-        this.setState({selectedImage:  URL.createObjectURL(event.target.files[0])});
-     }
+      const file = event.target.files[0];
+      const fileType = file['type'];
+      const validImageTypes = ['image/gif', 'image/jpeg', 'image/png'];
+      if (!validImageTypes.includes(fileType)) {
+          alert("This is not an image file")
+      }
+      else{{this.setState({selectedImage:  URL.createObjectURL(file)});
+
+      }}
+  
+    }
     
    
 
