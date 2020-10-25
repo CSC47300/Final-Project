@@ -31,13 +31,13 @@ class Settings extends Component{
                   <div class="form-group">
                     <label class="col-lg-3 control-label">First name:</label>
                     <div class="col-lg-8">
-                      <input class="form-control" type="text" value="Emily" />
+                      <input class="form-control" type="text" value="Maui" />
                     </div>
                   </div>
                   <div class="form-group">
                     <label class="col-lg-3 control-label">Last name:</label>
                     <div class="col-lg-8">
-                      <input class="form-control" type="text" value="Lang" />
+                      <input class="form-control" type="text" value="A" />
                     </div>
                   </div>
                   <div class="form-group">

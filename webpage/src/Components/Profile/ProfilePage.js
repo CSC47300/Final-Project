@@ -18,7 +18,7 @@ class ProfilePage extends Component{
           </MDBCol>
           <MDBCol xl="5" md="4">
               <div>
-        <h1>Emily Lang {this.props.userName}</h1>
+        <h1>Maui A {this.props.userName}</h1>
               <p>
                   <MDBIcon icon='quote-left' /> Lorem ipsum dolor sit amet,
                   consectetur adipisicing elit. Quod eos id officiis hic tenetur
