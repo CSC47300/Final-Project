@@ -7,11 +7,11 @@ import "./upload.css";
 class Upload extends React.Component{
   constructor(props) {
     super();
-    this.state = {
+    this.state = ({
        selectedTrack: null,
        selectedImage: null,
        selectedImagePreview: "765-default-avatar copy.png"
-     };
+     });
     }
 
     trackSelectedHandler = event => {
@@ -19,18 +19,24 @@ class Upload extends React.Component{
 
       const file = event.target.files[0];
       if(event.target.files.length == 0){
-        this.setState({selected:null});
+        this.setState({
+          selected:null
+        })
       }
       else{{
 
       const fileType = file['type'];
       const validSoundTypes = ['audio/mpeg','audio/wav','audio/ogg'];
       if (!validSoundTypes.includes(fileType)) {
-          this.setState({selectedTrack:null});
+          this.setState({
+            selectedTrack:null
+          })
           window.alert("This is not an Sound file")
       
       }
-      else{{this.setState({selectedTrack: file});
+      else{{this.setState({
+        selectedTrack: file
+      });
         console.log(this.state.selectedTrack);
 
       }}
@@ -42,8 +48,10 @@ class Upload extends React.Component{
 
       const file = event.target.files[0];
       if(event.target.files.length == 0){
-        this.setState({selectedImage:null});
-        this.setState({selectedImagePreview:null});
+        this.setState({
+           selectedImage:null,
+           selectedImagePreview:null
+        })
         
       }
       else{{
@@ -51,19 +59,23 @@ class Upload extends React.Component{
       const fileType = file['type'];
       const validImageTypes = ['image/gif', 'image/jpeg', 'image/png'];
       if (!validImageTypes.includes(fileType)) {
-          this.setState({selectedImage:null});
-          this.setState({selectedImagePreview:null});
+          this.setState({
+               selectedImage:null,
+               selectedImagePreview:null
+          })
           window.alert("This is not an Image file")
         
       }
-      else{{this.setState({selectedImage: file});
-            this.setState({selectedImagePreview:  URL.createObjectURL(file)});
+      else{{this.setState({
+            selectedImage: file,
+            selectedImagePreview:  URL.createObjectURL(file)
+          })
            
       }}
       }}
       }
       
-
+         
       fileSubmitHandler = event => {
         if(this.selectedImage === null){
           window.alert(this.selectedImage, this.selectedTrack)
