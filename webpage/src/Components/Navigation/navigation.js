@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
-import { Navbar, Nav, NavDropdown, Container } from 'react-bootstrap';
+import { Navbar, Nav, NavDropdown} from 'react-bootstrap';
 import "./navigation.css";
 import LoginModal from '../LoginModal/loginModal';
 import RegisterModal from '../RegisterModal/registerModal';
 
 class NavBar extends Component {
-    constructor(props) {
-        super(props);
-    }
+
     render() {
         let mobile, login;
         login =
@@ -40,7 +38,7 @@ class NavBar extends Component {
                     {mobile}
                 </Navbar.Collapse>
             </>
-        let display = this.props.loggedIn ? rightNav : login;
+        let display = this.props.isLoggedIn ? rightNav : login;
         return (
             <div>
                 <Navbar className="main-nav" bg="dark" variant="dark" expand="md">
