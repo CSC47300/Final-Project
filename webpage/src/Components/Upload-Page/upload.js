@@ -11,7 +11,7 @@ class Upload extends React.Component{
        selectedTrack: null,
        selectedImage: null,
        selectedImagePreview: "765-default-avatar copy.png"
-     }
+     };
     }
 
     trackSelectedHandler = event => {
@@ -58,18 +58,18 @@ class Upload extends React.Component{
       }
       else{{this.setState({selectedImage: file});
             this.setState({selectedImagePreview:  URL.createObjectURL(file)});
-            window/(this.state.selectedImage);
+           
       }}
       }}
       }
       
 
       fileSubmitHandler = event => {
-        if(this.selectedImage == null){
-          window.alert(selectedImage, selectedTrack)
+        if(this.selectedImage === null){
+          window.alert(this.selectedImage, this.selectedTrack)
           window.alert("You have not selected a Image")
         }
-        else if (this.selectedTrack == null){
+        else if (this.selectedTrack === null){
           window.alert("You have not selected an Track")
         }
       }
