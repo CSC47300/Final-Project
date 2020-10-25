@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { Modal, Button, Form, Tabs, Image, Tab } from 'react-bootstrap';
 import './ProfilePage.css';
 import { MDBIcon, MDBRow, MDBCol } from "mdbreact";
+import settings from '../Settings/settings';
 
 class ProfilePage extends Component{
     constructor(props) {
@@ -27,7 +28,7 @@ class ProfilePage extends Component{
                   aspernatur praesentium iste impedit quidem dolor veniam.
                 </p>
               
-                   <h6>email: google@gmail.com</h6>
+                   <h6>email: google@gmail.com {this.props.email}</h6>
                    <br></br>
                    <div style={{display:"flex",justifyContent:"space-between",width:"40%"}}>
                        <h6>posts: 0 {this.props.posts}</h6>
@@ -47,7 +48,7 @@ class ProfilePage extends Component{
                {/* <Sonnet /> */}
                 </Tab>
                     <Tab eventKey="settings" title="Settings">
-                {/* <Sonnet /> */}
+                 <settings />
                 </Tab>
           </Tabs>
           </div>
