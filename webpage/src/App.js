@@ -1,23 +1,45 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 import NavBar from './Components/Navigation/navigation';
-import Button from 'react-bootstrap/Button';
-import LoginModal from './Components/LoginModal/loginModal';
-import RegisterModal from './Components/RegisterModal/registerModal';
+import { Component} from 'react';
+import UserProvider from "./Providers/UserProvider";
 
 
-function App() {
-  return (
+
+
+
+class App extends Component {
+  
+  constructor(props) {
+    super(props);
+    
+    this.state = {
+      isLoggedIn : false,
+    }
+  }
+
+  login(userName, isLoggedIn){
+    this.setState({
+      isLoggedIn : isLoggedIn,
+      userName : userName
+    })
+  }
+  
+  render() {
+    return(
     <>
-      <div className="App">
-        <NavBar userName="Maui A" />
-        <Track playing={false} />
-      </div>
-      <LoginModal />
-      <RegisterModal />
+        <UserProvider>
+          <div className="App">
+            
+            <NavBar {...this.state} action = {this.login} />
+          
+          </div>
+          
+        </UserProvider>
     </>
   );
+}
+
 }
 
 export default App;

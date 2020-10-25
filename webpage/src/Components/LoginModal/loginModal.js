@@ -1,77 +1,108 @@
 
-import React, { Component, PropTypes } from 'react';
-import ReactDOM from 'react-dom';
-import { Modal, Button, Form } from 'react-bootstrap';
+import React, {useState } from 'react';
+import { Modal, Button} from 'react-bootstrap';
 import './loginModal.css';
+import { auth } from "../../firebase";
 
 
-class LoginModal extends Component {
-  constructor(props, context) {
-    super(props, context);
 
-    this.state = {
-      showModal: false
-    };
 
-    this.open = this.open.bind(this);
-    this.close = this.close.bind(this);
-  }
 
-  open() {
-    this.setState({ showModal: true }, function () {
+const LoginModal = () => {
+  
+  const [show,setShow] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
+  
+  const signInWithEmailAndPasswordHandler = (event, email, password) => {
+    event.preventDefault();
+    auth.signInWithEmailAndPassword(email, password)
+      .then(function(user){console.log(' logged in successfully')})
+      .catch(error => {
+      setError("Error signing in with password and email!");
+      console.error("Error signing in with password and email", error);
     });
-  }
+    
+  };
+  
+  const onChangeHandler = (event) => {
+    const {name, value} = event.currentTarget;
 
-  close() {
-    this.setState({ showModal: false });
-  }
+    if(name === 'userEmail') {
+      setEmail(value);
+    }
+    else if(name === 'userPassword'){
+      setPassword(value);
+    }
+  
+  };
 
-  render() {
-    return (
+
+  return (
+    <div>
+      <Button className="login-btn" onClick={() => setShow(true)}>Login</Button>
       <div>
-        <Button className="login-btn" onClick={this.open}>Login</Button>
-        <div>
-          <Modal className="modal-container" id="login"
-            show={this.state.showModal}
-            onHide={this.close}
-            size='md'
-            centered
-          >
+        <Modal className="modal-container" id="login"
+          show={show}
+          onHide={() => setShow(false)}
+          size='md'
+          centered>
 
-            <Modal.Body>
-              <form>
-                <h3 class='font-weight-bold text-center'>Sign In</h3>
+          <Modal.Body>
+            <form>
+              <h3 className ='font-weight-bold text-center' closeButton>Sign In</h3>
 
-                <div className="form-group">
-                  <label>Email address</label>
-                  <input type="email" className="form-control" placeholder="Enter email" />
+              <div className="form-group">
+                <label>Email address</label>
+                <input type="email" 
+                        name = "userEmail"
+                        value = {email}
+                        className="form-control" 
+                        placeholder={"Enter email"}
+                        onChange = {event => onChangeHandler(event)} 
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Password</label>
+                <input type="password" 
+                        name="userPassword"
+                        id="userPassword"
+                        value = {password} 
+                        className="form-control" 
+                        placeholder="Enter password"
+                        onChange = {event => onChangeHandler(event)} />
+              </div>
+
+              <div className="form-group">
+                <div className="custom-control custom-checkbox">
+                  <input type="checkbox" 
+                          className="custom-control-input" 
+                          id="customCheck1" />
+                  <label className="custom-control-label" 
+                          htmlFor="customCheck1"> Remember me 
+                  </label>
                 </div>
-
-                <div className="form-group">
-                  <label>Password</label>
-                  <input type="password" className="form-control" placeholder="Enter password" />
-                </div>
-
-                <div className="form-group">
-                  <div className="custom-control custom-checkbox">
-                    <input type="checkbox" className="custom-control-input" id="customCheck1" />
-                    <label className="custom-control-label" htmlFor="customCheck1">Remember me</label>
-                  </div>
-                </div>
-              </form>
-            </Modal.Body>
-
-            <Modal.Footer>
-              <button type="submit" className="btn btn-primary btn-block">Submit</button>
-              <p className="forgot-password text-right">
-                Forgot <a href="#">password?</a>
-              </p>
-            </Modal.Footer>
-          </Modal>
-        </div>
+              </div>
+              <div>
+              <button type="submit" 
+                        className="btn btn-primary btn-block"
+                        onClick={event => {
+                          signInWithEmailAndPasswordHandler(event, email, password);
+                          setShow(false)}}> Submit 
+              </button>
+                <p className="forgot-password text-right">
+                  Forgot <a href="#">password?</a>
+                </p>
+              </div>
+            </form>
+          </Modal.Body>
+        </Modal>
       </div>
-    );
-  }
+    </div>
+  );
 }
+
 
 export default LoginModal;
