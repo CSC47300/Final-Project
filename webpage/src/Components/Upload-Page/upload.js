@@ -20,7 +20,7 @@ class Upload extends React.Component{
       const file = event.target.files[0];
       if(event.target.files.length == 0){
         this.setState({
-          selected:null
+          selectedTrack:null
         })
       }
       else{{
