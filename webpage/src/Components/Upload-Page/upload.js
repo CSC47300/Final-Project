@@ -1,16 +1,18 @@
 import React, { Component } from 'react';
 import "./upload.css";
-import { Navbar, Nav, NavDropdown, Form, FormControl, Button, container, Row,FormCheck, Col, Image} from 'react-bootstrap';
 /* eslint-disable no-unused-expressions */ 
 
 
 
 class Upload extends React.Component{
-    
-     state = {
+  constructor(props) {
+    super();
+    this.state = {
        selectedTrack: null,
-       selectedImage: "765-default-avatar copy.png"
-     };
+       selectedImage: null,
+       selectedImagePreview: "765-default-avatar copy.png"
+     }
+    }
 
     trackSelectedHandler = event => {
         
@@ -26,9 +28,10 @@ class Upload extends React.Component{
       if (!validSoundTypes.includes(fileType)) {
           this.setState({selectedTrack:null});
           window.alert("This is not an Sound file")
-        
+      
       }
       else{{this.setState({selectedTrack: file});
+        console.log(this.state.selectedTrack);
 
       }}
       }}
@@ -40,6 +43,8 @@ class Upload extends React.Component{
       const file = event.target.files[0];
       if(event.target.files.length == 0){
         this.setState({selectedImage:null});
+        this.setState({selectedImagePreview:null});
+        
       }
       else{{
 
@@ -47,15 +52,28 @@ class Upload extends React.Component{
       const validImageTypes = ['image/gif', 'image/jpeg', 'image/png'];
       if (!validImageTypes.includes(fileType)) {
           this.setState({selectedImage:null});
+          this.setState({selectedImagePreview:null});
           window.alert("This is not an Image file")
         
       }
-      else{{this.setState({selectedImage:  URL.createObjectURL(file)});
+      else{{this.setState({selectedImage: file});
+            this.setState({selectedImagePreview:  URL.createObjectURL(file)});
+            window/(this.state.selectedImage);
+      }}
+      }}
+      }
+      
 
-      }}
-      }}
-  
-    }
+      fileSubmitHandler = event => {
+        if(this.selectedImage == null){
+          window.alert(selectedImage, selectedTrack)
+          window.alert("You have not selected a Image")
+        }
+        else if (this.selectedTrack == null){
+          window.alert("You have not selected an Track")
+        }
+      }
+
     
    
 
@@ -107,7 +125,7 @@ class Upload extends React.Component{
             </div>
             <div class="form-row mt-4 justify-content-center">
               <div class ="col-4">
-                  <img src = {this.state.selectedImage} class="img-thumbnail"/>
+                  <img src = {this.state.selectedImagePreview} class="img-thumbnail"/>
               </div>
             </div>  
           </div>
@@ -116,7 +134,7 @@ class Upload extends React.Component{
           <div class="col">
             <div class="d-flex justify-content-center">
               <div class="form-group row mt-3">
-                  <button type="submit" value ="Submit" class="btn btn-lg btn-success">Upload</button>
+                  <button type="submit" onClick={this.fileSubmitHandler} class="btn btn-lg btn-success">Upload</button>
               </div>
             </div>
           </div>
