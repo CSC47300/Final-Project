@@ -1,56 +1,49 @@
 import React, { Component, PropTypes } from 'react';
-import { Modal, Button, Form, Tabs, Image, Tab } from 'react-bootstrap';
+import { Modal, Button, Form, Tabs, Image, Tab , Container} from 'react-bootstrap';
 import './settings.css';
 import { MDBIcon, MDBRow, MDBCol } from "mdbreact";
 
 
-class settings extends Component{
+class Settings extends Component{
     constructor(props) {
         super(props);
     }
     render() {
         return (
+            <Container fluid>
+            <br></br>
             <div class="container">
-            <h1>Edit Profile</h1>
+            <h5>Change User Profile Image</h5>
               
             <div class="row">
               
               <div class="col-md-3">
                 <div class="text-center">
-                  <img src="//placehold.it/100" class="avatar img-circle" alt="avatar" />
+                  <img src="https://mdbootstrap.com/img/Photos/Avatars/img(31).jpg" class="img-fluid z-depth-1 rounded-circle" alt="avatar" />
                   <h6>Upload a different photo...</h6>
                   
                   <input type="file" class="form-control" />
                 </div>
               </div>
-              
-              
               <div class="col-md-9 personal-info">
-                <div class="alert alert-info alert-dismissable">
-                  <a class="panel-close close" data-dismiss="alert">×</a> 
-                  <i class="fa fa-coffee"></i>
-                  This is an <strong>.alert</strong>. Use this to show important messages to the user.
-                </div>
-                
                 <h3>Personal info</h3>
-                
                 <form class="form-horizontal" role="form" >
                   <div class="form-group">
                     <label class="col-lg-3 control-label">First name:</label>
                     <div class="col-lg-8">
-                      <input class="form-control" type="text" value="Jane" />
+                      <input class="form-control" type="text" value="Emily" />
                     </div>
                   </div>
                   <div class="form-group">
                     <label class="col-lg-3 control-label">Last name:</label>
                     <div class="col-lg-8">
-                      <input class="form-control" type="text" value="Bishop" />
+                      <input class="form-control" type="text" value="Lang" />
                     </div>
                   </div>
                   <div class="form-group">
                     <label class="col-lg-3 control-label">Email:</label>
                     <div class="col-lg-8">
-                      <input class="form-control" type="text" value="janesemail@gmail.com" />
+                      <input class="form-control" type="text" value="email@gmail.com" />
                     </div>
                   </div>
                   <div class="form-group">
@@ -73,7 +66,7 @@ class settings extends Component{
                   <div class="form-group">
                     <label class="col-md-3 control-label">Username:</label>
                     <div class="col-md-8">
-                      <input class="form-control" type="text" value="janeuser" />
+                      <input class="form-control" type="text" value="name" />
                     </div>
                   </div>
                   <div class="form-group">
@@ -100,13 +93,14 @@ class settings extends Component{
               </div>
           </div>
         </div>
+        </Container>
         );
       }
 
 }
 
-settings.propTypes = {
+Settings.propTypes = {
 
 };
 
-export default settings;
+export default Settings;

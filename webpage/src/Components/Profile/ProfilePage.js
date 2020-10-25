@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { Modal, Button, Form, Tabs, Image, Tab } from 'react-bootstrap';
 import './ProfilePage.css';
 import { MDBIcon, MDBRow, MDBCol } from "mdbreact";
-import settings from '../Settings/settings';
+import Settings from '../Settings/settings';
 
 class ProfilePage extends Component{
     constructor(props) {
@@ -48,7 +48,7 @@ class ProfilePage extends Component{
                {/* <Sonnet /> */}
                 </Tab>
                     <Tab eventKey="settings" title="Settings">
-                 <settings />
+                 <Settings />
                 </Tab>
           </Tabs>
           </div>
