@@ -1,44 +1,68 @@
 import React from 'react';
 import './App.css';
 import NavBar from './Components/Navigation/navigation';
-import { Component} from 'react';
+import { Component } from 'react';
 import UserProvider from "./Providers/UserProvider";
-
-
-
-
+import Track from './Components/Track/track';
 
 class App extends Component {
-  
+
   constructor(props) {
     super(props);
-    
+
     this.state = {
-      isLoggedIn : false,
+      isLoggedIn: false,
+      isPlaying: false,
+      currentlyPlaying: "",
+      userName: ""
     }
+
+    this.togglePlay = this.togglePlay.bind(this);
   }
 
-  login(userName, isLoggedIn){
+  login(userName, isLoggedIn) {
     this.setState({
-      isLoggedIn : isLoggedIn,
-      userName : userName
+      isLoggedIn: isLoggedIn,
+      userName: userName
     })
   }
-  
+
+  togglePlay() {
+    let newState = !this.state.isPlaying;
+    this.setState({
+      isPlaying: newState
+    });
+  }
+
   render() {
-    return(
-    <>
+    return (
+      <>
         <UserProvider>
           <div className="App">
-            
-            <NavBar {...this.state} action = {this.login} />
-          
+
+            <NavBar {...this.state} action={this.login} />
+            <Track
+              isPlaying={this.state.isPlaying}
+              likes="23"
+              reposts="4"
+              playCount={189}
+              commentCount={8}
+              songName="Not in it"
+              artistName="Ganghojen"
+              userName="MauiA"
+              albumArt="https://i.imgur.com/p3vccAp.jpeg"
+              timeFrame="15 hours"
+              track="https://www.mfiles.co.uk/mp3-downloads/gs-cd-track2.mp3"
+              id="waveform-1"
+              togglePlay={this.togglePlay}
+            />
+
           </div>
-          
+
         </UserProvider>
-    </>
-  );
-}
+      </>
+    );
+  }
 
 }
 
