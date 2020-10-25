@@ -78,7 +78,6 @@ class Upload extends React.Component{
          
       fileSubmitHandler = event => {
         if(this.state.selectedImage == null){
-          window.alert(this.selectedImage, this.selectedTrack)
           window.alert("You have not selected a Image")
         }
           if (this.state.selectedTrack == null){
