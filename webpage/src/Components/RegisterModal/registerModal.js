@@ -1,78 +1,107 @@
-import React, { Component, PropTypes } from 'react';
-import ReactDOM from 'react-dom';
-import { Modal, Button, Form } from 'react-bootstrap';
+import React, {useState } from 'react';
+import { Modal, Button} from 'react-bootstrap';
+import { auth, generateUserDocument } from "../../firebase";
 
 
-class LoginModal extends Component {
-  constructor(props, context) {
-    super(props, context);
+const LoginModal = () => {
+  
+  const [show,setShow] = useState(false);
+  const [email, setEmail] = useState('');
+  const [displayName, setDisplayName] = useState("taq");
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState(null);
+ 
+  const createUserWithEmailAndPasswordHandler = async (event, email, password) => {
+    event.preventDefault();
+    try{
+      const {user} = await auth.createUserWithEmailAndPassword(email, password);
+      generateUserDocument(user, {displayName});
+    }
+    catch(error){
+      setError('Error Signing up with email and password');
+    }
+      
+    setEmail("");
+    setPassword("");
+    setDisplayName("");
+  };
 
-    this.state = {
-      showModal: false
-    };
+  const onChangeHandler = (event) => {
+    const {name, value} = event.currentTarget;
 
-    this.open = this.open.bind(this);
-    this.close = this.close.bind(this);
-  }
+    if(name === 'userEmail') {
+      setEmail(value);
+    }
+    else if(name === 'userPassword'){
+      setPassword(value);
+    }
+};
+  
 
-  open() {
-    this.setState({ showModal: true }, function () {
-    });
-  }
-
-  close() {
-    this.setState({ showModal: false });
-  }
-
-  render() {
-    return (
+  return (
+    <div>
+      <Button className="login-btn" onClick={() => setShow(true)}>Register</Button>
       <div>
-        <Button className="login-btn" onClick={this.open}>Register</Button>
-        <div>
-          <Modal className="modal-container" id="register"
-            show={this.state.showModal}
-            onHide={this.close}
-            size='md'
-            centered
-          >
+        <Modal className="modal-container" id="register"
+          show={show}
+          onHide={() => setShow(false)}
+          size='md'
+          centered
+        >
 
-            <Modal.Body>
-              <form>
-                <h3>Register</h3>
+          <Modal.Body>
+            <form>
+              <h3>Register</h3>
 
-                <div className="form-group">
-                  <label>Username</label>
-                  <input type="text" className="form-control" placeholder="Username" />
-                </div>
 
-                <div className="form-group">
-                  <label>Email address</label>
-                  <input type="email" className="form-control" placeholder="Enter email" />
-                </div>
+              <div className="form-group">
+                <label>Email address</label>
+                <input type="email"
+                        id="userEmail"
+                        name="userEmail"
+                        value={email}
+                        className="form-control" 
+                        placeholder="Enter email" 
+                        onChange = {event => onChangeHandler(event)}/>
+              </div>
 
-                <div className="form-group">
-                  <label>Password</label>
-                  <input type="password" className="form-control" placeholder="Enter password" />
-                </div>
+              <div className="form-group">
+                <label>Password</label>
+                <input type="password" 
+                        name="userPassword"
+                        value={password}
+                        id="userPassword"
+                        className="form-control" 
+                        placeholder="Enter password" 
+                        onChange = {event => onChangeHandler(event)}/>
 
-                <div className="form-group">
-                  <label>Re-enter Password</label>
-                  <input type="password" className="form-control" placeholder="Re-enter password" />
-                </div>
-              </form>
-            </Modal.Body>
+              </div>
 
-            <Modal.Footer>
-              <button type="submit" className="btn btn-primary btn-block">Sign Up</button>
-              <p className="forgot-password text-right">
-                Already registered <a href="#">sign in?</a>
-              </p>
-            </Modal.Footer>
-          </Modal>
-        </div>
+              <div className="form-group">
+                <label>Re-enter Password</label>
+                <input type="password" 
+                        className="form-control" 
+                        placeholder="Re-enter password" />
+              </div>
+            </form>
+          </Modal.Body>
+
+          <Modal.Footer>
+            <button className="btn btn-primary btn-block"
+                    onClick={event => {
+                      createUserWithEmailAndPasswordHandler(event, email, password);
+                    }}>
+                      Sign Up
+            </button>
+            <p className="forgot-password text-right">
+              Already registered <a href="#">sign in?</a>
+            </p>
+          </Modal.Footer>
+        </Modal>
       </div>
-    );
-  }
+    </div>
+  );
+  
 }
 
 export default LoginModal;

@@ -1,22 +1,69 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 import NavBar from './Components/Navigation/navigation';
-import Button from 'react-bootstrap/Button';
-import LoginModal from './Components/LoginModal/loginModal';
-import RegisterModal from './Components/RegisterModal/registerModal';
-import Upload from './Components/Upload-Page/upload';
+import { Component } from 'react';
+import UserProvider from "./Providers/UserProvider";
+import Track from './Components/Track/track';
 
-function App() {
-  return (
-    <>
-      <div className="App">
-        <NavBar userName="Maui A" />
-      
-      </div>
-      <Upload/>
-    </>
-  );
+class App extends Component {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      isLoggedIn: false,
+      isPlaying: false,
+      currentlyPlaying: "",
+      userName: ""
+    }
+
+    this.togglePlay = this.togglePlay.bind(this);
+  }
+
+  login(userName, isLoggedIn) {
+    this.setState({
+      isLoggedIn: isLoggedIn,
+      userName: userName
+    })
+  }
+
+  togglePlay() {
+    let newState = !this.state.isPlaying;
+    this.setState({
+      isPlaying: newState
+    });
+  }
+
+  render() {
+    return (
+      <>
+        <UserProvider>
+          <div className="App">
+
+            <NavBar {...this.state} action={this.login} />
+            <Track
+              isPlaying={this.state.isPlaying}
+              likes="23"
+              reposts="4"
+              playCount={189}
+              commentCount={8}
+              songName="Not in it"
+              artistName="Ganghojen"
+              userName="MauiA"
+              albumArt="https://i.imgur.com/p3vccAp.jpeg"
+              timeFrame="15 hours"
+              track="https://www.mfiles.co.uk/mp3-downloads/gs-cd-track2.mp3"
+              id="waveform-1"
+              togglePlay={this.togglePlay}
+            />
+
+          </div>
+
+        </UserProvider>
+      </>
+    );
+  }
+
 }
 
 export default App;
