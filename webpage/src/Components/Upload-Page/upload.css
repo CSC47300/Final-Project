@@ -1,0 +1,10 @@
+.container-fluid {
+    min-height: 100vh;
+  }
+
+.tall{
+    min-height: 100vh;
+}
+.orange{
+    color: rgb(255, 153, 51);
+}
