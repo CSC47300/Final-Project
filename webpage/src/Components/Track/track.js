@@ -7,7 +7,7 @@ import WaveSurfer from 'wavesurfer.js';
 class Track extends Component {
 
     handlePlay = () => {
-        // this.props.togglePlay(); // TODO: implement playing state change in parent
+        this.props.togglePlay(); // TODO: implement playing state change in parent
         this.waveform.playPause();
     };
 
@@ -30,14 +30,14 @@ class Track extends Component {
         });
         this.waveform.load(track);
         this.waveform.on("seek", () => {
-            if (this.props.playing)
+            if (this.props.isPlaying)
                 this.waveform.play();
         })
 
     }
 
     render() {
-        const playBtn = !this.props.playing ? <BsPlayFill /> : <BsPauseFill className="pause-btn" />;
+        const playBtn = !this.props.isPlaying ? <BsPlayFill /> : <BsPauseFill className="pause-btn" />;
         const post = this.props.userName === this.props.artistName ? "posted" : <>&nbsp;<BsArrowRepeat />reposted</>;
         return (
             <Container className="track">
