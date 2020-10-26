@@ -1,0 +1,14 @@
+.profile-btn {
+    border: none;
+    background-color: transparent;
+}
+
+.profile-btn:hover {
+    color: rgb(197, 197, 197);
+    background-color: transparent;
+}
+
+.backimage {
+    height: 250px;
+    width: 2000px; 
+}
