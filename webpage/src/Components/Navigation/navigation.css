@@ -1,5 +1,7 @@
 .main-nav {
     border-radius: 0 !important;
+    padding-left: 50px;
+    padding-right: 50px;
 }
 
 .login-container {

@@ -40,6 +40,9 @@ wave {
     border-radius: 100%;
 }
 
+.track {
+    padding-top: 40px;
+}
 .play-btn:hover {
     opacity: 100%;
 }
