@@ -4,6 +4,9 @@ import NavBar from './Components/Navigation/navigation';
 import { Component } from 'react';
 import UserProvider from "./Providers/UserProvider";
 import Track from './Components/Track/track';
+import ProfilePage from './Components/Profile/ProfilePage';
+import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+import Settings from './Components/Settings/settings';
 
 class App extends Component {
 
@@ -11,10 +14,10 @@ class App extends Component {
     super(props);
 
     this.state = {
-      isLoggedIn: false,
+      isLoggedIn: true,
       isPlaying: false,
       currentlyPlaying: "",
-      userName: ""
+      userName: "Maui A"
     }
 
     this.togglePlay = this.togglePlay.bind(this);
@@ -41,7 +44,11 @@ class App extends Component {
           <div className="App">
 
             <NavBar {...this.state} action={this.login} />
-            <Track
+            <Router>
+              <Route exact path='/profile' component={ProfilePage}/>
+              <Route exact path='/settings' component={Settings}/>
+        </Router>
+            {/*<Track
               isPlaying={this.state.isPlaying}
               likes="23"
               reposts="4"
@@ -55,7 +62,7 @@ class App extends Component {
               track="https://www.mfiles.co.uk/mp3-downloads/gs-cd-track2.mp3"
               id="waveform-1"
               togglePlay={this.togglePlay}
-            />
+            />*/}
 
           </div>
 

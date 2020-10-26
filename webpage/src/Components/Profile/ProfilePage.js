@@ -3,6 +3,7 @@ import { Modal, Button, Form, Tabs, Image, Tab } from 'react-bootstrap';
 import './ProfilePage.css';
 import { MDBIcon, MDBRow, MDBCol } from "mdbreact";
 import Settings from '../Settings/settings';
+import Track from '../Track/track';
 
 class ProfilePage extends Component{
     constructor(props) {
@@ -45,7 +46,7 @@ class ProfilePage extends Component{
             
             <Tabs defaultActiveKey="tracks" id="tab">
                     <Tab eventKey="tracks" title="Tracks">
-               {/* <Sonnet /> */}
+                  {/*<Track/>*/}
                 </Tab>
                     <Tab eventKey="settings" title="Settings">
                  <Settings />
