@@ -16,6 +16,7 @@ class Track extends Component {
         let wave = document.querySelector(".waveform");
         wave.id = this.props.id;
         wave.classList.remove("waveform");
+        wave.classList.add("wave");
         this.waveform = WaveSurfer.create({
             barWidth: 2,
             cursorWidth: 1,
@@ -24,7 +25,7 @@ class Track extends Component {
             height: 70,
             progressColor: '#2D5BFF',
             responsive: true,
-            waveColor: '#EFEFEF',
+            waveColor: '#b5b5b5',
             cursorColor: '#2D5BFF',
             normalize: true
         });
