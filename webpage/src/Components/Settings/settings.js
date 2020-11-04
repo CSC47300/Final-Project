@@ -2,13 +2,71 @@ import React, { Component, PropTypes } from 'react';
 import { Modal, Button, Form, Tabs, Image, Tab , Container} from 'react-bootstrap';
 import './settings.css';
 import { MDBIcon, MDBRow, MDBCol } from "mdbreact";
-
+import { Firebase } from "../../firebase";
 
 class Settings extends Component{
     constructor(props) {
         super(props);
+        this.state = {
+          users: []
+        };
     }
+
+    componentDidMount() {
+      //this.getUserData();
+    }
+    componentDidUpdate(prevProps, prevState) {
+      if (prevState !== this.state) {
+        this.writeUserData();
+      }
+    }
+    writeUserData = () => {
+      Firebase.database().ref("/").set(this.state);
+      console.log("DATA SAVED");
+    };
+   
+    handleSubmit = (event) => {
+      event.preventDefault();
+      let name = this.name.value;
+      let role = this.role.value;
+      let uid = this.uid.value;
+  
+      if (uid && name && role) {
+        const { users } = this.state;
+        const devIndex = users.findIndex((data) => {
+          return data.uid === uid;
+        });
+        users[devIndex].name = name;
+        users[devIndex].role = role;
+        this.setState({ users });
+      } else if (name && role) {
+        const uid = new Date().getTime().toString();
+        const { users } = this.state;
+        users.push({ uid, name, role });
+        this.setState({ users });
+      }
+  
+      this.name.value = "";
+      this.role.value = "";
+      this.uid.value = "";
+    };
+  
+    removeData = (user) => {
+      const { users } = this.state;
+      const newState = users.filter((data) => {
+        return data.uid !== user.uid;
+      });
+      this.setState({ users: newState });
+    };
+  
+    updateData = (user) => {
+      this.uid.value = user.uid;
+      this.name.value = user.name;
+      this.role.value = user.role;
+    };
+
     render() {
+      const { users } = this.state;
         return (
             <Container fluid>
             <br></br>
@@ -84,9 +142,9 @@ class Settings extends Component{
                   <div class="form-group">
                     <label class="col-md-3 control-label"></label>
                     <div class="col-md-8">
-                      <input type="button" class="btn btn-primary" value="Save Changes" />
+                    <input type="button" class="btn btn-primary" value="Save Changes" />
                       <span></span>
-                      <input type="reset" class="btn btn-default" value="Cancel" />
+                    <input type="reset" class="btn btn-default" value="Cancel" />
                     </div>
                   </div>
                 </form>
