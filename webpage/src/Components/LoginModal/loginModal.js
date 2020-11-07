@@ -1,9 +1,8 @@
 
-import React, {useState } from 'react';
+import React, {useState,useContext} from 'react';
 import { Modal, Button} from 'react-bootstrap';
 import './loginModal.css';
-import { auth } from "../../firebase";
-
+import {auth} from '../../firebase';
 
 
 
@@ -11,32 +10,32 @@ import { auth } from "../../firebase";
 const LoginModal = () => {
   
   const [show,setShow] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
-  
-  const signInWithEmailAndPasswordHandler = (event, email, password) => {
-    event.preventDefault();
-    auth.signInWithEmailAndPassword(email, password)
-      .then(function(user){console.log(' logged in successfully')})
+
+  const signInWithEmailAndPasswordHandler = (event,email, password) => {
+      event.preventDefault();
+      auth.signInWithEmailAndPassword(email, password)
+      .then(function(){
+        console.log("success! " + auth.currentUser.uid)
+      })
       .catch(error => {
       setError("Error signing in with password and email!");
-      console.error("Error signing in with password and email", error);
-    });
+        console.error("Error signing in with password and email", error);
+      });
+    };
     
-  };
-  
-  const onChangeHandler = (event) => {
-    const {name, value} = event.currentTarget;
-
-    if(name === 'userEmail') {
-      setEmail(value);
-    }
-    else if(name === 'userPassword'){
-      setPassword(value);
-    }
-  
-  };
+    const onChangeHandler = (event) => {
+        const {name, value} = event.currentTarget;
+      
+        if(name === 'userEmail') {
+            setEmail(value);
+        }
+        else if(name === 'userPassword'){
+          setPassword(value);
+        }
+    };
 
 
   return (
@@ -50,17 +49,19 @@ const LoginModal = () => {
           centered>
 
           <Modal.Body>
-            <form>
+            <form onSubmit={(event) => {signInWithEmailAndPasswordHandler(event, email, password)}}>
               <h3 className ='font-weight-bold text-center' closeButton>Sign In</h3>
 
               <div className="form-group">
                 <label>Email address</label>
                 <input type="email" 
                         name = "userEmail"
+                        id = "userEmail"
                         value = {email}
                         className="form-control" 
                         placeholder={"Enter email"}
-                        onChange = {event => onChangeHandler(event)} 
+                        onChange = {(event) => onChangeHandler(event)}
+
                 />
               </div>
 
@@ -72,7 +73,7 @@ const LoginModal = () => {
                         value = {password} 
                         className="form-control" 
                         placeholder="Enter password"
-                        onChange = {event => onChangeHandler(event)} />
+                        onChange = {(event) => onChangeHandler(event)} />
               </div>
 
               <div className="form-group">
@@ -86,12 +87,8 @@ const LoginModal = () => {
                 </div>
               </div>
               <div>
-              <button type="submit" 
-                        className="btn btn-primary btn-block"
-                        onClick={event => {
-                          signInWithEmailAndPasswordHandler(event, email, password);
-                          setShow(false)}}> Submit 
-              </button>
+              <button> Submit </button>
+                
                 <p className="forgot-password text-right">
                   Forgot <a href="#">password?</a>
                 </p>

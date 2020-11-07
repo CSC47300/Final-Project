@@ -3,6 +3,7 @@ import "firebase/auth";
 import "firebase/firestore";
 
 
+
 var firebaseConfig = {
     apiKey: "AIzaSyCLam-q3MPZgOwRNotNi5zl6I8gi_7xmgM",
     authDomain: "musaic-69ec1.firebaseapp.com",
@@ -15,41 +16,51 @@ var firebaseConfig = {
   };
 
 firebase.initializeApp(firebaseConfig);
+export const db = firebase.firestore();
 export const auth = firebase.auth();
-export const firestore = firebase.firestore();
+
 
 
 export const generateUserDocument = async (user, additionalData) => {
-  if (!user) return;
-  const userRef = firestore.doc(`users/${user.uid}`);
-  const snapshot = await userRef.get();
-  if (!snapshot.exists) {
-    const { email, displayName, photoURL } = user;
-    try {
-      await userRef.set({
-        displayName,
-        email,
-        photoURL,
-        ...additionalData
-      });
-    } catch (error) {
-      console.error("Error creating user document", error);
+    if (!user) return;
+  
+    const userRef = db.doc(`users/${user.uid}`);
+    const snapshot = await userRef.get();
+  
+    if (!snapshot.exists) {
+      const { email, displayName, photoURL } = user;
+      try {
+        await userRef.set({
+          displayName,
+          email,
+          photoURL,
+          ...additionalData
+        });
+      } catch (error) {
+        console.error("Error creating user document", error);
+      }
     }
+    return getUserDocument(user.uid);
+  };
+  
+  export const getUserDocument = async uid => {
+    if (!uid) return null;
+    try {
+      const userDocument = await db.doc(`users/${uid}`).get();
+  
+      return {
+        uid,
+        ...userDocument.data()
+      };
+    } catch (error) {
+      console.error("Error fetching user", error);
+    }
+  };
+
+  export const signOut = () => {
+    firebase.auth().signOut().then(function() {
+        console.log('signedOut')
+      }).catch(function(error) {
+        // An error happened.
+      });
   }
-  return getUserDocument(user.uid);
-};
-
-
-const getUserDocument = async uid => {
-  if (!uid) return null;
-  try {
-    const userDocument = await firestore.doc(`users/${uid}`).get();
-    return {
-      uid,
-      ...userDocument.data()
-    };
-  } catch (error) {
-    console.error("Error fetching user", error);
-  }
-};
-
