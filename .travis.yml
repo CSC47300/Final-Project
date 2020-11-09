@@ -6,7 +6,7 @@ node_js:
 addons:
     sonarcloud:
         organization: "csc47300" # the key of the org you chose at step #3
-        token: SONAR_CLOUD
+        token: ${{ secrets.SONAR_CLOUD }}
 
 script:
     - cd webpage && npm install
