@@ -6,8 +6,8 @@ node_js:
 addons:
     sonarcloud:
         organization: "csc47300" # the key of the org you chose at step #3
-        token:
-            secure: "f55dbda5810f7c1bb8ba267f3a7ad75348b28ea0" # encrypted value of your token
+        token: "f55dbda5810f7c1bb8ba267f3a7ad75348b28ea0"
+            #secure: "f55dbda5810f7c1bb8ba267f3a7ad75348b28ea0" # encrypted value of your token
 
 script:
     - npm test
