@@ -5,7 +5,7 @@ import LoginModal from '../LoginModal/loginModal.js';
 import RegisterModal from '../RegisterModal/registerModal.js';
 import "firebase/auth";
 import "firebase/firestore";
-import { UserContext } from '../../providers/UserProvider.js';
+import { UserContext } from '../../Providers/UserProvider.js';
 import { signOut,auth } from '../../firebase.js';
 
 const NavBar = () => {
