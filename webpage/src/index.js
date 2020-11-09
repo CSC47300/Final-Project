@@ -3,8 +3,8 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import AuthProvider from './providers/UserProvider';
-import UserProvider from './providers/UserProvider.js';
+import AuthProvider from './Providers/UserProvider';
+import UserProvider from './Providers/UserProvider';
 
 ReactDOM.render(
   <React.StrictMode>
