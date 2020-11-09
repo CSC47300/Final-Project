@@ -1,6 +1,6 @@
 import React, {useContext,Button} from 'react';
 import './App.css';
-import NavBar from './Components/Navigation/navigation';
+import NavBar from './Components/Navigation/navigation.js';
 import Track from './Components/Track/track';
 import ProfilePage from './Components/Profile/ProfilePage';
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
