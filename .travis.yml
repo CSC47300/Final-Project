@@ -16,4 +16,4 @@ install:
 script:
     - npm test -- --coverage
     - npm run build
-    - sonar-scanner
+    - cd .. && sonar-scanner
