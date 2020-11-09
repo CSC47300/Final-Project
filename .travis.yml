@@ -11,6 +11,6 @@ addons:
 
 script:
     - cd webpage && npm install
-    - cd webpage && npm test
-    - cd webpage && npm run build
+    - npm test
+    - npm run build
     - sonar-scanner
