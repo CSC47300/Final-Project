@@ -1,12 +1,12 @@
 import React, { Component,useContext} from 'react';
 import { Navbar, Nav, NavDropdown, Button } from 'react-bootstrap';
 import "./navigation.css";
-import LoginModal from '../LoginModal/loginModal';
-import RegisterModal from '../RegisterModal/registerModal';
+import LoginModal from '../LoginModal/loginModal.js';
+import RegisterModal from '../RegisterModal/registerModal.js';
 import "firebase/auth";
 import "firebase/firestore";
-import { UserContext } from '../../providers/UserProvider';
-import { signOut,auth } from '../../firebase';
+import { UserContext } from '../../providers/UserProvider.js';
+import { signOut,auth } from '../../firebase.js';
 
 const NavBar = () => {
         
