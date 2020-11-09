@@ -1,0 +1,15 @@
+language: node_js
+
+node_js:
+  - "12"
+
+addons:
+    sonarcloud:
+        organization: "csc47300" # the key of the org you chose at step #3
+        token: ${{ secrets.SONAR_CLOUD }}
+
+script:
+    - cd webpage && npm install
+    - npm test -- --coverage
+    - npm run build
+    - sonar-scanner
