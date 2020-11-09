@@ -1,14 +1,5 @@
 jobs:
     include:
-      - stage: sonarcloud
-        name: "SolarCloud Scan"
-        addons:
-            sonarcloud:
-                organization: "csc47300"
-                token: "a3325592612dd9033f4f50504dace6cd70406b6e"
-                    #secure: "UlVh2v1Alax+8mBHp3ebttA2FUy7szwAWnFo7veCDrpZXFj4SvA6Ip3+RAugrWspZCfWOYkkLWCTQP8z35i/FQ2xrhkpQCdK318TiN8j+bSniWwnxlpbH3TC8gJn5LeuH4bXUTBpx+Oxpci6GC+nOTL8w8gX07n6aL+FaY8Tly0V37+5uqKh/ZDq4upb7jJFdFFeon89ENzQFIfswcka6d6+NH62rNtSmbmcMVZ3T60VzaTkDBcGfGI7oWc6LZAUx3YeXHASCMJhGJPkBWOL+OY5aGco3wI8GdXL1k/f8ytd0WiRErsh54SGkwuSqiYsUIMYW/q+uc824F4mILNUm48BYpsEuUkBbezsLgKVBdmhHLPRzqlmNR3z2w21662TDYbwxNcsR5Dn09JWAK8xcBqwRCsPLOJVF+WAwJ9Wfj0fHmOBF8H8jzDoIFfppwDsjycAVc0M7IYvWzKtzER2HBTJDe3hbHlt5PHjcjcJIIeNBPVj4w0zrUF2NAm2mGHGTnl4HkzwTHfTS9AGaTGl5r0uaFfLoTU/MyVbcY16C+5rUG40mEMwc2Ph4n9w3n/aO0Q3Z16iuU5+dh7KAfYAvMl9QM/PeyZa6t0lDIxQzbgWJdhKtDHtezN7QSXiOU++M+2LZuV0sEz4or/aVmp0wPObsWyJOxJQI8Hl22HsbJM="
-        script:
-            - sonar-scanner
       - stage: test
         name: "Front End React"
         language: node_js
@@ -19,5 +10,14 @@ jobs:
         install:
             - npm install
         script:
-            - npm test -- --coverage
             - npm run build
+            - npm test -- --coverage
+      - stage: sonarcloud
+        name: "SolarCloud Scan"
+        addons:
+            sonarcloud:
+                organization: "csc47300"
+                token: "a3325592612dd9033f4f50504dace6cd70406b6e"
+                    #secure: "UlVh2v1Alax+8mBHp3ebttA2FUy7szwAWnFo7veCDrpZXFj4SvA6Ip3+RAugrWspZCfWOYkkLWCTQP8z35i/FQ2xrhkpQCdK318TiN8j+bSniWwnxlpbH3TC8gJn5LeuH4bXUTBpx+Oxpci6GC+nOTL8w8gX07n6aL+FaY8Tly0V37+5uqKh/ZDq4upb7jJFdFFeon89ENzQFIfswcka6d6+NH62rNtSmbmcMVZ3T60VzaTkDBcGfGI7oWc6LZAUx3YeXHASCMJhGJPkBWOL+OY5aGco3wI8GdXL1k/f8ytd0WiRErsh54SGkwuSqiYsUIMYW/q+uc824F4mILNUm48BYpsEuUkBbezsLgKVBdmhHLPRzqlmNR3z2w21662TDYbwxNcsR5Dn09JWAK8xcBqwRCsPLOJVF+WAwJ9Wfj0fHmOBF8H8jzDoIFfppwDsjycAVc0M7IYvWzKtzER2HBTJDe3hbHlt5PHjcjcJIIeNBPVj4w0zrUF2NAm2mGHGTnl4HkzwTHfTS9AGaTGl5r0uaFfLoTU/MyVbcY16C+5rUG40mEMwc2Ph4n9w3n/aO0Q3Z16iuU5+dh7KAfYAvMl9QM/PeyZa6t0lDIxQzbgWJdhKtDHtezN7QSXiOU++M+2LZuV0sEz4or/aVmp0wPObsWyJOxJQI8Hl22HsbJM="
+        script:
+            - sonar-scanner
