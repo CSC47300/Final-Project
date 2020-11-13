@@ -10,6 +10,8 @@ jobs:
         install:
             - npm install
         script:
+            - npm test -- --coverage
+            - unset CI
             - npm run build
             - npm test -- --coverage
       - stage: sonarcloud
