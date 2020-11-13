@@ -1,14 +1,17 @@
-import React, { Component } from 'react';
+import React, { Component, useContext } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import { BsHeart, BsArrowRepeat, BsPlay, BsChatSquare, BsPlayFill, BsPauseFill } from 'react-icons/bs';
 import "./track.css";
 import WaveSurfer from 'wavesurfer.js';
+import { UserContext } from '../../Providers/UserProvider.js';
 import { db } from '../../firebase';
+import firebase from "firebase/app";
+
 
 class Track extends Component {
 
     handlePlay = () => {
-        this.props.togglePlay(); // TODO: implement playing state change in parent
+        // this.props.togglePlay(); // TODO: implement playing state change in parent
         this.waveform.playPause();
         if (!this.played) {
             db.collection('tracks').doc(this.props.id).update({ playCount: this.props.playCount + 1 });
@@ -17,11 +20,37 @@ class Track extends Component {
     };
 
     handleLike = () => {
-        db.collection('tracks').doc(this.props.id).update({ likes: this.props.likes + 1 });
+        db.collection('tracks').doc(this.props.id).get().then(doc => {
+            let data = doc.data();
+            if (data.likedBy.includes('Maui A')) return true;
+            else return false;
+        }).then(likedByCurrentUser => {
+            db.collection('tracks').doc(this.props.id).update({
+                likeCount: likedByCurrentUser === false ? firebase.firestore.FieldValue.increment(1) : this.props.likes,
+                likedBy: firebase.firestore.FieldValue.arrayUnion("Maui A")
+            });
+        })
     }
 
     handleRepost = () => {
-        // Gets user post collection and adds it along with timestamp
+        db.collection('tracks').doc(this.props.id).get().then(doc => {
+            let data = doc.data();
+            if (data.repostedBy.includes('Maui A')) return true;
+            else return false;
+        }).then(repostedByUser => {
+            if (!repostedByUser) {
+                db.collection('users').doc('0i3iKZNM8AgvUJXrLRezqr9ek662').update({
+                    posts: firebase.firestore.FieldValue.arrayUnion({
+                        trackId: this.props.id,
+                        postDate: Date.now()
+                    })
+                })
+                db.collection('tracks').doc(this.props.id).update({
+                    repostCount: firebase.firestore.FieldValue.increment(1),
+                    repostedBy: firebase.firestore.FieldValue.arrayUnion("Maui A")
+                })
+            }
+        })
     }
 
     componentDidMount() {
@@ -48,6 +77,7 @@ class Track extends Component {
             if (this.props.isPlaying)
                 this.waveform.play();
         })
+
     }
 
     render() {
@@ -64,7 +94,7 @@ class Track extends Component {
 
                 </Row>
                 <Row className="main-track">
-                    <Col lg={3} className="art-clm">
+                    <Col md="auto" lg="auto" sm="auto" xs="auto" className="art-clm">
                         <img className="track-art" src={this.props.albumArt} alt="track-art" />
                         <button className="play-btn" onClick={this.handlePlay}>
                             {playBtn}
@@ -85,7 +115,7 @@ class Track extends Component {
                             <div ><button className="social-icon like" onClick={this.handleLike}>
                                 <BsHeart /> {this.props.likes}
                             </button></div>
-                            <div ><button className="social-icon repost">
+                            <div ><button className="social-icon repost" onClick={this.handleRepost}>
                                 <BsArrowRepeat /> {this.props.reposts}
                             </button></div>
                             <Col md={6}>
