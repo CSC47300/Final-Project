@@ -3,15 +3,29 @@ import { Container, Row, Col } from 'react-bootstrap';
 import { BsHeart, BsArrowRepeat, BsPlay, BsChatSquare, BsPlayFill, BsPauseFill } from 'react-icons/bs';
 import "./track.css";
 import WaveSurfer from 'wavesurfer.js';
+import { db } from '../../firebase';
 
 class Track extends Component {
 
     handlePlay = () => {
         this.props.togglePlay(); // TODO: implement playing state change in parent
         this.waveform.playPause();
+        if (!this.played) {
+            db.collection('tracks').doc(this.props.id).update({ playCount: this.props.playCount + 1 });
+        }
+        this.played = true;
     };
 
+    handleLike = () => {
+        db.collection('tracks').doc(this.props.id).update({ likes: this.props.likes + 1 });
+    }
+
+    handleRepost = () => {
+        // Gets user post collection and adds it along with timestamp
+    }
+
     componentDidMount() {
+        this.played = false;
         const track = this.props.track;
         let wave = document.querySelector(".waveform");
         wave.id = this.props.id;
@@ -34,7 +48,6 @@ class Track extends Component {
             if (this.props.isPlaying)
                 this.waveform.play();
         })
-
     }
 
     render() {
@@ -69,7 +82,7 @@ class Track extends Component {
                             </Col>
                         </Row>
                         <Row className="social">
-                            <div ><button className="social-icon like">
+                            <div ><button className="social-icon like" onClick={this.handleLike}>
                                 <BsHeart /> {this.props.likes}
                             </button></div>
                             <div ><button className="social-icon repost">
