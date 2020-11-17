@@ -1,4 +1,4 @@
-import React, { Component, useContext, useState, useEffect } from 'react';
+import React, { useRef, useContext, useState, useEffect } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import { BsHeart, BsArrowRepeat, BsPlay, BsChatSquare, BsPlayFill, BsPauseFill } from 'react-icons/bs';
 import "./track.css";
@@ -10,7 +10,8 @@ import firebase from "firebase/app";
 function Track(props) {
 
     const [played, setPlayed] = useState(false);
-    let waveform;
+    const [likes, setLikes] = useState(props.likes);
+    const waveform = useRef();
     const user = useContext(UserContext);
 
     useEffect(() => {
@@ -19,7 +20,7 @@ function Track(props) {
         wave.id = props.id;
         wave.classList.remove("waveform");
         wave.classList.add("wave");
-        waveform = WaveSurfer.create({
+        waveform.current = WaveSurfer.create({
             barWidth: 2,
             cursorWidth: 1,
             container: document.getElementById(props.id),
@@ -30,17 +31,17 @@ function Track(props) {
             waveColor: '#b5b5b5',
             cursorColor: '#2D5BFF',
             normalize: true
-        });
-        waveform.load(track);
-        waveform.on("seek", () => {
+        })
+        waveform.current.load(track);
+        waveform.current.on("seek", () => {
             if (props.isPlaying)
-                waveform.play();
+                waveform.current.play();
         })
     }, [])
 
     const handlePlay = () => {
         // props.togglePlay(); // TODO: implement playing state change in parent
-        waveform.playPause();
+        waveform.current.playPause();
         if (!played) {
             db.collection('tracks').doc(props.id).update({ playCount: props.playCount + 1 });
         }
@@ -50,20 +51,23 @@ function Track(props) {
     const handleLike = () => {
         db.collection('tracks').doc(props.id).get().then(doc => {
             let data = doc.data();
-            if (data.likedBy.includes('Maui A')) return true;
+            if (data.likedBy.includes(user.uid)) return true;
             else return false;
         }).then(likedByCurrentUser => {
             db.collection('tracks').doc(props.id).update({
                 likeCount: likedByCurrentUser === false ? firebase.firestore.FieldValue.increment(1) : props.likes,
-                likedBy: firebase.firestore.FieldValue.arrayUnion("Maui A")
+                likedBy: firebase.firestore.FieldValue.arrayUnion(user.uid)
             });
+            if (!likedByCurrentUser) {
+                setLikes(likes => likes + 1);
+            }
         })
     }
 
     const handleRepost = () => {
         db.collection('tracks').doc(props.id).get().then(doc => {
             let data = doc.data();
-            if (data.repostedBy.includes('Maui A')) return true;
+            if (data.repostedBy.includes(user.uid)) return true;
             else return false;
         }).then(repostedByUser => {
             if (!repostedByUser) {
@@ -75,7 +79,7 @@ function Track(props) {
                 })
                 db.collection('tracks').doc(props.id).update({
                     repostCount: firebase.firestore.FieldValue.increment(1),
-                    repostedBy: firebase.firestore.FieldValue.arrayUnion("Maui A")
+                    repostedBy: firebase.firestore.FieldValue.arrayUnion(user.uid)
                 })
             }
         })
@@ -115,7 +119,7 @@ function Track(props) {
                     </Row>
                     <Row className="social">
                         <div ><button className="social-icon like" onClick={handleLike}>
-                            <BsHeart /> {props.likes}
+                            <BsHeart /> {likes}
                         </button></div>
                         <div ><button className="social-icon repost" onClick={handleRepost}>
                             <BsArrowRepeat /> {props.reposts}
