@@ -1,72 +1,41 @@
-import React, { Component, PropTypes } from 'react';
-import { Modal, Button, Form, Tabs, Image, Tab , Container} from 'react-bootstrap';
+import React, { Component, useContext, } from 'react';
+import { Container } from 'react-bootstrap';
 import './settings.css';
 import { MDBIcon, MDBRow, MDBCol } from "mdbreact";
-import { Firebase } from "../../firebase";
+import { UserContext } from '../../Providers/UserProvider.js';
+import { db } from '../../firebase';
+import firebase from "firebase/app";
 
 class Settings extends Component{
     constructor(props) {
         super(props);
-        this.state = {
-          users: []
-        };
-    }
-
-    componentDidMount() {
-      //this.getUserData();
-    }
-    componentDidUpdate(prevProps, prevState) {
-      if (prevState !== this.state) {
-        this.writeUserData();
-      }
-    }
-    writeUserData = () => {
-      Firebase.database().ref("/").set(this.state);
-      console.log("DATA SAVED");
-    };
-   
-    handleSubmit = (event) => {
-      event.preventDefault();
-      let name = this.name.value;
-      let role = this.role.value;
-      let uid = this.uid.value;
-  
-      if (uid && name && role) {
-        const { users } = this.state;
-        const devIndex = users.findIndex((data) => {
-          return data.uid === uid;
+        this.state = ({
+          displayName: null,
+          email: null,
+          photoURL: null,
+          firstName: null,
+          lastName: null,
         });
-        users[devIndex].name = name;
-        users[devIndex].role = role;
-        this.setState({ users });
-      } else if (name && role) {
-        const uid = new Date().getTime().toString();
-        const { users } = this.state;
-        users.push({ uid, name, role });
-        this.setState({ users });
-      }
+        
+    }
+    
+     changeUserInfo = () => {
+      db.collection('users').doc(
+        "uoL8rAP4xsaXp1BRmAO5QBcS99G3"
+        ).update({
+        displayName: "username",
+        email: "me",
+        photoURL: "me",
+        firstName: "me",
+        lastName: "me222222",
+    })
+    .then(() => {
+      console.log('User updated!');
+    });
+  }
   
-      this.name.value = "";
-      this.role.value = "";
-      this.uid.value = "";
-    };
-  
-    removeData = (user) => {
-      const { users } = this.state;
-      const newState = users.filter((data) => {
-        return data.uid !== user.uid;
-      });
-      this.setState({ users: newState });
-    };
-  
-    updateData = (user) => {
-      this.uid.value = user.uid;
-      this.name.value = user.name;
-      this.role.value = user.role;
-    };
-
+   
     render() {
-      const { users } = this.state;
         return (
             <Container fluid>
             <br></br>
@@ -83,77 +52,77 @@ class Settings extends Component{
                   <input type="file" class="form-control" />
                 </div>
               </div>
-              <div class="col-md-9 personal-info">
-                <h3>Personal info</h3>
-                <form class="form-horizontal" role="form" >
-                  <div class="form-group">
-                    <label class="col-lg-3 control-label">First name:</label>
-                    <div class="col-lg-8">
-                      <input class="form-control" type="text" value="Maui" />
+            </div>
+            <div className="col-md-9 personal-info">
+              <h3>Personal info</h3>
+              <form className="form-horizontal" role="form" >
+                <div className="form-group">
+                  <label className="col-lg-3 control-label">First name:</label>
+                  <div className="col-lg-8">
+                    <input className="form-control" type="text" value="Maui" />
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label className="col-lg-3 control-label">Last name:</label>
+                  <div className="col-lg-8">
+                    <input className="form-control" type="text" value="A" />
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label className="col-lg-3 control-label">Email:</label>
+                  <div className="col-lg-8">
+                    <input className="form-control" type="text" value="email@gmail.com" />
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label className="col-lg-3 control-label">Time Zone:</label>
+                  <div className="col-lg-8">
+                    <div className="ui-select">
+                      <select id="user_time_zone" className="form-control">
+                        <option value="Hawaii">(GMT-10:00) Hawaii</option>
+                        <option value="Alaska">(GMT-09:00) Alaska</option>
+                        <option value="Pacific Time (US &amp; Canada)">(GMT-08:00) Pacific Time (US &amp; Canada)</option>
+                        <option value="Arizona">(GMT-07:00) Arizona</option>
+                        <option value="Mountain Time (US &amp; Canada)">(GMT-07:00) Mountain Time (US &amp; Canada)</option>
+                        <option value="Central Time (US &amp; Canada)" selected="selected">(GMT-06:00) Central Time (US &amp; Canada)</option>
+                        <option value="Eastern Time (US &amp; Canada)">(GMT-05:00) Eastern Time (US &amp; Canada)</option>
+                        <option value="Indiana (East)">(GMT-05:00) Indiana (East)</option>
+                      </select>
                     </div>
                   </div>
-                  <div class="form-group">
-                    <label class="col-lg-3 control-label">Last name:</label>
-                    <div class="col-lg-8">
-                      <input class="form-control" type="text" value="A" />
-                    </div>
+                </div>
+                <div className="form-group">
+                  <label className="col-md-3 control-label">Username:</label>
+                  <div className="col-md-8">
+                    <input className="form-control" type="text" value="name" />
                   </div>
-                  <div class="form-group">
-                    <label class="col-lg-3 control-label">Email:</label>
-                    <div class="col-lg-8">
-                      <input class="form-control" type="text" value="email@gmail.com" />
-                    </div>
+                </div>
+                <div className="form-group">
+                  <label className="col-md-3 control-label">Password:</label>
+                  <div className="col-md-8">
+                    <input className="form-control" type="password" value="11111122333" />
                   </div>
-                  <div class="form-group">
-                    <label class="col-lg-3 control-label">Time Zone:</label>
-                    <div class="col-lg-8">
-                      <div class="ui-select">
-                        <select id="user_time_zone" class="form-control">
-                          <option value="Hawaii">(GMT-10:00) Hawaii</option>
-                          <option value="Alaska">(GMT-09:00) Alaska</option>
-                          <option value="Pacific Time (US &amp; Canada)">(GMT-08:00) Pacific Time (US &amp; Canada)</option>
-                          <option value="Arizona">(GMT-07:00) Arizona</option>
-                          <option value="Mountain Time (US &amp; Canada)">(GMT-07:00) Mountain Time (US &amp; Canada)</option>
-                          <option value="Central Time (US &amp; Canada)" selected="selected">(GMT-06:00) Central Time (US &amp; Canada)</option>
-                          <option value="Eastern Time (US &amp; Canada)">(GMT-05:00) Eastern Time (US &amp; Canada)</option>
-                          <option value="Indiana (East)">(GMT-05:00) Indiana (East)</option>
-                        </select>
-                      </div>
-                    </div>
+                </div>
+                <div className="form-group">
+                  <label className="col-md-3 control-label">Confirm password:</label>
+                  <div className="col-md-8">
+                    <input className="form-control" type="password" value="11111122333" />
                   </div>
-                  <div class="form-group">
-                    <label class="col-md-3 control-label">Username:</label>
-                    <div class="col-md-8">
-                      <input class="form-control" type="text" value="name" />
-                    </div>
+                </div>
+                <div className="form-group">
+                  <label className="col-md-3 control-label"></label>
+                  <div className="col-md-8">
+                    <input type="button" className="btn btn-primary" value="Save Changes" onClick={this.changeUserInfo}/>
+                    <span></span>
+                    <input type="reset" className="btn btn-default" value="Cancel" />
                   </div>
-                  <div class="form-group">
-                    <label class="col-md-3 control-label">Password:</label>
-                    <div class="col-md-8">
-                      <input class="form-control" type="password" value="11111122333" />
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label class="col-md-3 control-label">Confirm password:</label>
-                    <div class="col-md-8">
-                      <input class="form-control" type="password" value="11111122333" />
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label class="col-md-3 control-label"></label>
-                    <div class="col-md-8">
-                    <input type="button" class="btn btn-primary" value="Save Changes" />
-                      <span></span>
-                    <input type="reset" class="btn btn-default" value="Cancel" />
-                    </div>
-                  </div>
-                </form>
-              </div>
+                </div>
+              </form>
+            </div>
           </div>
-        </div>
-        </Container>
-        );
-      }
+      </Container>
+    );
+  }
 
 }
 

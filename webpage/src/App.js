@@ -1,53 +1,23 @@
-import React from 'react';
+import React, {useContext,Button} from 'react';
 import './App.css';
-import NavBar from './Components/Navigation/navigation';
-import { Component } from 'react';
-import UserProvider from "./Providers/UserProvider";
+import NavBar from './Components/Navigation/navigation.js';
 import Track from './Components/Track/track';
 import ProfilePage from './Components/Profile/ProfilePage';
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 import Settings from './Components/Settings/settings';
 
-class App extends Component {
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      isLoggedIn: true,
-      isPlaying: false,
-      currentlyPlaying: "",
-      userName: "Maui A"
-    }
-
-    this.togglePlay = this.togglePlay.bind(this);
-  }
-
-  login(userName, isLoggedIn) {
-    this.setState({
-      isLoggedIn: isLoggedIn,
-      userName: userName
-    })
-  }
-
-  togglePlay() {
-    let newState = !this.state.isPlaying;
-    this.setState({
-      isPlaying: newState
-    });
-  }
-
-  render() {
+function App() {
+     
     return (
       <>
-        <UserProvider>
           <div className="App">
-
-            <NavBar {...this.state} action={this.login} />
-            <Router>
-              <Route exact path='/profile' component={ProfilePage}/>
-              <Route exact path='/settings' component={Settings}/>
-        </Router>
+            <NavBar />
+              
+              <Router>
+                <Route exact path='/profile' component={ProfilePage}/>
+                <Route exact path='/settings' component={Settings}/>
+              </Router>
             {/*<Track
               isPlaying={this.state.isPlaying}
               likes="23"
@@ -65,12 +35,9 @@ class App extends Component {
             />*/}
 
           </div>
-
-        </UserProvider>
       </>
     );
   }
 
-}
 
 export default App;

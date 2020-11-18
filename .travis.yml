@@ -1,0 +1,23 @@
+jobs:
+    include:
+      - stage: sonarcloud
+        name: "SolarCloud Scan"
+        addons:
+            sonarcloud:
+                organization: "csc47300"
+                token: "a3325592612dd9033f4f50504dace6cd70406b6e"
+        script:
+            - sonar-scanner
+      - stage: test
+        name: "Front End React"
+        language: node_js
+        node_js:
+            - 'stable'
+        before_install:
+            - cd webpage
+        install:
+            - npm install
+        script:
+            - npm test -- --coverage
+            - unset CI
+            - npm run build

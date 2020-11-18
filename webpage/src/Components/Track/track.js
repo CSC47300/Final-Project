@@ -1,26 +1,29 @@
-import React, { Component } from 'react';
+import React, { useRef, useContext, useState, useEffect } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import { BsHeart, BsArrowRepeat, BsPlay, BsChatSquare, BsPlayFill, BsPauseFill } from 'react-icons/bs';
 import "./track.css";
 import WaveSurfer from 'wavesurfer.js';
+import { UserContext } from '../../Providers/UserProvider.js';
+import { db } from '../../firebase';
+import firebase from "firebase/app";
 
-class Track extends Component {
+function Track(props) {
 
-    handlePlay = () => {
-        this.props.togglePlay(); // TODO: implement playing state change in parent
-        this.waveform.playPause();
-    };
+    const [played, setPlayed] = useState(false);
+    const [likes, setLikes] = useState(props.likes);
+    const waveform = useRef();
+    const user = useContext(UserContext);
 
-    componentDidMount() {
-        const track = this.props.track;
+    useEffect(() => {
+        const track = props.track;
         let wave = document.querySelector(".waveform");
-        wave.id = this.props.id;
+        wave.id = props.id;
         wave.classList.remove("waveform");
         wave.classList.add("wave");
-        this.waveform = WaveSurfer.create({
+        waveform.current = WaveSurfer.create({
             barWidth: 2,
             cursorWidth: 1,
-            container: document.getElementById(this.props.id),
+            container: document.getElementById(props.id),
             backend: 'WebAudio',
             height: 70,
             progressColor: '#2D5BFF',
@@ -28,65 +31,111 @@ class Track extends Component {
             waveColor: '#b5b5b5',
             cursorColor: '#2D5BFF',
             normalize: true
-        });
-        this.waveform.load(track);
-        this.waveform.on("seek", () => {
-            if (this.props.isPlaying)
-                this.waveform.play();
         })
+        waveform.current.load(track);
+        waveform.current.on("seek", () => {
+            if (props.isPlaying)
+                waveform.current.play();
+        })
+    }, [])
 
+    const handlePlay = () => {
+        // props.togglePlay(); // TODO: implement playing state change in parent
+        waveform.current.playPause();
+        if (!played) {
+            db.collection('tracks').doc(props.id).update({ playCount: props.playCount + 1 });
+        }
+        setPlayed(true);
+    };
+
+    const handleLike = () => {
+        db.collection('tracks').doc(props.id).get().then(doc => {
+            let data = doc.data();
+            if (data.likedBy.includes(user.uid)) return true;
+            else return false;
+        }).then(likedByCurrentUser => {
+            db.collection('tracks').doc(props.id).update({
+                likeCount: likedByCurrentUser === false ? firebase.firestore.FieldValue.increment(1) : props.likes,
+                likedBy: firebase.firestore.FieldValue.arrayUnion(user.uid)
+            });
+            if (!likedByCurrentUser) {
+                setLikes(likes => likes + 1);
+            }
+        })
     }
 
-    render() {
-        const playBtn = !this.props.isPlaying ? <BsPlayFill /> : <BsPauseFill className="pause-btn" />;
-        const post = this.props.userName === this.props.artistName ? "posted" : <>&nbsp;<BsArrowRepeat />reposted</>;
-        return (
-            <Container className="track">
-                <Row className="poster">
-                    <Col className="">
-                        <img className="user-avatar" src="https://i.imgur.com/p3vccAp.jpeg" alt="poster-avatar" />
-                        &nbsp;<a className="link" href={`#${this.props.userName}`}>{this.props.userName}</a>
-                        &nbsp;{post} a track {this.props.timeFrame} ago
-                    </Col>
-
-                </Row>
-                <Row className="main-track">
-                    <Col lg={3} className="art-clm">
-                        <img className="track-art" src={this.props.albumArt} alt="track-art" />
-                        <button className="play-btn" onClick={this.handlePlay}>
-                            {playBtn}
-                        </button>
-                    </Col>
-                    <Col className="">
-                        <Row><div>
-                            <a className="link artist" href={`#${this.props.artistName}`}>{this.props.artistName}</a>
-                        </div></Row>
-                        <Row><div>
-                            <a className="link song" href={`#${this.props.songName}`}>{this.props.songName}</a>
-                        </div></Row>
-                        <Row className="">
-                            <Col className="waveform wave-container" md={9}>
-                            </Col>
-                        </Row>
-                        <Row className="social">
-                            <div ><button className="social-icon like">
-                                <BsHeart /> {this.props.likes}
-                            </button></div>
-                            <div ><button className="social-icon repost">
-                                <BsArrowRepeat /> {this.props.reposts}
-                            </button></div>
-                            <Col md={6}>
-                            </Col>
-                            <div className="social-tag"><BsPlay /> {this.props.playCount}</div>
-                            <div className="social-tag">
-                                <BsChatSquare /> {this.props.commentCount}
-                            </div>
-                        </Row>
-                    </Col>
-                </Row>
-            </Container >
-        )
+    const handleRepost = () => {
+        db.collection('tracks').doc(props.id).get().then(doc => {
+            let data = doc.data();
+            if (data.repostedBy.includes(user.uid)) return true;
+            else return false;
+        }).then(repostedByUser => {
+            if (!repostedByUser) {
+                db.collection('users').doc(user.uid).update({
+                    posts: firebase.firestore.FieldValue.arrayUnion({
+                        trackId: props.id,
+                        postDate: Date.now()
+                    })
+                })
+                db.collection('tracks').doc(props.id).update({
+                    repostCount: firebase.firestore.FieldValue.increment(1),
+                    repostedBy: firebase.firestore.FieldValue.arrayUnion(user.uid)
+                })
+            }
+        })
     }
+
+
+    const playBtn = !props.isPlaying ? <BsPlayFill /> : <BsPauseFill className="pause-btn" />;
+    const post = props.userName === props.artistName ? "posted" : <>&nbsp;<BsArrowRepeat />reposted</>;
+
+    return (
+        <Container className="track">
+            <Row className="poster">
+                <Col className="">
+                    <img className="user-avatar" src="https://i.imgur.com/p3vccAp.jpeg" alt="poster-avatar" />
+                    &nbsp;<a className="link" href={`#${props.userName}`}>{props.userName}</a>
+                    &nbsp;{post} a track {props.timeFrame} ago
+                </Col>
+
+            </Row>
+            <Row className="main-track">
+                <Col md="auto" lg="auto" sm="auto" xs="auto" className="art-clm">
+                    <img className="track-art" src={props.albumArt} alt="track-art" />
+                    <button className="play-btn" onClick={handlePlay}>
+                        {playBtn}
+                    </button>
+                </Col>
+                <Col className="">
+                    <Row><div>
+                        <a className="link artist" href={`#${props.artistName}`}>{props.artistName}</a>
+                    </div></Row>
+                    <Row><div>
+                        <a className="link song" href={`#${props.songName}`}>{props.songName}</a>
+                    </div></Row>
+                    <Row className="">
+                        <Col className="waveform wave-container" md={9}>
+                        </Col>
+                    </Row>
+                    <Row className="social">
+                        <div ><button className="social-icon like" onClick={handleLike}>
+                            <BsHeart /> {likes}
+                        </button></div>
+                        <div ><button className="social-icon repost" onClick={handleRepost}>
+                            <BsArrowRepeat /> {props.reposts}
+                        </button></div>
+                        <Col md={6}>
+                        </Col>
+                        <div className="social-tag"><BsPlay /> {props.playCount}</div>
+                        <div className="social-tag">
+                            <BsChatSquare /> {props.commentCount}
+                        </div>
+                    </Row>
+                </Col>
+            </Row>
+        </Container >
+    )
+
 }
 
 export default Track;
