@@ -1,4 +1,4 @@
-import React, { Component, useContext, } from 'react';
+import React, { Component, useContext, useState } from 'react';
 import { Container } from 'react-bootstrap';
 import './settings.css';
 import { MDBIcon, MDBRow, MDBCol } from "mdbreact";
@@ -9,25 +9,36 @@ import firebase from "firebase/app";
 class Settings extends Component{
     constructor(props) {
         super(props);
-        this.state = ({
-          displayName: null,
-          email: null,
+        this.state = {
+          displayName: 'name',
+          email: '',
           photoURL: null,
           firstName: null,
           lastName: null,
-        });
-        
+          password: null
+        };
+        //this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+        this.input = React.createRef();
     }
+    // handleChange(event) {
+    //   console.log('q!');
+    //   this.setState({displayName: event.target.displayName});
+    //   console.log(this.state.displayName);
+    // }
     
-     changeUserInfo = () => {
+    handleSubmit(event) {
+      console.log(this.input.current.value);
+      event.preventDefault();
+      
       db.collection('users').doc(
         "uoL8rAP4xsaXp1BRmAO5QBcS99G3"
         ).update({
-        displayName: "username",
-        email: "me",
-        photoURL: "me",
-        firstName: "me",
-        lastName: "me222222",
+        displayName: this.input.current.value,
+        email: this.input.current.value,
+        // photoURL: "url",
+        // firstName: this.firstName,
+        // lastName: this.lastName,
     })
     .then(() => {
       console.log('User updated!');
@@ -59,19 +70,19 @@ class Settings extends Component{
                 <div className="form-group">
                   <label className="col-lg-3 control-label">First name:</label>
                   <div className="col-lg-8">
-                    <input className="form-control" type="text" value="Maui" />
+                    <input className="form-control" type="text" value={this.state.firstName} />
                   </div>
                 </div>
                 <div className="form-group">
                   <label className="col-lg-3 control-label">Last name:</label>
                   <div className="col-lg-8">
-                    <input className="form-control" type="text" value="A" />
+                    <input className="form-control" type="text" value={this.state.lastName} />
                   </div>
                 </div>
                 <div className="form-group">
                   <label className="col-lg-3 control-label">Email:</label>
                   <div className="col-lg-8">
-                    <input className="form-control" type="text" value="email@gmail.com" />
+                    <input className="form-control" type="text" ref={this.input} />
                   </div>
                 </div>
                 <div className="form-group">
@@ -94,25 +105,25 @@ class Settings extends Component{
                 <div className="form-group">
                   <label className="col-md-3 control-label">Username:</label>
                   <div className="col-md-8">
-                    <input className="form-control" type="text" value="name" />
+                    <input className="form-control" type="text" ref={this.input} />
                   </div>
                 </div>
                 <div className="form-group">
                   <label className="col-md-3 control-label">Password:</label>
                   <div className="col-md-8">
-                    <input className="form-control" type="password" value="11111122333" />
+                    <input className="form-control" type="password" value={this.state.password} />
                   </div>
                 </div>
                 <div className="form-group">
                   <label className="col-md-3 control-label">Confirm password:</label>
                   <div className="col-md-8">
-                    <input className="form-control" type="password" value="11111122333" />
+                    <input className="form-control" type="password" value={this.state.password} />
                   </div>
                 </div>
                 <div className="form-group">
                   <label className="col-md-3 control-label"></label>
                   <div className="col-md-8">
-                    <input type="button" className="btn btn-primary" value="Save Changes" onClick={this.changeUserInfo}/>
+                    <input type="button" className="btn btn-primary" value="Submit" onClick={this.handleSubmit}/>
                     <span></span>
                     <input type="reset" className="btn btn-default" value="Cancel" />
                   </div>
