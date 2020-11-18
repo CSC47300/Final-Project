@@ -17,20 +17,19 @@ const NavBar = () => {
             if (window.innerWidth < 768) {
                 mobile =
                     <Nav className="container-fluid">
-                    
                         <Nav.Link href="/upload">Upload</Nav.Link>
                         <Nav.Link href="/profile">Profile</Nav.Link>
                         <Nav.Link href="/settings">Settings</Nav.Link>
-                        <Nav.Link href="/likes">likes</Nav.Link>
                         <Button onClick={() => signOut()} >Logout</Button>
                     </Nav>
             } else mobile =
                 <Nav className="container-fluid">
                     <Nav.Link href="/upload" className="ml-auto">Upload</Nav.Link>
                     <NavDropdown title={user.displayName} className="">
-                        <NavDropdown.Item href='/likes'>userLikes</NavDropdown.Item>
+                        <NavDropdown.Item href='/likes'>likes</NavDropdown.Item>
                         <NavDropdown.Item href="/profile">Profile</NavDropdown.Item>
                         <NavDropdown.Item href="/settings">Settings</NavDropdown.Item>
+                        <NavDropdown.Item href="/history">history</NavDropdown.Item>
                         <NavDropdown.Item onClick={() => signOut()} >Logout</NavDropdown.Item>
                     </NavDropdown>
                     <Button onClick={() => console.log(user)}>test</Button>

@@ -7,6 +7,7 @@ import Track from './Components/Track/track';
 import ProfilePage from './Components/Profile/ProfilePage';
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 import Settings from './Components/Settings/settings';
+import History from './Components/ListenHistory/history';
 
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
                 <Route exact path='/settings' component={Settings}/>
                 <Route exact path ='/upload' component = {Upload}/>
                 <Route exact path ='/likes' component = {Likes}/>
+                <Route exact path ='/history' component = {History}/>
               </Router>
             {/*<Track
               isPlaying={this.state.isPlaying}
