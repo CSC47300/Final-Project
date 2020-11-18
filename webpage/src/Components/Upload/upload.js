@@ -1,7 +1,8 @@
 import React, { useState, useContext } from 'react';
 import { UserContext } from '../../Providers/UserProvider.js';
 import "./upload.css";
-import firebase from "firebase/app";
+
+import {storage} from '.App/../firebase';
 import { db } from '../../firebase';
 /* eslint-disable no-unused-expressions */ 
 
@@ -14,7 +15,7 @@ function Upload(props){
    const [selectedTrack ,setTrack] = useState(null);
    const [selectedImage ,setImage] = useState(null);
    const [selectedImagePreview ,setImagePrev] = useState("765-default-avatar copy.png");
-
+ 
  
   
 
@@ -70,6 +71,24 @@ function Upload(props){
         else {
           setImage(file);
           setImagePrev(URL.createObjectURL(file));
+          /*const uploadImg = storage.ref('images/${file.name}').put(file);
+          uploadImg.on(
+            "state_changed",
+            snapshot => {},
+            error =>{
+              console.log(error);
+            },
+            ()=> {
+              storage
+              .ref("images")
+              .child(file.name)
+              .getDownloadURL()
+              .then(url =>{
+                setImage(url);
+              })
+            }
+
+          )*/
         }
 
       }
@@ -102,7 +121,7 @@ function Upload(props){
       likeCount: 0,
       playCount: 0,
       repostCount: 0,
-      trackArt: 'temp',
+      trackArt: "temp",
       trackId: trackName,
       uploadDate: date,
       userId: user
