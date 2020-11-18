@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { UserContext } from '../../Providers/UserProvider.js';
 import "./upload.css";
+import firebase from "firebase/app";
 import { db } from '../../firebase';
 /* eslint-disable no-unused-expressions */ 
 
@@ -9,14 +10,17 @@ import { db } from '../../firebase';
 function Upload(props){
 
    const user = useContext(UserContext);
-   const [trackName ,setTrackName] = useState(null);
+   const [trackName ,setTrackName] = useState("temp");
    const [selectedTrack ,setTrack] = useState(null);
    const [selectedImage ,setImage] = useState(null);
    const [selectedImagePreview ,setImagePrev] = useState("765-default-avatar copy.png");
 
+ 
+  
+
 
     function trackSelectedHandler(event) {
-
+   
     const file = event.target.files[0];
     if (event.target.files.length == 0) {
       setTrack(null);
@@ -31,7 +35,9 @@ function Upload(props){
 
         }
         else {
+          setTrackName(event.target.files[0].name.split('.')[0]);
           setTrack(file);
+         
 
         }
       }
@@ -82,29 +88,32 @@ function Upload(props){
   }
 }
 
-     const uploadTrackInfo = event =>{
+     function uploadTrackInfo(event) {
 
-       
-       
-        
-        db.collection("track").add({
-          audio:  'temp',
-          commentCount:0,
-          likeCount: 0,
-          playCount: 0,
-          repostCount: 0,
-          trackArt: 'temp',
-          trackId: 'temp',
-          uploadDate:"2 hours",
-          userId: user
+    var d = new Date();
+    var day = d.getDate();
+    var month = d.getMonth() + 1; // Since getMonth() returns month from 0-11 not 1-12
+    var year = d.getFullYear();
+    var date = month + "/" + day + "/" + year;
+
+    db.collection("track").add({
+      audio: 'temp',
+      commentCount: 0,
+      likeCount: 0,
+      playCount: 0,
+      repostCount: 0,
+      trackArt: 'temp',
+      trackId: trackName,
+      uploadDate: date,
+      userId: user
+    })
+      .then(function () {
+        console.log("Document successfully written!");
       })
-        .then(function() {
-          console.log("Document successfully written!");
-        })
-        .catch(function(error) {
-          console.error("Error writing document: ", error);
-        });
-      }
+      .catch(function (error) {
+        console.error("Error writing document: ", error);
+      });
+  }
     
    
 

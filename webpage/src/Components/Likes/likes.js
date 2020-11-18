@@ -1,9 +1,9 @@
-import React, { Component, useContext } from 'react';
-import { Modal, Button, Form, Tabs, Image, Tab } from 'react-bootstrap';
+import React, { Component} from 'react';
+
 
 import Track from '../Track/track';
 import { db } from '../../firebase';
-import { auth } from 'firebase';
+
 
 
 
