@@ -10,35 +10,50 @@ class Settings extends Component{
     constructor(props) {
         super(props);
         this.state = {
-          displayName: 'name',
+          photoURL: "https://mdbootstrap.com/img/Photos/Avatars/img(31).jpg",
+          firstName: '',
+          lastName: '',
           email: '',
-          photoURL: null,
-          firstName: null,
-          lastName: null,
-          password: null
+          timeZone:'',
+          displayName: '',
         };
-        //this.handleChange = this.handleChange.bind(this);
+        this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-        this.input = React.createRef();
+        this.inputPhoto = React.createRef();
+        this.inputFirstName = React.createRef();
+        this.inputLastName = React.createRef();
+        this.inputEmail = React.createRef();
+        this.inputUsername = React.createRef();
+        //this.input4 = React.createRef();
+        //this.input5 = React.createRef();
     }
     // handleChange(event) {
     //   console.log('q!');
     //   this.setState({displayName: event.target.displayName});
     //   console.log(this.state.displayName);
     // }
-    
+    handleChange(event) {
+      this.setState({
+        photoURL: URL.createObjectURL(event.target.files[0])
+      })
+    }
     handleSubmit(event) {
-      console.log(this.input.current.value);
+      console.log(this.inputPhoto.current.value);
+      console.log(this.inputFirstName.current.value);
+      console.log(this.inputLastName.current.value);
+      console.log(this.inputEmail.current.value);
+      console.log(this.inputUsername.current.value);
+      //console.log(this.input5.current.value);
       event.preventDefault();
       
       db.collection('users').doc(
         "uoL8rAP4xsaXp1BRmAO5QBcS99G3"
         ).update({
-        displayName: this.input.current.value,
-        email: this.input.current.value,
-        // photoURL: "url",
-        // firstName: this.firstName,
-        // lastName: this.lastName,
+          photoURL: this.inputPhoto.current.value,
+          firstName: this.inputFirstName.current.value,
+          lastName: this.inputLastName.current.value,
+          email: this.inputEmail.current.value,
+          displayName: this.inputUsername.current.value,
     })
     .then(() => {
       console.log('User updated!');
@@ -57,10 +72,10 @@ class Settings extends Component{
               
               <div class="col-md-3">
                 <div class="text-center">
-                  <img src="https://mdbootstrap.com/img/Photos/Avatars/img(31).jpg" class="img-fluid z-depth-1 rounded-circle" alt="avatar" />
+                  <img src={this.state.photoURL}  class="img-fluid z-depth-1 rounded-circle" alt="avatar"/>
                   <h6>Upload a different photo...</h6>
                   
-                  <input type="file" class="form-control" />
+                  <input type="file" class="form-control" onChange={this.handleChange} ref={this.inputPhoto}/>
                 </div>
               </div>
             </div>
@@ -70,19 +85,19 @@ class Settings extends Component{
                 <div className="form-group">
                   <label className="col-lg-3 control-label">First name:</label>
                   <div className="col-lg-8">
-                    <input className="form-control" type="text" value={this.state.firstName} />
+                    <input className="form-control" type="text" ref={this.inputFirstName} />
                   </div>
                 </div>
                 <div className="form-group">
                   <label className="col-lg-3 control-label">Last name:</label>
                   <div className="col-lg-8">
-                    <input className="form-control" type="text" value={this.state.lastName} />
+                    <input className="form-control" type="text" ref={this.inputLastName} />
                   </div>
                 </div>
                 <div className="form-group">
                   <label className="col-lg-3 control-label">Email:</label>
                   <div className="col-lg-8">
-                    <input className="form-control" type="text" ref={this.input} />
+                    <input className="form-control" type="text" ref={this.inputEmail} />
                   </div>
                 </div>
                 <div className="form-group">
@@ -105,19 +120,19 @@ class Settings extends Component{
                 <div className="form-group">
                   <label className="col-md-3 control-label">Username:</label>
                   <div className="col-md-8">
-                    <input className="form-control" type="text" ref={this.input} />
+                    <input className="form-control" type="text" ref={this.inputUsername} />
                   </div>
                 </div>
                 <div className="form-group">
                   <label className="col-md-3 control-label">Password:</label>
                   <div className="col-md-8">
-                    <input className="form-control" type="password" value={this.state.password} />
+                    <input className="form-control" type="password"  />
                   </div>
                 </div>
                 <div className="form-group">
                   <label className="col-md-3 control-label">Confirm password:</label>
                   <div className="col-md-8">
-                    <input className="form-control" type="password" value={this.state.password} />
+                    <input className="form-control" type="password"  />
                   </div>
                 </div>
                 <div className="form-group">
