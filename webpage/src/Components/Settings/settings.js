@@ -24,6 +24,7 @@ class Settings extends Component{
         this.inputLastName = React.createRef();
         this.inputEmail = React.createRef();
         this.inputUsername = React.createRef();
+        this.inputTimeZone = React.createRef();
         //this.input4 = React.createRef();
         //this.input5 = React.createRef();
     }
@@ -43,7 +44,7 @@ class Settings extends Component{
       console.log(this.inputLastName.current.value);
       console.log(this.inputEmail.current.value);
       console.log(this.inputUsername.current.value);
-      //console.log(this.input5.current.value);
+      console.log(this.inputTimeZone.current.value);
       event.preventDefault();
       
       db.collection('users').doc(
@@ -54,6 +55,7 @@ class Settings extends Component{
           lastName: this.inputLastName.current.value,
           email: this.inputEmail.current.value,
           displayName: this.inputUsername.current.value,
+          timeZone: this.inputTimeZone.current.value
     })
     .then(() => {
       console.log('User updated!');
@@ -104,15 +106,15 @@ class Settings extends Component{
                   <label className="col-lg-3 control-label">Time Zone:</label>
                   <div className="col-lg-8">
                     <div className="ui-select">
-                      <select id="user_time_zone" className="form-control">
-                        <option value="Hawaii">(GMT-10:00) Hawaii</option>
-                        <option value="Alaska">(GMT-09:00) Alaska</option>
-                        <option value="Pacific Time (US &amp; Canada)">(GMT-08:00) Pacific Time (US &amp; Canada)</option>
-                        <option value="Arizona">(GMT-07:00) Arizona</option>
-                        <option value="Mountain Time (US &amp; Canada)">(GMT-07:00) Mountain Time (US &amp; Canada)</option>
-                        <option value="Central Time (US &amp; Canada)" selected="selected">(GMT-06:00) Central Time (US &amp; Canada)</option>
-                        <option value="Eastern Time (US &amp; Canada)">(GMT-05:00) Eastern Time (US &amp; Canada)</option>
-                        <option value="Indiana (East)">(GMT-05:00) Indiana (East)</option>
+                      <select id="user_time_zone" className="form-control" ref={this.inputTimeZone}>
+                        <option value="Hawaii"  >(GMT-10:00) Hawaii</option>
+                        <option value="Alaska"  >(GMT-09:00) Alaska</option>
+                        <option value="Pacific Time (US &amp; Canada)"  >(GMT-08:00) Pacific Time (US &amp; Canada)</option>
+                        <option value="Arizona"  >(GMT-07:00) Arizona</option>
+                        <option value="Mountain Time (US &amp; Canada)"  >(GMT-07:00) Mountain Time (US &amp; Canada)</option>
+                        <option value="Central Time (US &amp; Canada)"  >(GMT-06:00) Central Time (US &amp; Canada)</option>
+                        <option value="Eastern Time (US &amp; Canada)" selected="selected"  >(GMT-05:00) Eastern Time (US &amp; Canada)</option>
+                        <option value="Indiana (East)"  >(GMT-05:00) Indiana (East)</option>
                       </select>
                     </div>
                   </div>
