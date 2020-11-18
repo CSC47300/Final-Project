@@ -1,117 +1,102 @@
-import React, { Component, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import { UserContext } from '../../Providers/UserProvider.js';
 import "./upload.css";
-import firebase from "firebase/app";
 import { db } from '../../firebase';
 /* eslint-disable no-unused-expressions */ 
 
 
 
-class Upload extends React.Component{
+function Upload(props){
 
-  
+   const user = useContext(UserContext);
+   const [trackName ,setTrackName] = useState(null);
+   const [selectedTrack ,setTrack] = useState(null);
+   const [selectedImage ,setImage] = useState(null);
+   const [selectedImagePreview ,setImagePrev] = useState("765-default-avatar copy.png");
 
 
-  constructor(props) {
-    super(props);
-    this.state = ({
-       trackName: null,
-       selectedTrack: null,
-       selectedImage: null,
-       selectedImagePreview: "765-default-avatar copy.png"
-     });
+    function trackSelectedHandler(event) {
+
+    const file = event.target.files[0];
+    if (event.target.files.length == 0) {
+      setTrack(null);
     }
+    else {
+      {
+        const fileType = file['type'];
+        const validSoundTypes = ['audio/mpeg', 'audio/wav', 'audio/ogg'];
+        if (!validSoundTypes.includes(fileType)) {
+          setTrack(null);
+          window.alert("This is not an Sound file");
 
-    trackSelectedHandler = event => {
-        
+        }
+        else {
+          setTrack(file);
 
-      const file = event.target.files[0];
-      if(event.target.files.length == 0){
-        this.setState({
-          selectedTrack:null
-        })
+        }
       }
-      else{{
-
-      const fileType = file['type'];
-      const validSoundTypes = ['audio/mpeg','audio/wav','audio/ogg'];
-      if (!validSoundTypes.includes(fileType)) {
-          this.setState({
-            selectedTrack:null
-          })
-          window.alert("This is not an Sound file")
-      
-      }
-      else{{this.setState({
-        selectedTrack: file,
-       // trackName: file.split('.')[0],
-      });
-        console.log(this.state.selectedTrack);
-
-      }}
-      }}
+    }
+  }
   
-     }
+    
 
-     imageSelectedHandler = event => {
+     function imageSelectedHandler(event) {
 
-      const file = event.target.files[0];
-      if(event.target.files.length == 0){
-        this.setState({
-           selectedImage:null,
-           selectedImagePreview:null
-        })
-        
-      }
-      else{{
+    const file = event.target.files[0];
+    if (event.target.files.length == 0) {
+      setImage(null);
+      setImagePrev(null);
 
-      const fileType = file['type'];
-      const validImageTypes = ['image/gif', 'image/jpeg', 'image/png'];
-      if (!validImageTypes.includes(fileType)) {
-          this.setState({
-               selectedImage:null,
-               selectedImagePreview:null
-          })
-          window.alert("This is not an Image file")
-        
+    }
+    else {
+      {
+
+        const fileType = file['type'];
+        const validImageTypes = ['image/gif', 'image/jpeg', 'image/png'];
+        if (!validImageTypes.includes(fileType)) {
+
+          setImage(null);
+          setImagePrev(null);
+
+          window.alert("This is not an Image file");
+
+        }
+        else {
+          setImage(file);
+          setImagePrev(URL.createObjectURL(file));
+        }
+
       }
-      else{{this.setState({
-            selectedImage: file,
-            selectedImagePreview:  URL.createObjectURL(file)
-          })
-           
-      }}
-      }}
-      }
+    }
+  }
+      
       
          
-      fileSubmitHandler = event => {
-        if(this.state.selectedImage == null){
-          window.alert("You have not selected a Image")
-          window.alert(this.state.user)
-        }
-          if (this.state.selectedTrack == null){
-          window.alert("You have not selected an Track")
-        }
-      }
+    function fileSubmitHandler(event) {
+  if (selectedImage == null) {
+    window.alert("You have not selected a Image");
 
-      uploadTrackInfo = event =>{
+  }
+  if (selectedTrack == null) {
+    window.alert("You have not selected an Track");
+  }
+}
 
-        var storageRef = firebase.storage().ref();
-        var TrackRef = storageRef.child(this.state.selectedTrack);
-        var ImageRef = storageRef.child(this.state.selectedImage);
+     const uploadTrackInfo = event =>{
+
+       
        
         
         db.collection("track").add({
-          audio:  TrackRef,
+          audio:  'temp',
           commentCount:0,
           likeCount: 0,
           playCount: 0,
           repostCount: 0,
-          trackArt: ImageRef,
+          trackArt: 'temp',
           trackId: 'temp',
           uploadDate:"2 hours",
-          userId: "Raul"
+          userId: user
       })
         .then(function() {
           console.log("Document successfully written!");
@@ -123,7 +108,7 @@ class Upload extends React.Component{
     
    
 
-    render(){
+   
 
         return(
 
@@ -157,7 +142,7 @@ class Upload extends React.Component{
           </div>
           <div class="form-row justify-content-center">
             <div class="col-4">
-              <input type="file" onChange={this.trackSelectedHandler} required/>
+              <input type="file" onChange={trackSelectedHandler} required/>
             </div>
           </div>
           <div class="row pt-5 m-2">
@@ -167,11 +152,11 @@ class Upload extends React.Component{
           </div>
           <div class="form-row justify-content-center">
             <div class="col-4">
-            <input type="file" onChange={this.imageSelectedHandler} required/>
+            <input type="file" onChange={imageSelectedHandler} required/>
             </div>
             <div class="form-row mt-4 justify-content-center">
               <div class ="col-4">
-                  <img src = {this.state.selectedImagePreview} class="img-thumbnail"/>
+                  <img src = {selectedImagePreview } class="img-thumbnail"/>
               </div>
             </div>  
           </div>
@@ -180,7 +165,7 @@ class Upload extends React.Component{
           <div class="col">
             <div class="d-flex justify-content-center">
               <div class="form-group row mt-3">
-                  <button type="submit" onClick={this.fileSubmitHandler} class="btn btn-lg btn-success">Upload</button>
+                  <button type="submit" onClick={fileSubmitHandler} class="btn btn-lg btn-success">Upload</button>
               </div>
             </div>
           </div>
@@ -194,7 +179,7 @@ class Upload extends React.Component{
     <div class="col">
             <div class="d-flex justify-content-center">
               <div class="form-group row mt-3">
-                  <button type="submit" onClick={this.uploadTrackInfo} class="btn btn-lg btn-success">test</button>
+                  <button type="submit" onClick={uploadTrackInfo} class="btn btn-lg btn-success">test</button>
               </div>
             </div>
           </div>
@@ -205,5 +190,5 @@ class Upload extends React.Component{
      )
   }
 
-}
+
 export default Upload
