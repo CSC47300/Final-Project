@@ -1,13 +1,21 @@
-import React, { Component } from 'react';
+import React, { Component, useContext } from 'react';
+import { UserContext } from '../../Providers/UserProvider.js';
 import "./upload.css";
+import firebase from "firebase/app";
+import { db } from '../../firebase';
 /* eslint-disable no-unused-expressions */ 
 
 
 
 class Upload extends React.Component{
+
+  
+
+
   constructor(props) {
-    super();
+    super(props);
     this.state = ({
+       trackName: null,
        selectedTrack: null,
        selectedImage: null,
        selectedImagePreview: "765-default-avatar copy.png"
@@ -35,7 +43,8 @@ class Upload extends React.Component{
       
       }
       else{{this.setState({
-        selectedTrack: file
+        selectedTrack: file,
+       // trackName: file.split('.')[0],
       });
         console.log(this.state.selectedTrack);
 
@@ -79,12 +88,38 @@ class Upload extends React.Component{
       fileSubmitHandler = event => {
         if(this.state.selectedImage == null){
           window.alert("You have not selected a Image")
+          window.alert(this.state.user)
         }
           if (this.state.selectedTrack == null){
           window.alert("You have not selected an Track")
         }
       }
 
+      uploadTrackInfo = event =>{
+
+        var storageRef = firebase.storage().ref();
+        var TrackRef = storageRef.child(this.state.selectedTrack);
+        var ImageRef = storageRef.child(this.state.selectedImage);
+       
+        
+        db.collection("track").add({
+          audio:  TrackRef,
+          commentCount:0,
+          likeCount: 0,
+          playCount: 0,
+          repostCount: 0,
+          trackArt: ImageRef,
+          trackId: 'temp',
+          uploadDate:"2 hours",
+          userId: "Raul"
+      })
+        .then(function() {
+          console.log("Document successfully written!");
+        })
+        .catch(function(error) {
+          console.error("Error writing document: ", error);
+        });
+      }
     
    
 
@@ -156,7 +191,13 @@ class Upload extends React.Component{
          <small> By uploading, you confirm that your sounds comply with our Terms of Use and you don't infringe anyone else's rights.</small>
         </div>
     </div>
-
+    <div class="col">
+            <div class="d-flex justify-content-center">
+              <div class="form-group row mt-3">
+                  <button type="submit" onClick={this.uploadTrackInfo} class="btn btn-lg btn-success">test</button>
+              </div>
+            </div>
+          </div>
 
     </div>
     
