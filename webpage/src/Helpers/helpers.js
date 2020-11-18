@@ -18,8 +18,9 @@ function getElapsedTime(time) {
             break;
         }
     }
+    if (i === 7) i--;
     let val = Math.floor(measurment);
-    return `${val} ${val > 1 ? names[i] : names[i].substr(0, names[i].length - 1)} ago`;
+    return `${val} ${val > 1 || val === 0 ? names[i] : names[i].substr(0, names[i].length - 1)} ago`;
 }
 
 export { getElapsedTime };
