@@ -1,6 +1,7 @@
 import React, {useContext,Button} from 'react';
 import './App.css';
 import Upload from './Components/Upload/upload';
+import Likes from './Components/Likes/likes';
 import NavBar from './Components/Navigation/navigation.js';
 import Track from './Components/Track/track';
 import ProfilePage from './Components/Profile/ProfilePage';
@@ -19,6 +20,7 @@ function App() {
                 <Route exact path='/profile' component={ProfilePage}/>
                 <Route exact path='/settings' component={Settings}/>
                 <Route exact path ='/upload' component = {Upload}/>
+                <Route exact path ='/likes' component = {Likes}/>
               </Router>
             {/*<Track
               isPlaying={this.state.isPlaying}
