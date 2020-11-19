@@ -26,8 +26,10 @@ const NavBar = () => {
                 <Nav className="container-fluid">
                     <Nav.Link href="/upload" className="ml-auto">Upload</Nav.Link>
                     <NavDropdown title={user.displayName} className="">
+                        <NavDropdown.Item href='/likes'>likes</NavDropdown.Item>
                         <NavDropdown.Item href="/profile">Profile</NavDropdown.Item>
                         <NavDropdown.Item href="/settings">Settings</NavDropdown.Item>
+                        <NavDropdown.Item href="/history">history</NavDropdown.Item>
                         <NavDropdown.Item onClick={() => signOut()} >Logout</NavDropdown.Item>
                     </NavDropdown>
                     <Button onClick={() => console.log(user)}>test</Button>
