@@ -108,23 +108,21 @@ function Upload(props){
 }
 
      function uploadTrackInfo(event) {
-
-    var d = new Date();
-    var day = d.getDate();
-    var month = d.getMonth() + 1; // Since getMonth() returns month from 0-11 not 1-12
-    var year = d.getFullYear();
-    var date = month + "/" + day + "/" + year;
+     
+      
 
     db.collection("track").add({
       audio: 'temp',
       commentCount: 0,
       likeCount: 0,
+      likedBy: [],
       playCount: 0,
       repostCount: 0,
+      repostedBy: [],
       trackArt: "temp",
       trackId: trackName,
-      uploadDate: date,
-      userId: user
+      uploadDate: Date.now(),
+      userId: user.uid
     })
       .then(function () {
         console.log("Document successfully written!");
