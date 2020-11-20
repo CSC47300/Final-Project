@@ -1,9 +1,9 @@
-import React, { Component, useContext, useState } from 'react';
+import React, { Component, useContext, useReducer, useState } from 'react';
 import { Container } from 'react-bootstrap';
 import './settings.css';
 import { MDBIcon, MDBRow, MDBCol } from "mdbreact";
 import { UserContext } from '../../Providers/UserProvider.js';
-import { db } from '../../firebase';
+import { db, getUserDocument } from '../../firebase';
 import firebase from "firebase/app";
 
 class Settings extends Component{
@@ -25,20 +25,24 @@ class Settings extends Component{
         this.inputEmail = React.createRef();
         this.inputUsername = React.createRef();
         this.inputTimeZone = React.createRef();
-        //this.input4 = React.createRef();
-        //this.input5 = React.createRef();
+        this.user = React.useContext(UserContext);
+        
+        
+        
     }
-    // handleChange(event) {
-    //   console.log('q!');
-    //   this.setState({displayName: event.target.displayName});
-    //   console.log(this.state.displayName);
-    // }
+   
+    component(){
+      const user = useContext(UserContext);
+      return user;
+    }
     handleChange(event) {
       this.setState({
         photoURL: URL.createObjectURL(event.target.files[0])
       })
     }
     handleSubmit(event) {
+      //this.user = React.useContext(UserContext);
+      console.log(this.userRef.uid)
       console.log(this.inputPhoto.current.value);
       console.log(this.inputFirstName.current.value);
       console.log(this.inputLastName.current.value);
@@ -48,7 +52,7 @@ class Settings extends Component{
       event.preventDefault();
       
       db.collection('users').doc(
-        "uoL8rAP4xsaXp1BRmAO5QBcS99G3"
+        //"uoL8rAP4xsaXp1BRmAO5QBcS99G3"
         ).update({
           photoURL: this.inputPhoto.current.value,
           firstName: this.inputFirstName.current.value,
