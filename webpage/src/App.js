@@ -8,21 +8,22 @@ import ProfilePage from './Components/Profile/ProfilePage';
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 import Settings from './Components/Settings/settings';
 import History from './Components/ListenHistory/history';
-
+/*<Route exact path='/profile' component={ProfilePage}/>*/
 
 function App() {
-     
+ 
     return (
       <>
           <div className="App">
             <NavBar />
               
               <Router>
-                <Route exact path='/profile' component={ProfilePage}/>
+
                 <Route exact path='/settings' component={Settings}/>
                 <Route exact path ='/upload' component = {Upload}/>
                 <Route exact path ='/likes' component = {Likes}/>
                 <Route exact path ='/history' component = {History}/>
+                <Route path='/:profileName' component={ProfilePage} />
               </Router>
             {/*<Track
               isPlaying={this.state.isPlaying}
