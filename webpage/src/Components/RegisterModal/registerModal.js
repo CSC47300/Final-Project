@@ -7,7 +7,7 @@ const LoginModal = () => {
   
   const [show,setShow] = useState(false);
   const [email, setEmail] = useState('');
-  const [displayName, setDisplayName] = useState("taq");
+  const [displayName, setDisplayName] = useState("");
   const [password, setPassword] = useState('');
   const [, setError] = useState(null);
  
@@ -52,7 +52,16 @@ const LoginModal = () => {
           <Modal.Body>
             <form>
               <h3>Register</h3>
-
+              <div className="form-group">
+                <label>Display Name</label>
+                <input type="label"
+                        id="displayName"
+                        name="displayName"
+                        value={displayName}
+                        className="form-control" 
+                        placeholder="Enter desired display name" 
+                        onChange = {event => onChangeHandler(event)}/>
+              </div>
 
               <div className="form-group">
                 <label>Email address</label>

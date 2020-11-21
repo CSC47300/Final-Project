@@ -5,7 +5,7 @@ import { MDBIcon, MDBRow, MDBCol } from "mdbreact";
 import Settings from '../Settings/settings';
 import Track from '../Track/track';
 import { db } from '../../firebase';
-import { auth } from 'firebase';
+
 
 
 class ProfilePage extends Component {
@@ -69,11 +69,7 @@ class ProfilePage extends Component {
 
   render() {
     let tracks = this.state.tracks;
-    let eff;
-    console.log(auth().userName);
-    console.log(this.props.match.params.profileName,"hello")
-    if(auth().userName == this.props.match.params.profileName){console.log(eff)}
-    else{eff = <Button>followers</Button>}
+    
     return (
 
       <div className="profile-page">
@@ -101,7 +97,7 @@ class ProfilePage extends Component {
                 <h6>posts: 0 {this.props.posts}</h6>
                 <h6>followers : 0 {this.props.followers}</h6>
                 <h6>following: 0 {this.props.following}</h6>
-                <div>{eff}</div>
+
               </div>
 
             </div>
