@@ -30,9 +30,11 @@ const Feed = (props) => {
             }
             posts.sort((a, b) => b.postDate - a.postDate);  // Sort by latest posts first
             requests = [];
-            posts.forEach(post => {                 // Get all tracks from posts
-                requests.push(db.collection('tracks').doc(post.trackId));
-            })
+
+            // Get all tracks from posts
+            for (let i = 0; i < posts.length || i < 25; i++) { // Hard limit on posts shown, this can be changed in future
+                requests.push(db.collection('tracks').doc(posts[i].trackId));
+            }
             return Promise.all(requests);
         }).then(docs => {
             let tracks = [];
