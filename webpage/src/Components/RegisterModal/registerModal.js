@@ -9,7 +9,7 @@ const LoginModal = () => {
   const [email, setEmail] = useState('');
   const [displayName, setDisplayName] = useState("taq");
   const [password, setPassword] = useState('');
-  const [error, setError] = useState(null);
+  const [, setError] = useState(null);
  
   const createUserWithEmailAndPasswordHandler = async (event, email, password) => {
     event.preventDefault();

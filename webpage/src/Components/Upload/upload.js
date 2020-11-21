@@ -1,8 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { UserContext } from '../../Providers/UserProvider.js';
 import "./upload.css";
-
-import {storage} from '.App/../firebase';
 import { db } from '../../firebase';
 /* eslint-disable no-unused-expressions */ 
 
