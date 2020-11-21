@@ -1,5 +1,5 @@
 
-import React, {useState,useContext} from 'react';
+import React, {useState} from 'react';
 import { Modal, Button} from 'react-bootstrap';
 import './loginModal.css';
 import {auth} from '../../firebase';
@@ -12,7 +12,7 @@ const LoginModal = () => {
   const [show,setShow] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState(null);
+  const [, setError] = useState(null);
 
   const signInWithEmailAndPasswordHandler = (event,email, password) => {
       event.preventDefault();

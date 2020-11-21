@@ -1,15 +1,21 @@
-import React, { Component, PropTypes } from 'react';
-import { Modal, Button, Form, Tabs, Image, Tab } from 'react-bootstrap';
+import React, { Component } from 'react';
+import {  Tabs, Tab,Button } from 'react-bootstrap';
 import './ProfilePage.css';
 import { MDBIcon, MDBRow, MDBCol } from "mdbreact";
 import Settings from '../Settings/settings';
 import Track from '../Track/track';
 import { db } from '../../firebase';
-import { auth } from 'firebase';
+
+
 
 class ProfilePage extends Component {
   constructor(props) {
     super(props);
+    
+    if (this.props.match.params.profileName){
+      this.name = this.props.match.params.profileName;
+    } else{this.name = 'Guest';}
+
     this.state = {
       tracks: []
     }
@@ -35,7 +41,9 @@ class ProfilePage extends Component {
   }
   getUserTracks() {
     let tracks = [];
-    db.collection('tracks').where('userId', '==', 'Maui A').get().then(querySnapshot => {
+    
+    console.log(this.props.match.params.profileName);
+    db.collection('tracks').where('userId', '==', this.name).get().then(querySnapshot => {
       const data = querySnapshot.docs.map(doc => doc.data());
       data.forEach(track => {
         tracks.push(this.createTrack(
@@ -53,21 +61,6 @@ class ProfilePage extends Component {
         this.setState({ tracks: tracks });
       })
     })
-
-    // for (let i = 10; i < 13; i++) {
-    //   db.collection('tracks').add({
-    //     "trackId": `trackId${i}`,
-    //     "userId": `Maui A`,
-    //     "uploadDate": "2 hours",
-    //     "audio": "https://www.mfiles.co.uk/mp3-downloads/gs-cd-track2.mp3",
-    //     "trackName": `trackName${i}`,
-    //     "playCount": 0,
-    //     "likeCount": 0,
-    //     "commentCount": 0,
-    //     "repostCount": 0,
-    //     "trackArt": "https://i.imgur.com/HezWtqg.jpeg"
-    //   });
-    // }
   }
 
   componentDidMount() {
@@ -76,8 +69,11 @@ class ProfilePage extends Component {
 
   render() {
     let tracks = this.state.tracks;
+    
     return (
+
       <div className="profile-page">
+        <h3>{this.props.match.params.profileName}</h3>
         <br></br>
         <MDBRow>
           <MDBCol xl="4" md="4" className="mb-3">
@@ -101,6 +97,7 @@ class ProfilePage extends Component {
                 <h6>posts: 0 {this.props.posts}</h6>
                 <h6>followers : 0 {this.props.followers}</h6>
                 <h6>following: 0 {this.props.following}</h6>
+
               </div>
 
             </div>
