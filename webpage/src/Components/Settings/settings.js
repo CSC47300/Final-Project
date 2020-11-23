@@ -1,73 +1,52 @@
-import React, { Component, useContext, useReducer, useState } from 'react';
+import React, { Component, useContext, useRef, useState, createRef } from 'react';
 import { Container } from 'react-bootstrap';
-import './settings.css';
-import { MDBIcon, MDBRow, MDBCol } from "mdbreact";
 import { UserContext } from '../../Providers/UserProvider.js';
 import { db, getUserDocument } from '../../firebase';
 import firebase from "firebase/app";
 
-class Settings extends Component{
-    constructor(props) {
-        super(props);
-        this.state = {
-          photoURL: "https://mdbootstrap.com/img/Photos/Avatars/img(31).jpg",
-          firstName: '',
-          lastName: '',
-          email: '',
-          timeZone:'',
-          displayName: '',
-        };
-        this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-        this.inputPhoto = React.createRef();
-        this.inputFirstName = React.createRef();
-        this.inputLastName = React.createRef();
-        this.inputEmail = React.createRef();
-        this.inputUsername = React.createRef();
-        this.inputTimeZone = React.createRef();
-        this.user = React.useContext(UserContext);
-        
-        
-        
-    }
+function Settings(props){
    
-    component(){
-      const user = useContext(UserContext);
-      return user;
+        const inputPhoto = useRef("https://mdbootstrap.com/img/Photos/Avatars/img(31).jpg");
+        const inputFirstName = useRef(null);
+        const inputLastName = useRef();
+        const inputEmail = useRef();
+        const inputUsername = useRef();
+        const inputTimeZone = useRef();
+        const user = useContext(UserContext);
+        const [ImagePreview ,setImagePreview] = useState("https://mdbootstrap.com/img/Photos/Avatars/img(31).jpg");
+    
+    
+   
+    const handleChange= (event) => {
+        setImagePreview(URL.createObjectURL(event.target.files[0]));
     }
-    handleChange(event) {
-      this.setState({
-        photoURL: URL.createObjectURL(event.target.files[0])
-      })
-    }
-    handleSubmit(event) {
-      //this.user = React.useContext(UserContext);
-      console.log(this.userRef.uid)
-      console.log(this.inputPhoto.current.value);
-      console.log(this.inputFirstName.current.value);
-      console.log(this.inputLastName.current.value);
-      console.log(this.inputEmail.current.value);
-      console.log(this.inputUsername.current.value);
-      console.log(this.inputTimeZone.current.value);
+    
+    const handleSubmit= (event) =>{
+      console.log(inputPhoto.current.value);
+      console.log(inputFirstName.current.value);
+      console.log(inputLastName.current.value);
+      console.log(inputEmail.current.value);
+      console.log(inputUsername.current.value);
+      console.log(inputTimeZone.current.value);
       event.preventDefault();
       
-      db.collection('users').doc(
-        //"uoL8rAP4xsaXp1BRmAO5QBcS99G3"
+      db.collection('users').doc(user.uid
         ).update({
-          photoURL: this.inputPhoto.current.value,
-          firstName: this.inputFirstName.current.value,
-          lastName: this.inputLastName.current.value,
-          email: this.inputEmail.current.value,
-          displayName: this.inputUsername.current.value,
-          timeZone: this.inputTimeZone.current.value
+          photoURL: inputPhoto.current.value,
+          firstName: inputFirstName.current.value,
+          lastName: inputLastName.current.value,
+          email: inputEmail.current.value,
+          displayName: inputUsername.current.value,
+          timeZone:inputTimeZone.current.value
     })
     .then(() => {
       console.log('User updated!');
+      alert("User settings sucsessfully updated!");
+    })
+    .catch(function (error) {
+      console.error("Error update user: ", error);
     });
-  }
-  
-   
-    render() {
+    }
         return (
             <Container fluid>
             <br></br>
@@ -78,10 +57,10 @@ class Settings extends Component{
               
               <div class="col-md-3">
                 <div class="text-center">
-                  <img src={this.state.photoURL}  class="img-fluid z-depth-1 rounded-circle" alt="avatar"/>
+                  <img src={ImagePreview}  class="img-fluid z-depth-1 rounded-circle" alt="avatar"/>
                   <h6>Upload a different photo...</h6>
                   
-                  <input type="file" class="form-control" onChange={this.handleChange} ref={this.inputPhoto}/>
+                  <input type="file" class="form-control" onChange={handleChange} ref={inputPhoto}/>
                 </div>
               </div>
             </div>
@@ -91,26 +70,26 @@ class Settings extends Component{
                 <div className="form-group">
                   <label className="col-lg-3 control-label">First name:</label>
                   <div className="col-lg-8">
-                    <input className="form-control" type="text" ref={this.inputFirstName} />
+                    <input className="form-control" type="text" ref={inputFirstName} />
                   </div>
                 </div>
                 <div className="form-group">
                   <label className="col-lg-3 control-label">Last name:</label>
                   <div className="col-lg-8">
-                    <input className="form-control" type="text" ref={this.inputLastName} />
+                    <input className="form-control" type="text" ref={inputLastName} />
                   </div>
                 </div>
                 <div className="form-group">
                   <label className="col-lg-3 control-label">Email:</label>
                   <div className="col-lg-8">
-                    <input className="form-control" type="text" ref={this.inputEmail} />
+                    <input className="form-control" type="text" ref={inputEmail} />
                   </div>
                 </div>
                 <div className="form-group">
                   <label className="col-lg-3 control-label">Time Zone:</label>
                   <div className="col-lg-8">
                     <div className="ui-select">
-                      <select id="user_time_zone" className="form-control" ref={this.inputTimeZone}>
+                      <select id="user_time_zone" className="form-control" ref={inputTimeZone}>
                         <option value="Hawaii"  >(GMT-10:00) Hawaii</option>
                         <option value="Alaska"  >(GMT-09:00) Alaska</option>
                         <option value="Pacific Time (US &amp; Canada)"  >(GMT-08:00) Pacific Time (US &amp; Canada)</option>
@@ -126,7 +105,7 @@ class Settings extends Component{
                 <div className="form-group">
                   <label className="col-md-3 control-label">Username:</label>
                   <div className="col-md-8">
-                    <input className="form-control" type="text" ref={this.inputUsername} />
+                    <input className="form-control" type="text" ref={inputUsername} />
                   </div>
                 </div>
                 <div className="form-group">
@@ -144,7 +123,7 @@ class Settings extends Component{
                 <div className="form-group">
                   <label className="col-md-3 control-label"></label>
                   <div className="col-md-8">
-                    <input type="button" className="btn btn-primary" value="Submit" onClick={this.handleSubmit}/>
+                    <input type="button" className="btn btn-primary" value="Submit" onClick={handleSubmit}/>
                     <span></span>
                     <input type="reset" className="btn btn-default" value="Cancel" />
                   </div>
@@ -153,13 +132,7 @@ class Settings extends Component{
             </div>
           </div>
       </Container>
-    );
+    )
   }
-
-}
-
-Settings.propTypes = {
-
-};
 
 export default Settings;
