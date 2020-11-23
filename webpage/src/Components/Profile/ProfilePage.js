@@ -4,19 +4,21 @@ import './ProfilePage.css';
 import { MDBIcon, MDBRow, MDBCol } from "mdbreact";
 import Settings from '../Settings/settings';
 import Track from '../Track/track';
-import { db } from '../../firebase';
+import {db} from '../../firebase';
+
 
 
 
 class ProfilePage extends Component {
   constructor(props) {
-    super(props);
-    
+    super(props);    
+
     if (this.props.match.params.profileName){
       this.name = this.props.match.params.profileName;
     } else{this.name = 'Guest';}
 
     this.state = {
+
       tracks: []
     }
   }
@@ -69,7 +71,7 @@ class ProfilePage extends Component {
 
   render() {
     let tracks = this.state.tracks;
-    
+
     return (
 
       <div className="profile-page">
@@ -97,6 +99,7 @@ class ProfilePage extends Component {
                 <h6>posts: 0 {this.props.posts}</h6>
                 <h6>followers : 0 {this.props.followers}</h6>
                 <h6>following: 0 {this.props.following}</h6>
+                <Button onClick={() => console.log(this.props.user)}>testing</Button>
 
               </div>
 

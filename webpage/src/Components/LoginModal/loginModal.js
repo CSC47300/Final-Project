@@ -12,7 +12,7 @@ const LoginModal = () => {
   const [show,setShow] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [, setError] = useState(null);
+  const [error, setError] = useState(null);
 
   const signInWithEmailAndPasswordHandler = (event,email, password) => {
       event.preventDefault();
@@ -21,7 +21,7 @@ const LoginModal = () => {
         console.log("success! " + auth.currentUser.uid)
       })
       .catch(error => {
-      setError("Error signing in with password and email!");
+      setError(error.message);
         console.error("Error signing in with password and email", error);
       });
     };
@@ -37,6 +37,11 @@ const LoginModal = () => {
         }
     };
 
+    const onSubmit = (e) => {
+      console.log('onSubmit()');
+      signInWithEmailAndPasswordHandler(e, email, password)
+    }
+
 
   return (
     <div>
@@ -49,7 +54,7 @@ const LoginModal = () => {
           centered>
 
           <Modal.Body>
-            <form onSubmit={(event) => {signInWithEmailAndPasswordHandler(event, email, password)}}>
+            <form onSubmit={(event) => {onSubmit(event)}}>
               <h3 className ='font-weight-bold text-center' closeButton>Sign In</h3>
 
               <div className="form-group">
@@ -75,22 +80,11 @@ const LoginModal = () => {
                         placeholder="Enter password"
                         onChange = {(event) => onChangeHandler(event)} />
               </div>
-
-              <div className="form-group">
-                <div className="custom-control custom-checkbox">
-                  <input type="checkbox" 
-                          className="custom-control-input" 
-                          id="customCheck1" />
-                  <label className="custom-control-label" 
-                          htmlFor="customCheck1"> Remember me 
-                  </label>
-                </div>
-              </div>
+              <div className="invalid-feedback d-block"> {error}</div>
               <div>
-              <button> Submit </button>
-                
-                <p className="forgot-password text-right">
-                  Forgot <a href="#">password?</a>
+                  <Button type='submit' class='padding-top'> Submit </Button>
+                  <p className="forgot-password text-right">
+                  <a href="#">Forgot password?</a>
                 </p>
               </div>
             </form>

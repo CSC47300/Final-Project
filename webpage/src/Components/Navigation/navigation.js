@@ -7,6 +7,7 @@ import "firebase/auth";
 import "firebase/firestore";
 import { UserContext } from '../../Providers/UserProvider.js';
 import { signOut } from '../../firebase.js';
+import { auth } from 'firebase';
 
 const NavBar = () => {
         
