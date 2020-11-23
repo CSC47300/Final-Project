@@ -109,18 +109,6 @@ function Settings(props){
                   </div>
                 </div>
                 <div className="form-group">
-                  <label className="col-md-3 control-label">Password:</label>
-                  <div className="col-md-8">
-                    <input className="form-control" type="password"  />
-                  </div>
-                </div>
-                <div className="form-group">
-                  <label className="col-md-3 control-label">Confirm password:</label>
-                  <div className="col-md-8">
-                    <input className="form-control" type="password"  />
-                  </div>
-                </div>
-                <div className="form-group">
                   <label className="col-md-3 control-label"></label>
                   <div className="col-md-8">
                     <input type="button" className="btn btn-primary" value="Submit" onClick={handleSubmit}/>
