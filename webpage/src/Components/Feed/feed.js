@@ -63,8 +63,44 @@ const Feed = (props) => {
         })
     }
 
+    const getDefaultPosts = () => {
+        let requests = [];
+        db.collection('tracks-data').doc('recent-uploads').get().then(doc => {
+            let recents = doc.data().recent;
+            recents.forEach(track => {
+                requests.push(db.collection('tracks-1').doc(track).get());
+            })
+            return Promise.all(requests);
+        }).then(docs => {
+            let tracks = [];
+            let items = docs.map(doc => doc.data());
+            for (let i = 0; i < items.length; i++) {
+                let data = items[i];      // Create tracks
+                tracks.push(
+                    createTrack(
+                        `${data.trackId}_inst_${i}`,
+                        data.userId,
+                        data.userId,
+                        getElapsedTime(data.uploadDate),
+                        data.audio,
+                        props.isPlaying,
+                        props.togglePlay,
+                        data.trackName,
+                        data.playCount,
+                        data.likeCount,
+                        data.commentCount,
+                        data.repostCount,
+                        data.trackArt,
+                    )
+                )
+            }
+            setTracks(tracks);      // Push tracks to state
+        })
+    }
+
     useEffect(() => {
-        getPosts();
+        // getPosts();
+        getDefaultPosts();
     }, [])
 
     return (
