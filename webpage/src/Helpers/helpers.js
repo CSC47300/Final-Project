@@ -1,5 +1,6 @@
 import Track from '../Components/Track/track';
 import React from 'react';
+import { db } from '../firebase';
 
 const getElapsedTime = (time) => {
     const current = Date.now();
@@ -23,7 +24,7 @@ const getElapsedTime = (time) => {
     }
     if (i === 7) i--;
     let val = Math.floor(measurment);
-    return `${val} ${val > 1 || val === 0 ? names[i] : names[i].substr(0, names[i].length - 1)} ago`;
+    return `${val} ${val > 1 || val === 0 ? names[i] : names[i].substr(0, names[i].length - 1)}`;
 }
 
 const createTrack = (trackId, userName, artistName, uploadDate, audio, isPlaying, togglePlay,
@@ -46,4 +47,19 @@ const createTrack = (trackId, userName, artistName, uploadDate, audio, isPlaying
     />
 }
 
-export { getElapsedTime, createTrack };
+const updateRecentUploads = (trackId) => {
+    db.collection('tracks-data').doc('recent-uploads').get().then(doc => {
+        let recent = doc.data().recent;
+        if (recent.length < 25) {
+            recent.unshift(trackId);
+        } else {
+            recent.unshift(trackId);
+            recent.pop();
+        }
+        db.collection('tracks-data').doc('recent-uploads').set({
+            recent: recent
+        })
+    })
+}
+
+export { getElapsedTime, createTrack, updateRecentUploads };
