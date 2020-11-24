@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import { UserContext } from '../../Providers/UserProvider.js';
 import "./upload.css";
 import { db } from '../../firebase';
+import firebase from 'firebase'
 /* eslint-disable no-unused-expressions */ 
 
 
@@ -13,6 +14,8 @@ function Upload(props){
    const [selectedTrack ,setTrack] = useState(null);
    const [selectedImage ,setImage] = useState(null);
    const [selectedImagePreview ,setImagePrev] = useState("765-default-avatar copy.png");
+   var storageRefPicture = firebase.storage().ref();
+   var storageRefTrack = firebase.storage().ref();
  
  
   
