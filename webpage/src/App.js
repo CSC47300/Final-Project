@@ -9,6 +9,8 @@ import Settings from './Components/Settings/settings';
 import History from './Components/ListenHistory/history';
 import Feed from './Components/Feed/feed';
 
+import AudioPlayer from 'react-h5-audio-player';
+import 'react-h5-audio-player/lib/styles.css';
 
 function App() {
 
@@ -26,7 +28,12 @@ function App() {
           <Route path='/:profileName' component={ProfilePage} />
           <Route path='/' component={Feed} />
         </Router>
-
+        <AudioPlayer
+          autoPlay
+            src="http://example.com/audio.mp3"
+            onPlay={e => console.log("onPlay")}
+            // other props here
+        />
       </div>
     </>
   );
