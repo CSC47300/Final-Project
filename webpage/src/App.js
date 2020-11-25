@@ -8,7 +8,8 @@ import { BrowserRouter as Router, Route } from 'react-router-dom';
 import Settings from './Components/Settings/settings';
 import History from './Components/ListenHistory/history';
 import Feed from './Components/Feed/feed';
-
+import AudioPlayer from 'react-h5-audio-player';
+import 'react-h5-audio-player/lib/styles.css';
 
 function App() {
 
@@ -26,7 +27,13 @@ function App() {
           <Route path='/:profileName' component={ProfilePage} />
           <Route path='/' component={Feed} />
         </Router>
-
+        
+        <AudioPlayer
+          autoPlay
+            src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+            onPlay={e => console.log("onPlay")}
+            // other props here if needed
+        />
       </div>
     </>
   );
