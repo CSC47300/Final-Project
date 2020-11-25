@@ -3,7 +3,7 @@ import { UserContext } from '../../Providers/UserProvider.js';
 import "./upload.css";
 import { db } from '../../firebase';
 import firebase from 'firebase'
-import storage from 'firebase'
+
 /* eslint-disable no-unused-expressions */ 
 
 
@@ -15,14 +15,11 @@ function Upload(props){
    const [selectedTrack ,setTrack] = useState(null);
    const [selectedImage ,setImage] = useState(null);
    const [selectedImagePreview ,setImagePrev] = useState("765-default-avatar copy.png");
-   //let storageRefPicture = storage().ref();
-   var ref = firebase.storage().ref();
+  
+   let ref = firebase.storage().ref();
   
 
-   
-
- 
- 
+  
   
 
 
@@ -43,10 +40,14 @@ function Upload(props){
         }
         else {
           setTrackName(event.target.files[0].name.split('.')[0]);
-          setTrack(file);
           let Trackref = ref.child('tracks/' + file.name);
           Trackref.put(file).then(function(snapshot) {
-            console.log('Uploaded a blob or file!');
+            console.log('Uploaded the track ' + file.name);
+          Trackref.getDownloadURL().then((url) => {
+                setTrack(url);
+                console.log('Track Set')
+            })
+            
           });
          
 
@@ -80,12 +81,16 @@ function Upload(props){
         }
         else {
 
-          setImage(file);
+        
           setImagePrev(URL.createObjectURL(file));
           console.log(file.name);
           let Imageref = ref.child('images/' + file.name);
           Imageref.put(file).then(function(snapshot) {
-            console.log('Uploaded a blob or file!');
+            console.log('Uploaded the image' + file.name);
+            Imageref.getDownloadURL().then((url) => {
+              setImage(url);
+              console.log('Image set')
+          })
           });
         }
 
@@ -98,28 +103,20 @@ function Upload(props){
     function fileSubmitHandler(event) {
   if (selectedImage == null) {
     window.alert("You have not selected a Image");
-
   }
-  if (selectedTrack == null) {
+  else  if(selectedTrack == null) {
     window.alert("You have not selected an Track");
   }
-}
-
-     function uploadTrackInfo(event) {
-     
-
-
-      
-
-    db.collection("track").add({
-      audio: 'temp',
+  else{
+    db.collection("tracks").add({
+      audio: selectedTrack,
       commentCount: 0,
       likeCount: 0,
       likedBy: [],
       playCount: 0,
       repostCount: 0,
       repostedBy: [],
-      trackArt: "temp",
+      trackArt: selectedImage,
       trackId: trackName,
       uploadDate: Date.now(),
       userId: user.uid
@@ -131,10 +128,11 @@ function Upload(props){
         console.error("Error writing document: ", error);
       });
   }
-    
-   
 
-   
+}
+
+     
+    
 
         return(
 
@@ -202,13 +200,7 @@ function Upload(props){
          <small> By uploading, you confirm that your sounds comply with our Terms of Use and you don't infringe anyone else's rights.</small>
         </div>
     </div>
-    <div class="col">
-            <div class="d-flex justify-content-center">
-              <div class="form-group row mt-3">
-                  <button type="submit" onClick={uploadTrackInfo} class="btn btn-lg btn-success">test</button>
-              </div>
-            </div>
-          </div>
+   
 
     </div>
     
