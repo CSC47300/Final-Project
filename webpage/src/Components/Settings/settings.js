@@ -1,4 +1,4 @@
-import React, { Component, useContext, useRef, useState, createRef } from 'react';
+import React, { useContext, useRef, useState, createRef } from 'react';
 import { Container } from 'react-bootstrap';
 import { UserContext } from '../../Providers/UserProvider.js';
 import { db, getUserDocument } from '../../firebase';

@@ -1,67 +1,57 @@
-import React, { Component} from 'react';
+import React, {useState,useEffect } from 'react';
+import { createTrack, getElapsedTime } from '../../Helpers/helpers';
 import Track from '../Track/track';
 import { db } from '../../firebase';
 
 
 
 
-class History extends Component{
-    constructor(props) {
-        super(props);
-        this.state = {
-          tracks: []
-        }
-      }
+const History = (props) => 
+  {
+   
+    let name;
 
-      createTrack = (trackId, userName, uploadDate, audio, trackName, playCount, likeCount, commentCount, repostCount, trackArt) => {
-        return <Track
-          key={trackId}
-          isPlaying={this.props.isPlaying}
-          likes={likeCount}
-          reposts={repostCount}
-          playCount={playCount}
-          commentCount={commentCount}
-          songName={trackName}
-          artistName={userName}
-          userName={userName}
-          albumArt={trackArt}
-          timeFrame={uploadDate}
-          track={audio}
-          id={trackId}
-          togglePlay={this.props.togglePlay}
-        />
-      }
-
-      getUserTracks() {
-        let tracks = [];
-        db.collection('tracks').where('userId', '==', 'Maui A' ).get().then(querySnapshot => {
-          const data = querySnapshot.docs.map(doc => doc.data());
-          data.forEach(track => {
-            tracks.push(this.createTrack(
-              track.trackId,
-              track.userId,
-              track.uploadDate,
-              track.audio,
-              track.trackName,
-              track.playCount,
-              track.likeCount,
-              track.commentCount,
-              track.repostCount,
-              track.trackArt
-            ))
-            this.setState({ tracks: tracks });
-          })
+    if (props.match.params.profileName) {
+      name = props.match.params.profileName;} 
+    else{ name = 'Guest'; }
+  
+    const [tracks, setTracks] = useState([]);
+  
+    const getUserTracks = () => {
+      let tracks = [];
+  
+      console.log(props.match.params.profileName);
+      db.collection('tracks').where('userId', '==', name).get().then(querySnapshot => {
+        const data = querySnapshot.docs.map(doc => doc.data());
+        data.forEach(data => {
+          tracks.push(createTrack(
+            data.trackId,
+            data.userId,
+            data.userId,
+            getElapsedTime(data.uploadDate),
+            data.audio,
+            props.isPlaying,
+            props.togglePlay,
+            data.trackName,
+            data.playCount,
+            data.likeCount,
+            data.commentCount,
+            data.repostCount,
+            data.trackArt
+          ))
+          setTracks(tracks);
         })
-
+      })
     }
-        componentDidMount() {
-            this.getUserTracks();
-          }
+  
+    useEffect(() => {
+      getUserTracks();
+    }, [])
 
 
 
-render(){
-  let tracks = this.state.tracks;
+
+
   return(
     
 
@@ -83,7 +73,7 @@ render(){
     </div>
   
   );
-}
+
 
 
 
