@@ -3,6 +3,7 @@ import { UserContext } from '../../Providers/UserProvider.js';
 import "./upload.css";
 import { db } from '../../firebase';
 import firebase from 'firebase'
+import storage from 'firebase'
 /* eslint-disable no-unused-expressions */ 
 
 
@@ -14,8 +15,12 @@ function Upload(props){
    const [selectedTrack ,setTrack] = useState(null);
    const [selectedImage ,setImage] = useState(null);
    const [selectedImagePreview ,setImagePrev] = useState("765-default-avatar copy.png");
-   var storageRefPicture = firebase.storage().ref();
-   var storageRefTrack = firebase.storage().ref();
+   //let storageRefPicture = storage().ref();
+   var ref = firebase.storage().ref();
+  
+
+   
+
  
  
   
@@ -39,6 +44,10 @@ function Upload(props){
         else {
           setTrackName(event.target.files[0].name.split('.')[0]);
           setTrack(file);
+          let Trackref = ref.child('tracks/' + file.name);
+          Trackref.put(file).then(function(snapshot) {
+            console.log('Uploaded a blob or file!');
+          });
          
 
         }
@@ -70,26 +79,14 @@ function Upload(props){
 
         }
         else {
+
           setImage(file);
           setImagePrev(URL.createObjectURL(file));
-          /*const uploadImg = storage.ref('images/${file.name}').put(file);
-          uploadImg.on(
-            "state_changed",
-            snapshot => {},
-            error =>{
-              console.log(error);
-            },
-            ()=> {
-              storage
-              .ref("images")
-              .child(file.name)
-              .getDownloadURL()
-              .then(url =>{
-                setImage(url);
-              })
-            }
-
-          )*/
+          console.log(file.name);
+          let Imageref = ref.child('images/' + file.name);
+          Imageref.put(file).then(function(snapshot) {
+            console.log('Uploaded a blob or file!');
+          });
         }
 
       }
@@ -110,6 +107,8 @@ function Upload(props){
 
      function uploadTrackInfo(event) {
      
+
+
       
 
     db.collection("track").add({
