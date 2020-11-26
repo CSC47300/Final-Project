@@ -7,12 +7,17 @@ import {auth} from '../../firebase';
 
 
 
-const LoginModal = () => {
+
+
+const LoginModal = (props) => {
   
   const [show,setShow] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
+
+  
+
 
   const signInWithEmailAndPasswordHandler = (event,email, password) => {
       event.preventDefault();
@@ -40,7 +45,10 @@ const LoginModal = () => {
     const onSubmit = (e) => {
       console.log('onSubmit()');
       signInWithEmailAndPasswordHandler(e, email, password)
+      
     }
+
+    
 
 
   return (
@@ -83,6 +91,7 @@ const LoginModal = () => {
               <div className="invalid-feedback d-block"> {error}</div>
               <div>
                   <Button type='submit' class='padding-top'> Submit </Button>
+                  <Button onClick={() => console.log(props)}>test</Button>
                   <p className="forgot-password text-right">
                   <a href="#">Forgot password?</a>
                 </p>

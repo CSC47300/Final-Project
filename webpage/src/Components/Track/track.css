@@ -70,6 +70,9 @@
     margin-right: 10px;
 }
 
+.liked {
+    background-color: rgb(224, 97, 97);
+}
 .social-tag {
     font-size: 12px;
     padding-right: 10px;

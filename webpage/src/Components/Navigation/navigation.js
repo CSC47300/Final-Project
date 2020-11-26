@@ -7,7 +7,9 @@ import "firebase/auth";
 import "firebase/firestore";
 import { UserContext } from '../../Providers/UserProvider.js';
 import { signOut } from '../../firebase.js';
-import { auth } from 'firebase';
+import { useHistory } from 'react-router';
+
+
 
 const NavBar = () => {
         
@@ -41,8 +43,7 @@ const NavBar = () => {
         login =
             <Nav className="ml-auto login-container">
                 <LoginModal />
-                <RegisterModal></RegisterModal>
-                
+                <RegisterModal/> 
             </Nav>
        
        
