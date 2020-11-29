@@ -7,8 +7,6 @@ import "firebase/auth";
 import "firebase/firestore";
 import { UserContext } from '../../Providers/UserProvider.js';
 import { signOut } from '../../firebase.js';
-import { useHistory } from 'react-router';
-
 
 
 const NavBar = () => {

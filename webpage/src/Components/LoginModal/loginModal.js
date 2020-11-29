@@ -91,7 +91,6 @@ const LoginModal = (props) => {
               <div className="invalid-feedback d-block"> {error}</div>
               <div>
                   <Button type='submit' class='padding-top'> Submit </Button>
-                  <Button onClick={() => console.log(props)}>test</Button>
                   <p className="forgot-password text-right">
                   <a href="#">Forgot password?</a>
                 </p>
