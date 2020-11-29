@@ -8,6 +8,7 @@ import "firebase/firestore";
 import { UserContext } from '../../Providers/UserProvider.js';
 import { signOut } from '../../firebase.js';
 
+
 const NavBar = () => {
         
         let mobile, login;
@@ -40,8 +41,7 @@ const NavBar = () => {
         login =
             <Nav className="ml-auto login-container">
                 <LoginModal />
-                <RegisterModal></RegisterModal>
-                
+                <RegisterModal/> 
             </Nav>
        
        

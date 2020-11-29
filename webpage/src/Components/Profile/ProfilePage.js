@@ -1,15 +1,17 @@
-import React, { Component, useState, useEffect } from 'react';
+import React, { Component, useState, useEffect, useContext } from 'react';
 import { Tabs, Tab, Button } from 'react-bootstrap';
 import './ProfilePage.css';
 import { MDBIcon, MDBRow, MDBCol } from "mdbreact";
 import Settings from '../Settings/settings';
 import { db } from '../../firebase';
 import { createTrack, getElapsedTime } from '../../Helpers/helpers';
+import { UserContext } from '../../Providers/UserProvider';
 
 
 const ProfilePage = (props) => {
 
   let name;
+  let user = useContext(UserContext);
   if (props.match.params.profileName) {
     name = props.match.params.profileName;
   } else { name = 'Guest'; }
@@ -43,6 +45,13 @@ const ProfilePage = (props) => {
     })
   }
 
+
+  const follow = () => {
+
+    let tobe = {name: props.match.params.profileName,dateFollowed: new Date() }
+    const f = db.collection('users').doc(user.uid).collection('following').doc().set(tobe);
+  }
+
   useEffect(() => {
     getUserTracks();
   }, [])
@@ -67,20 +76,21 @@ const ProfilePage = (props) => {
                 molestias voluptatum inventore laboriosam labore sit,
                 aspernatur praesentium iste impedit quidem dolor veniam.
               </p>
-
+            
             <h6>email: google@gmail.com {props.email}</h6>
             <br></br>
             <div style={{ display: "flex", justifyContent: "space-between", width: "40%" }}>
               <h6>posts: 0 {props.posts}</h6>
               <h6>followers : 0 {props.followers}</h6>
               <h6>following: 0 {props.following}</h6>
-
             </div>
-
+            <Button onClick = {follow}>Follow</Button>
           </div>
 
         </MDBCol>
+        
       </MDBRow>
+      
       <br></br>
 
       <Tabs defaultActiveKey="tracks" id="tab">

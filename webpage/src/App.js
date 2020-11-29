@@ -11,15 +11,15 @@ import Feed from './Components/Feed/feed';
 import AudioPlayer from 'react-h5-audio-player';
 import 'react-h5-audio-player/lib/styles.css';
 
+
 function App() {
 
   return (
     <>
       <div className="App">
-        <NavBar />
 
         <Router>
-
+          <NavBar />
           <Route exact path='/settings' component={Settings} />
           <Route exact path='/upload' component={Upload} />
           <Route exact path='/likes' component={Likes} />
@@ -29,7 +29,7 @@ function App() {
         </Router>
         
         <AudioPlayer
-          autoPlay
+          
             src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
             onPlay={e => console.log("onPlay")}
             // other props here if needed
