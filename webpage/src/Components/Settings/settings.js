@@ -14,16 +14,42 @@ function Settings(props){
         const inputTimeZone = useRef();
         const inputDescription = useRef();
         const user = useContext(UserContext);
-        const [ImagePreview ,setImagePreview] = useState("https://mdbootstrap.com/img/Photos/Avatars/img(31).jpg");
-    
-    
+        const [selectedImage ,setImage] = useState(null);
+        const [selectedImagePreview ,setImagePrev] = useState("https://mdbootstrap.com/img/Photos/Avatars/img(31).jpg");
+        let ref = firebase.storage().ref();
    
-    const handleChange= (event) => {
-        setImagePreview(URL.createObjectURL(event.target.files[0]));
+    function imageSelectedHandler(event) {
+      const file = event.target.files[0];
+      if (event.target.files.length == 0) {
+        setImage(null);
+        setImagePrev(null);
+      }
+      else {
+        {
+          const fileType = file['type'];
+          const validImageTypes = ['image/gif', 'image/jpeg', 'image/png'];
+          if (!validImageTypes.includes(fileType)) {
+            setImage(null);
+            setImagePrev(null);
+            window.alert("This is not an Image file");
+          }
+          else {
+            setImagePrev(URL.createObjectURL(file));
+            let Imageref = ref.child('images/' + file.name);
+            Imageref.put(file).then(function(snapshot) {
+              console.log('Uploaded the image' + file.name);
+              Imageref.getDownloadURL().then((url) => {
+                setImage(url);
+            })
+            });
+          }
+        }
+      }
     }
-    
     const handleSubmit= (event) =>{
-      console.log(inputPhoto.current.value);
+      if (selectedImage == null) {
+        window.alert("You have not selected a Image");
+      }
       console.log(inputFirstName.current.value);
       console.log(inputLastName.current.value);
       console.log(inputEmail.current.value);
@@ -34,7 +60,7 @@ function Settings(props){
       
       db.collection('users').doc(user.uid
         ).update({
-          photoURL: inputPhoto.current.value,
+          photoURL: selectedImage,
           firstName: inputFirstName.current.value,
           lastName: inputLastName.current.value,
           email: inputEmail.current.value,
@@ -60,10 +86,10 @@ function Settings(props){
               
               <div class="col-md-3">
                 <div class="text-center">
-                  <img src={ImagePreview}  class="img-fluid z-depth-1 rounded-circle" alt="avatar"/>
+                  <img src={selectedImagePreview}  class="img-fluid z-depth-1 rounded-circle" alt="avatar"/>
                   <h6>Upload a different photo...</h6>
                   
-                  <input type="file" class="form-control" onChange={handleChange} ref={inputPhoto}/>
+                  <input type="file" onChange={imageSelectedHandler} required/>
                 </div>
               </div>
             </div>
