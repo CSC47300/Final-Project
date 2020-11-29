@@ -12,6 +12,7 @@ function Settings(props){
         const inputEmail = useRef();
         const inputUsername = useRef();
         const inputTimeZone = useRef();
+        const inputDescription = useRef();
         const user = useContext(UserContext);
         const [ImagePreview ,setImagePreview] = useState("https://mdbootstrap.com/img/Photos/Avatars/img(31).jpg");
     
@@ -28,6 +29,7 @@ function Settings(props){
       console.log(inputEmail.current.value);
       console.log(inputUsername.current.value);
       console.log(inputTimeZone.current.value);
+      console.log(inputDescription.current.value);
       event.preventDefault();
       
       db.collection('users').doc(user.uid
@@ -37,7 +39,8 @@ function Settings(props){
           lastName: inputLastName.current.value,
           email: inputEmail.current.value,
           displayName: inputUsername.current.value,
-          timeZone:inputTimeZone.current.value
+          timeZone:inputTimeZone.current.value,
+          description: inputDescription.current.value
     })
     .then(() => {
       console.log('User updated!');
@@ -106,6 +109,12 @@ function Settings(props){
                   <label className="col-md-3 control-label">Username:</label>
                   <div className="col-md-8">
                     <input className="form-control" type="text" ref={inputUsername} />
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label className="col-md-3 control-label">Description:</label>
+                  <div className="col-md-8">
+                    <textarea className="form-control" type="text" rows={3} ref={inputDescription} />
                   </div>
                 </div>
                 <div className="form-group">
