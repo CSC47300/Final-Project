@@ -1,0 +1,16 @@
+.feed {
+    background-color: rgb(241, 241, 241);    
+}
+
+.latest-header {
+    font-size: 20px;
+    padding-left: 20px;
+    padding-top: 30px;
+    color: rgb(85, 85, 85);
+}
+
+.track-column {
+    border-right-style: solid;
+    border-right-width: 2px;
+    border-right-color: rgb(233, 233, 233);
+}

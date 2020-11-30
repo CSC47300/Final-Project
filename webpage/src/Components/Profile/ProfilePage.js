@@ -1,26 +1,45 @@
-import React, { Component, useState, useEffect } from 'react';
+import React, { Component, useState, useEffect, useContext } from 'react';
 import { Tabs, Tab, Button } from 'react-bootstrap';
 import './ProfilePage.css';
 import { MDBIcon, MDBRow, MDBCol } from "mdbreact";
 import Settings from '../Settings/settings';
 import { db } from '../../firebase';
 import { createTrack, getElapsedTime } from '../../Helpers/helpers';
-
+import { UserContext } from '../../Providers/UserProvider';
+import Player from '../Player/player';
 
 const ProfilePage = (props) => {
 
   let name;
+  let user = useContext(UserContext);
   if (props.match.params.profileName) {
     name = props.match.params.profileName;
   } else { name = 'Guest'; }
 
   const [tracks, setTracks] = useState([]);
+  const [currentlyPlaying, setCurrent] = useState({
+    current: "",
+    id: ""
+  });
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentInfo, setInfo] = useState({
+    img: '',
+    songName: '',
+    artistName: ''
+  })
+
+  const togglePlaying = (item = currentlyPlaying) => {
+    if (item.current != "") {
+      item.current.playPause();
+      setIsPlaying(isPlaying => !isPlaying);
+    }
+  }
 
   const getUserTracks = () => {
     let tracks = [];
 
     console.log(props.match.params.profileName);
-    db.collection('tracks').where('userId', '==', name).get().then(querySnapshot => {
+    db.collection('tracks').where('userId', '==', "HnZTMFbD0mgEM9umDs3FHkiARtU2").get().then(querySnapshot => {
       const data = querySnapshot.docs.map(doc => doc.data());
       data.forEach(data => {
         tracks.push(createTrack(
@@ -29,18 +48,28 @@ const ProfilePage = (props) => {
           data.userId,
           getElapsedTime(data.uploadDate),
           data.audio,
-          props.isPlaying,
-          props.togglePlay,
+          isPlaying,
+          togglePlaying,
           data.trackName,
           data.playCount,
           data.likeCount,
-          data.commentCount,
+          // data.commentCount,
           data.repostCount,
-          data.trackArt
+          data.trackArt,
+          setCurrent,
+          setInfo,
+          currentlyPlaying
         ))
         setTracks(tracks);
       })
     })
+  }
+
+
+  const follow = () => {
+
+    let tobe = { name: props.match.params.profileName, dateFollowed: new Date() }
+    const f = db.collection('users').doc(user.uid).collection('following').doc().set(tobe);
   }
 
   useEffect(() => {
@@ -74,13 +103,14 @@ const ProfilePage = (props) => {
               <h6>posts: 0 {props.posts}</h6>
               <h6>followers : 0 {props.followers}</h6>
               <h6>following: 0 {props.following}</h6>
-
             </div>
-
+            <Button onClick={follow}>Follow</Button>
           </div>
 
         </MDBCol>
+
       </MDBRow>
+
       <br></br>
 
       <Tabs defaultActiveKey="tracks" id="tab">
@@ -91,6 +121,13 @@ const ProfilePage = (props) => {
           <Settings />
         </Tab>
       </Tabs>
+      <Player
+        togglePlay={togglePlaying}
+        isPlaying={isPlaying}
+        img={currentInfo.img}
+        songName={currentInfo.songName}
+        artistName={currentInfo.artistName}
+      />
     </div>
   )
 }

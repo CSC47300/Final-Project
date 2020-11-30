@@ -1,6 +1,6 @@
 import React, {useState } from 'react';
 import { Modal, Button} from 'react-bootstrap';
-import { auth, generateUserDocument } from "../../firebase";
+import { auth, generateUserDocument,db } from "../../firebase";
 
 
 const LoginModal = () => {
@@ -9,22 +9,45 @@ const LoginModal = () => {
   const [email, setEmail] = useState('');
   const [displayName, setDisplayName] = useState("");
   const [password, setPassword] = useState('');
-  const [, setError] = useState(null);
+  const [reenterPassword,setReenterPassword] = useState("");
+  const [error, setError] = useState("");
  
-  const createUserWithEmailAndPasswordHandler = async (event, email, password) => {
+  const createUserWithEmailAndPasswordHandler = async (event,email, password) => {
     event.preventDefault();
-    try{
-      const {user} = await auth.createUserWithEmailAndPassword(email, password);
-      generateUserDocument(user, {displayName});
+    if(password != reenterPassword){
+      setError("Passwords do not match")
     }
-    catch(error){
-      setError('Error Signing up with email and password');
+    else if(displayName == ""){
+      setError("Choose a username")
     }
+    else if(createUser){
+
+      try{
+        const {user} = await auth.createUserWithEmailAndPassword(email, password);
+        generateUserDocument(user, {displayName});
+        console.log('success')
+      }
+      catch(error){
+        setError(error);
+     
+    }}
       
     setEmail("");
     setPassword("");
     setDisplayName("");
+    setReenterPassword("");
   };
+  
+  const createUser = () => {
+    db.collection('users').where('displayName','==',displayName).get()
+      .then(snapshot => {
+        if (snapshot.empty){
+          return true
+        }else{
+          return false
+        }
+      })
+  }
 
   const onChangeHandler = (event) => {
     const {name, value} = event.currentTarget;
@@ -35,9 +58,19 @@ const LoginModal = () => {
     else if(name === 'userPassword'){
       setPassword(value);
     }
+    else if(name === 'displayName'){
+      setDisplayName(value);
+    }
+    else if(name === 'reenterPassword'){
+      setReenterPassword(value);
+    }
 };
   
-
+const onSubmit = (e) => {
+  console.log('onSubmit()');
+  createUserWithEmailAndPasswordHandler(e, email, password)
+  
+}
   return (
     <div>
       <Button className="login-btn" onClick={() => setShow(true)}>Register</Button>
@@ -48,9 +81,8 @@ const LoginModal = () => {
           size='md'
           centered
         >
-
           <Modal.Body>
-            <form>
+            <form onSubmit={(event) => {onSubmit(event)}}>
               <h3>Register</h3>
               <div className="form-group">
                 <label>Display Name</label>
@@ -83,29 +115,28 @@ const LoginModal = () => {
                         className="form-control" 
                         placeholder="Enter password" 
                         onChange = {event => onChangeHandler(event)}/>
-
               </div>
 
               <div className="form-group">
                 <label>Re-enter Password</label>
-                <input type="password" 
+                <input type="password"
+                        name="reenterPassword"
+                        value={reenterPassword}
+                        id="reenterPassword"
                         className="form-control" 
-                        placeholder="Re-enter password" />
+                        placeholder="Re-enter password"
+                        onChange = {event => onChangeHandler(event)} />
               </div>
-            </form>
-          </Modal.Body>
-
-          <Modal.Footer>
-            <button className="btn btn-primary btn-block"
-                    onClick={event => {
-                      createUserWithEmailAndPasswordHandler(event, email, password);
-                    }}>
-                      Sign Up
-            </button>
+          
+            <div className="invalid-feedback d-block"> {error.toString()}</div>
+            <Button className="btn btn-primary btn-block" type='submit'>
+                Sign Up
+            </Button>
             <p className="forgot-password text-right">
               Already registered <a href="#">sign in?</a>
             </p>
-          </Modal.Footer>
+            </form>
+            </Modal.Body>
         </Modal>
       </div>
     </div>

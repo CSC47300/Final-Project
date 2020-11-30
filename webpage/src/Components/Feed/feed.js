@@ -1,17 +1,46 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, useCallback } from 'react';
 import { UserContext } from '../../Providers/UserProvider.js';
 import { db } from '../../firebase';
 import { createTrack, getElapsedTime } from '../../Helpers/helpers';
+import { Col, Container, Row } from 'react-bootstrap';
+import UserLikes from '../Likes/likes';
+import Player from '../Player/player.js';
+import Track from '../Track/track';
+import './feed.css';
 
-const Feed = (props) => {
-
+const Feed = ({ user }) => {
     const [tracks, setTracks] = useState([]);
+    const [currentlyPlaying, setCurrent] = useState({
+        current: "",
+        id: ""
+    });
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [currentInfo, setInfo] = useState({
+        img: '',
+        songName: '',
+        artistName: ''
+    })
 
-    const user = useContext(UserContext);
+    // const user = useContext(UserContext);
+
+    const togglePlaying = (item = currentlyPlaying) => {
+        // console.log(currentlyPlaying.current)
+        // if (currentlyPlaying.current != "") {
+        //     console.log(currentlyPlaying.current.current, item.id != currentlyPlaying.id);
+        //     if (currentlyPlaying.current.current !== null && item.id != currentlyPlaying.id) currentlyPlaying.current.pause();
+        // }
+        // if (item.id != currentlyPlaying.id && item.id !== "") {
+        //     currentlyPlaying.current.pause();
+        // }
+        if (item.current != "") {
+            item.current.playPause();
+            setIsPlaying(isPlaying => !isPlaying);
+        }
+    }
 
     const getPosts = () => {
         let posts = [], following = [], requests = [];
-        db.collection('users-1').doc('user_0').get().then(doc => {
+        db.collection('users-1').doc('user_2').get().then(doc => {
             const data = doc.data();
             following = [...data.following];
         }).then(() => {
@@ -22,7 +51,6 @@ const Feed = (props) => {
         }).then(docs => {
             let items = docs.map(doc => doc.data());
             for (let i = 0; i < items.length; i++) {
-                // let data = items[i];
                 let newPosts = items[i].posts;
                 newPosts.forEach(post => {          // Get all posts by user and add the userName to the post object
                     post["postedBy"] = items[i].displayName;
@@ -42,25 +70,29 @@ const Feed = (props) => {
             for (let i = 0; i < items.length; i++) {
                 let data = items[i];      // Create tracks
                 tracks.push(
-                    createTrack(
-                        `${data.trackId}_inst_${i}`,
-                        posts[i]["postedBy"],
-                        data.userId,
-                        getElapsedTime(data.uploadDate),
-                        data.audio,
-                        props.isPlaying,
-                        props.togglePlay,
-                        data.trackName,
-                        data.playCount,
-                        data.likeCount,
-                        data.commentCount,
-                        data.repostCount,
-                        data.trackArt,
-                    )
+                    <Track
+                        key={`${data.trackId}_inst_${i}`}
+                        isPlaying={isPlaying}
+                        likes={data.likeCount}
+                        reposts={data.repostCount}
+                        playCount={data.playCount}
+                        // commentCount={commentCount}
+                        songName={data.trackName}
+                        artistName={posts[i]["postedBy"]}
+                        userName={data.userId}
+                        albumArt={data.trackArt}
+                        timeFrame={getElapsedTime(data.uploadDate)}
+                        track={data.audio}
+                        id={`${data.trackId}_inst_${i}`}
+                        togglePlaying={togglePlaying}
+                        setCurrent={setCurrent}
+                        setInfo={setInfo}
+                        currentlyPlaying={currentlyPlaying}
+                    />
                 )
             }
             setTracks(tracks);      // Push tracks to state
-        })
+        }).catch(err => console.error(err))
     }
 
     const getDefaultPosts = () => {
@@ -83,32 +115,61 @@ const Feed = (props) => {
                         data.userId,
                         getElapsedTime(data.uploadDate),
                         data.audio,
-                        props.isPlaying,
-                        props.togglePlay,
+                        isPlaying,
+                        togglePlaying,
                         data.trackName,
                         data.playCount,
                         data.likeCount,
-                        data.commentCount,
                         data.repostCount,
                         data.trackArt,
+                        setCurrent,
+                        setInfo,
+                        currentlyPlaying
                     )
                 )
             }
-            setTracks(tracks);      // Push tracks to state
-        })
+            if (tracks.length === 0) getDefaultPosts();
+            else setTracks(tracks);      // Push tracks to state
+        }).catch(err => console.error(err))
     }
 
     useEffect(() => {
-        // getPosts();
-        getDefaultPosts();
-    }, [])
+        if (user === null) return;
+        if (user !== undefined) {
+            getPosts();
+        } else {
+            getDefaultPosts();
+        }
+    }, [user])
 
     return (
         <>
-            <h2>
-                Here are the latest posts from the artists you follow:
-            </h2>
-            {tracks}
+            <Container className="feed">
+                <Row>
+                    <Col className="track-column" md={9} lg={9} sm="auto" xs="auto">
+                        <h2 className="latest-header">
+                            Here are the latest posts from the artists you follow:
+                    </h2>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col className="track-column" md={9} lg={9} sm="auto" xs="auto">
+                        {tracks}
+                    </Col>
+                    <Col lg={3} md={3}>
+                        <div>Likes:</div>
+                        {/* <UserLikes /> */}
+                        <div>Listening History:</div>
+                    </Col>
+                </Row>
+            </Container>
+            <Player
+                togglePlay={togglePlaying}
+                isPlaying={isPlaying}
+                img={currentInfo.img}
+                songName={currentInfo.songName}
+                artistName={currentInfo.artistName}
+            />
         </>
     )
 }
