@@ -10,8 +10,11 @@
 } */
 
 .wave-container {
-    padding-right: 30px;
     padding-left: 0;
+    padding-right: 0;
+}
+.wave-col {
+    margin-left: 50px;
 }
 .wave {
     width: 100%;
