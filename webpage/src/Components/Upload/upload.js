@@ -39,7 +39,6 @@ function Upload(props){
 
         }
         else {
-          setTrackName(event.target.files[0].name.split('.')[0]);
           let Trackref = ref.child('tracks/' + file.name);
           Trackref.put(file).then(function(snapshot) {
             console.log('Uploaded the track ' + file.name);
@@ -108,6 +107,8 @@ function Upload(props){
     window.alert("You have not selected an Track");
   }
   else{
+    setTrackName(event.target.elements.trackname.value);
+
     db.collection("tracks").add({
       audio: selectedTrack,
       commentCount: 0,
@@ -161,14 +162,22 @@ function Upload(props){
         <div class="form">
           <div class="row pt-5 m-2">
             <div class="col">
-                  <h5 class="card-title text-center">Select your track</h5>
+                <h5 class="card-title text-center">Select your track</h5>
             </div>
           </div>
+
           <div class="form-row justify-content-center">
-            <div class="col-4">
-              <input type="file" onChange={trackSelectedHandler} required/>
+              <div class="col-4">
+                <input type="file" onChange={trackSelectedHandler} required/>
+              </div>
             </div>
-          </div>
+
+            <div class="form-row justify-content-center mt-3">
+              <div class="col-4">
+                <input type="text" class="form-control" id="trackname" placeholder="Track Name"></input>
+              </div>
+            </div>
+          
           <div class="row pt-5 m-2">
             <div class="col">
                   <h5 class="card-title text-center">Select your Image</h5>
