@@ -28,14 +28,14 @@ const getElapsedTime = (time) => {
 }
 
 const createTrack = (trackId, userName, artistName, uploadDate, audio, isPlaying, togglePlay,
-    trackName, playCount, likeCount, commentCount, repostCount, trackArt) => {
+    trackName, playCount, likeCount, repostCount, trackArt, setCurrent, setInfo, currentlyPlaying) => {
     return <Track
         key={trackId}
         isPlaying={isPlaying}
         likes={likeCount}
         reposts={repostCount}
         playCount={playCount}
-        commentCount={commentCount}
+        // commentCount={commentCount}
         songName={trackName}
         artistName={artistName}
         userName={userName}
@@ -43,7 +43,10 @@ const createTrack = (trackId, userName, artistName, uploadDate, audio, isPlaying
         timeFrame={uploadDate}
         track={audio}
         id={trackId}
-        togglePlay={togglePlay}
+        togglePlaying={togglePlay}
+        setCurrent={setCurrent}
+        setInfo={setInfo}
+        currentlyPlaying={currentlyPlaying}
     />
 }
 
