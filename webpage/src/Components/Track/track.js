@@ -14,6 +14,7 @@ function Track({ ...props }) {
     const [isPlaying, setIsPlaying] = useState(false);
     const waveform = useRef();
     const user = useContext(UserContext);
+    const trackId = props.id.split('_inst')[0];
 
     useEffect(() => {
         const track = props.track;
@@ -27,12 +28,13 @@ function Track({ ...props }) {
             container: document.getElementById(props.id),
             backend: 'WebAudio',
             height: 70,
-            progressColor: '#2D5BFF',
+            progressColor: '#398cd4',
+            backgroundColor: '#f7f7f7',
             responsive: true,
             waveColor: '#b5b5b5',
-            cursorColor: '#2D5BFF',
+            cursorColor: '#398cd4',
             normalize: true,
-            pixelRatio: 1,
+            pixelRatio: 2,
             responsive: true
         })
         waveform.current.load(track);
@@ -52,19 +54,19 @@ function Track({ ...props }) {
         }
         props.togglePlaying({
             current: waveform.current,
-            id: props.id
+            id: trackId
         });
         props.setCurrent({
             current: waveform.current,
-            id: props.id
+            id: trackId
         });
         if (!played && user != null) {
-            db.collection('tracks').doc(props.id).update({ playCount: props.playCount + 1 });
+            db.collection('tracks').doc(trackId).update({ playCount: props.playCount + 1 });
             db.collection('users').doc(user.uid).get().then(doc => {
                 const data = doc.data();
-                if (!data.playedTracks.includes(props.id)) {
+                if (!data.playedTracks.includes(trackId)) {
                     db.collection('users').doc(user.uid).update({
-                        playedTracks: firebase.firestore.FieldValue.arrayUnion(props.id)
+                        playedTracks: firebase.firestore.FieldValue.arrayUnion(trackId)
                     })
                 }
             })
@@ -75,17 +77,17 @@ function Track({ ...props }) {
 
     const handleLike = () => {
         if (user != null) {
-            db.collection('tracks').doc(props.id).get().then(doc => {
+            db.collection('tracks').doc(trackId).get().then(doc => {
                 let data = doc.data();
                 if (data.likedBy.includes(user.uid)) return true;
                 else return false;
             }).then(likedByCurrentUser => {
-                db.collection('tracks').doc(props.id).update({
+                db.collection('tracks').doc(trackId).update({
                     likeCount: likedByCurrentUser === false ? firebase.firestore.FieldValue.increment(1) : props.likes,
                     likedBy: firebase.firestore.FieldValue.arrayUnion(user.uid)
                 });
                 db.collection('users').doc(user.uid).update({
-                    likedTracks: firebase.firestore.FieldValue.arrayUnion(props.id)
+                    likedTracks: firebase.firestore.FieldValue.arrayUnion(trackId)
                 });
                 if (!likedByCurrentUser) {
                     setLikes(likes => likes + 1);
@@ -97,7 +99,7 @@ function Track({ ...props }) {
 
     const handleRepost = () => {
         if (user != null) {
-            db.collection('tracks').doc(props.id).get().then(doc => {
+            db.collection('tracks').doc(trackId).get().then(doc => {
                 let data = doc.data();
                 if (data.repostedBy.includes(user.uid)) return true;
                 else return false;
@@ -105,11 +107,11 @@ function Track({ ...props }) {
                 if (!repostedByUser) {
                     db.collection('users').doc(user.uid).update({
                         posts: firebase.firestore.FieldValue.arrayUnion({
-                            trackId: props.id,
+                            trackId: trackId,
                             postDate: Date.now()
                         })
                     })
-                    db.collection('tracks').doc(props.id).update({
+                    db.collection('tracks').doc(trackId).update({
                         repostCount: firebase.firestore.FieldValue.increment(1),
                         repostedBy: firebase.firestore.FieldValue.arrayUnion(user.uid)
                     })
