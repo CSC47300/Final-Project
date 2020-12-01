@@ -1,52 +1,39 @@
-import React, {useState,useEffect } from 'react';
+import React, {useState,useEffect,useContext } from 'react';
 import { createTrack, getElapsedTime } from '../../Helpers/helpers';
 import Track from '../Track/track';
 import { db } from '../../firebase';
-
+import { UserContext } from '../../Providers/UserProvider';
 
 
 
 const History = (props) => 
   {
    
-    let name;
+    let user = useContext(UserContext);
 
-    if (props.match.params.profileName) {
-      name = props.match.params.profileName;} 
-    else{ name = 'Guest'; }
   
     const [tracks, setTracks] = useState([]);
+    const [history, setHistory] = useState([]);
   
+    const getUserHistory = ()=> {
+        let history = [];
+
+
+        db.collection('user').where('userId', '==', uid).get().then(querySnapshot => {
+          const data = querySnapshot.docs.map(doc => doc.data());
+          //data.forEach(data => {
+            
+           // data.playedTracks
+          })
+
+    }
+
     const getUserTracks = () => {
       let tracks = [];
   
-      console.log(props.match.params.profileName);
-      db.collection('tracks').where('userId', '==', name).get().then(querySnapshot => {
-        const data = querySnapshot.docs.map(doc => doc.data());
-        data.forEach(data => {
-          tracks.push(createTrack(
-            data.trackId,
-            data.userId,
-            data.userId,
-            getElapsedTime(data.uploadDate),
-            data.audio,
-            props.isPlaying,
-            props.togglePlay,
-            data.trackName,
-            data.playCount,
-            data.likeCount,
-            data.commentCount,
-            data.repostCount,
-            data.trackArt
-          ))
-          setTracks(tracks);
-        })
-      })
+      //MAKE SURE TO CHANGE THIS LATER!!!!!!!!!
+      
     }
-  
-    useEffect(() => {
-      getUserTracks();
-    }, [])
 
 
 
