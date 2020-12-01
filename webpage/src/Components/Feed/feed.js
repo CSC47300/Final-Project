@@ -20,7 +20,7 @@ const Feed = ({ user }) => {
         songName: '',
         artistName: ''
     })
-
+    const [header, setHeader] = useState("");
     // const user = useContext(UserContext);
 
     const togglePlaying = (item = currentlyPlaying) => {
@@ -40,12 +40,12 @@ const Feed = ({ user }) => {
 
     const getPosts = () => {
         let posts = [], following = [], requests = [];
-        db.collection('users-1').doc('user_2').get().then(doc => {
+        db.collection('users').doc(user.uid).get().then(doc => {
             const data = doc.data();
             following = [...data.following];
         }).then(() => {
             following.forEach(artist => {
-                requests.push(db.collection('users-1').doc(artist).get());
+                requests.push(db.collection('users').doc(artist).get());
             })
             return Promise.all(requests);
         }).then(docs => {
@@ -60,8 +60,8 @@ const Feed = ({ user }) => {
             posts.sort((a, b) => b.postDate - a.postDate);  // Sort by latest posts first
             requests = [];
             // Get all tracks from posts
-            for (let i = 0; i < posts.length || i < 25; i++) { // Hard limit on posts shown, this can be changed in future
-                requests.push(db.collection('tracks-1').doc(posts[i].trackId).get());
+            for (let i = 0; i < posts.length && i < 25; i++) { // Hard limit on posts shown, this can be changed in future
+                requests.push(db.collection('tracks').doc(posts[i].trackId).get());
             }
             return Promise.all(requests);
         }).then(docs => {
@@ -79,7 +79,7 @@ const Feed = ({ user }) => {
                         // commentCount={commentCount}
                         songName={data.trackName}
                         artistName={posts[i]["postedBy"]}
-                        userName={data.userId}
+                        userName={data.userDisplayName}
                         albumArt={data.trackArt}
                         timeFrame={getElapsedTime(data.uploadDate)}
                         track={data.audio}
@@ -92,6 +92,8 @@ const Feed = ({ user }) => {
                 )
             }
             setTracks(tracks);      // Push tracks to state
+            if (tracks.length < 1) getDefaultPosts();
+            setHeader("Here are the latest posts from the artists you follow:");
         }).catch(err => console.error(err))
     }
 
@@ -100,7 +102,7 @@ const Feed = ({ user }) => {
         db.collection('tracks-data').doc('recent-uploads').get().then(doc => {
             let recents = doc.data().recent;
             recents.forEach(track => {
-                requests.push(db.collection('tracks-1').doc(track).get());
+                requests.push(db.collection('tracks').doc(track).get());
             })
             return Promise.all(requests);
         }).then(docs => {
@@ -111,8 +113,8 @@ const Feed = ({ user }) => {
                 tracks.push(
                     createTrack(
                         `${data.trackId}_inst_${i}`,
-                        data.userId,
-                        data.userId,
+                        data.userDisplayName,
+                        data.userDisplayName,
                         getElapsedTime(data.uploadDate),
                         data.audio,
                         isPlaying,
@@ -128,8 +130,8 @@ const Feed = ({ user }) => {
                     )
                 )
             }
-            if (tracks.length === 0) getDefaultPosts();
-            else setTracks(tracks);      // Push tracks to state
+            setTracks(tracks);      // Push tracks to state
+            setHeader("Most recently uploaded tracks:");
         }).catch(err => console.error(err))
     }
 
@@ -142,14 +144,15 @@ const Feed = ({ user }) => {
         }
     }, [user])
 
+    // const header = user !== undefined ? "Here are the latest posts from the artists you follow:" : "Most recently uploaded tracks:";
     return (
         <>
             <Container className="feed">
                 <Row>
                     <Col className="track-column" md={9} lg={9} sm="auto" xs="auto">
                         <h2 className="latest-header">
-                            Here are the latest posts from the artists you follow:
-                    </h2>
+                            {header}
+                        </h2>
                     </Col>
                 </Row>
                 <Row>
