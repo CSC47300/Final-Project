@@ -2,8 +2,23 @@
     border-radius: 0 !important;
     padding-left: 50px;
     padding-right: 50px;
+    background-color: rgb(43, 43, 43) !important;
 }
 
 .login-container {
     flex-direction: row;
+}
+
+.navbar-brand {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    padding-left: 4%;
+}
+
+.dropdown-menu {
+    background-color:  rgb(43, 43, 43) !important;
+}
+
+.dropdown-item {
+    color: white;
 }
