@@ -44,7 +44,7 @@
 }
 
 .track {
-    padding-top: 40px;
+    padding-top: 20px;
 }
 .play-btn:hover {
     opacity: 100%;
@@ -60,6 +60,14 @@
     z-index: -1;
 }
 
+/* div {
+    color: rgb(230, 230, 230);
+} */
+
+.link {
+    color: rgb(102, 102, 102);
+}
+
 .track-art:hover ~.play-btn{
     opacity: 100%;
 }
@@ -71,18 +79,15 @@
     border-style: solid;
     font-size: 12px;
     margin-right: 10px;
+    background-color: #b6b6b6;
 }
 
 .liked {
-    background-color: rgb(224, 97, 97);
+    background-color: #c580e0;
 }
 .social-tag {
     font-size: 12px;
     padding-right: 10px;
-}
-
-.link {
-    color: rgb(48, 48, 48);
 }
 
 .artist {
