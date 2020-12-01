@@ -7,7 +7,7 @@ import "firebase/auth";
 import "firebase/firestore";
 import { UserContext } from '../../Providers/UserProvider';
 import { signOut } from '../../firebase.js';
-
+import logo from './musaic-logo.png';
 
 const NavBar = () => {
 
@@ -31,7 +31,6 @@ const NavBar = () => {
                     <NavDropdown.Item href="/settings">Settings</NavDropdown.Item>
                     <NavDropdown.Item onClick={() => signOut()} >Logout</NavDropdown.Item>
                 </NavDropdown>
-                <Button onClick={() => console.log(user)}>test</Button>
             </Nav>
 
     }
@@ -54,7 +53,12 @@ const NavBar = () => {
     return (
         <div>
             <Navbar className="main-nav" bg="dark" variant="dark" expand="md">
-                <Navbar.Brand href="/">Newercloud</Navbar.Brand>
+                <Navbar.Brand href="/">
+                    <img
+                        src={logo}
+                        width='70'
+                    />
+                </Navbar.Brand>
                 {display}
             </Navbar>
         </div>
