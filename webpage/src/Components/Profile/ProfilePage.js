@@ -1,4 +1,4 @@
-import React, { Component, useState, useEffect } from 'react';
+import React, { Component, useState, useEffect, useRef } from 'react';
 import { Tabs, Tab, Button } from 'react-bootstrap';
 import './ProfilePage.css';
 import { MDBIcon, MDBRow, MDBCol } from "mdbreact";
@@ -13,6 +13,17 @@ const ProfilePage = (props) => {
   if (props.match.params.profileName) {
     name = props.match.params.profileName;
   } else { name = 'Guest'; }
+  
+  
+    db.collection('users').where('displayName', '==', name).get().then(querySnapshot => {
+    const data = querySnapshot.docs.map(doc => doc.data());
+    const values = data[0];
+    console.log(data, "user in db with this name", typeof data);
+   // console.log(values.displayName);
+    
+    }
+) 
+  
 
   const [tracks, setTracks] = useState([]);
 
@@ -46,7 +57,7 @@ const ProfilePage = (props) => {
   useEffect(() => {
     getUserTracks();
   }, [])
-
+  
   return (
 
     <div className="profile-page">
@@ -58,7 +69,7 @@ const ProfilePage = (props) => {
         </MDBCol>
         <MDBCol xl="5" md="4">
           <div>
-            <h1>{props.userName}</h1>
+            <h1>llll</h1>
             <p>
               <MDBIcon icon='quote-left' /> Lorem ipsum dolor sit amet,
                 consectetur adipisicing elit. Quod eos id officiis hic tenetur
