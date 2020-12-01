@@ -1,43 +1,86 @@
-import React, {useState } from 'react';
-import { Modal, Button} from 'react-bootstrap';
-import { auth, generateUserDocument } from "../../firebase";
+import React, { useState } from 'react';
+import { Modal, Button } from 'react-bootstrap';
+import { auth, generateUserDocument, db } from "../../firebase";
 
 
 const LoginModal = () => {
-  
-  const [show,setShow] = useState(false);
+
+  const [show, setShow] = useState(false);
   const [email, setEmail] = useState('');
   const [displayName, setDisplayName] = useState("");
   const [password, setPassword] = useState('');
-  const [, setError] = useState(null);
- 
+  const [reenterPassword, setReenterPassword] = useState("");
+  const [error, setError] = useState("");
+
   const createUserWithEmailAndPasswordHandler = async (event, email, password) => {
     event.preventDefault();
-    try{
-      const {user} = await auth.createUserWithEmailAndPassword(email, password);
-      generateUserDocument(user, {displayName});
+    if (password != reenterPassword) {
+      setError("Passwords do not match")
     }
-    catch(error){
-      setError('Error Signing up with email and password');
+    else if (displayName == "") {
+      setError("Choose a username")
     }
-      
+    else if (createUser) {
+
+      try {
+        const { user } = await auth.createUserWithEmailAndPassword(email, password);
+        generateUserDocument(user, { displayName }).then(user => {
+          db.collection("users").doc(user.uid).update({
+            followers: [],
+            following: [],
+            likedTracks: [],
+            playedTracks: [],
+            posts: [],
+            trackIds: []
+          })
+        })
+        console.log('success')
+      }
+      catch (error) {
+        setError(error);
+
+      }
+    }
+
     setEmail("");
     setPassword("");
     setDisplayName("");
+    setReenterPassword("");
   };
 
-  const onChangeHandler = (event) => {
-    const {name, value} = event.currentTarget;
+  const createUser = () => {
+    db.collection('users').where('displayName', '==', displayName).get()
+      .then(snapshot => {
+        if (snapshot.empty) {
+          return true
+        } else {
+          return false
+        }
+      })
+  }
 
-    if(name === 'userEmail') {
+  const onChangeHandler = (event) => {
+    const { name, value } = event.currentTarget;
+
+    if (name === 'userEmail') {
       setEmail(value);
     }
-    else if(name === 'userPassword'){
+    else if (name === 'userPassword') {
       setPassword(value);
     }
-};
-  
+    else if (name === 'displayName') {
+      setDisplayName(value);
+    }
+    else if (name === 'reenterPassword') {
+      setReenterPassword(value);
+    }
+  };
 
+  const onSubmit = (e) => {
+    console.log('onSubmit()');
+    createUserWithEmailAndPasswordHandler(e, email, password)
+
+  }
   return (
     <div>
       <Button className="login-btn" onClick={() => setShow(true)}>Register</Button>
@@ -48,69 +91,67 @@ const LoginModal = () => {
           size='md'
           centered
         >
-
           <Modal.Body>
-            <form>
+            <form onSubmit={(event) => { onSubmit(event) }}>
               <h3>Register</h3>
               <div className="form-group">
                 <label>Display Name</label>
                 <input type="label"
-                        id="displayName"
-                        name="displayName"
-                        value={displayName}
-                        className="form-control" 
-                        placeholder="Enter desired display name" 
-                        onChange = {event => onChangeHandler(event)}/>
+                  id="displayName"
+                  name="displayName"
+                  value={displayName}
+                  className="form-control"
+                  placeholder="Enter desired display name"
+                  onChange={event => onChangeHandler(event)} />
               </div>
 
               <div className="form-group">
                 <label>Email address</label>
                 <input type="email"
-                        id="userEmail"
-                        name="userEmail"
-                        value={email}
-                        className="form-control" 
-                        placeholder="Enter email" 
-                        onChange = {event => onChangeHandler(event)}/>
+                  id="userEmail"
+                  name="userEmail"
+                  value={email}
+                  className="form-control"
+                  placeholder="Enter email"
+                  onChange={event => onChangeHandler(event)} />
               </div>
 
               <div className="form-group">
                 <label>Password</label>
-                <input type="password" 
-                        name="userPassword"
-                        value={password}
-                        id="userPassword"
-                        className="form-control" 
-                        placeholder="Enter password" 
-                        onChange = {event => onChangeHandler(event)}/>
-
+                <input type="password"
+                  name="userPassword"
+                  value={password}
+                  id="userPassword"
+                  className="form-control"
+                  placeholder="Enter password"
+                  onChange={event => onChangeHandler(event)} />
               </div>
 
               <div className="form-group">
                 <label>Re-enter Password</label>
-                <input type="password" 
-                        className="form-control" 
-                        placeholder="Re-enter password" />
+                <input type="password"
+                  name="reenterPassword"
+                  value={reenterPassword}
+                  id="reenterPassword"
+                  className="form-control"
+                  placeholder="Re-enter password"
+                  onChange={event => onChangeHandler(event)} />
               </div>
+
+              <div className="invalid-feedback d-block"> {error.toString()}</div>
+              <Button className="btn btn-primary btn-block" type='submit'>
+                Sign Up
+            </Button>
+              <p className="forgot-password text-right">
+                Already registered <a href="#">sign in?</a>
+              </p>
             </form>
           </Modal.Body>
-
-          <Modal.Footer>
-            <button className="btn btn-primary btn-block"
-                    onClick={event => {
-                      createUserWithEmailAndPasswordHandler(event, email, password);
-                    }}>
-                      Sign Up
-            </button>
-            <p className="forgot-password text-right">
-              Already registered <a href="#">sign in?</a>
-            </p>
-          </Modal.Footer>
         </Modal>
       </div>
     </div>
   );
-  
+
 }
 
 export default LoginModal;
