@@ -35,7 +35,7 @@ const History = (props) =>
       db.collection('users').doc(user.uid).get().then(doc => {
         const data = doc.data();
        console.log(data.playedTracks);
-       db.collection('tracks').where('trackId', "in", data.playedTracks).limit(3).get().then(querySnapshot => {
+       db.collection('tracks').where('trackId', "in", data.playedTracks).get().then(querySnapshot => {
           const track = querySnapshot.docs.map(doc => doc.data());
           track.forEach(data => {
             tracks.push(createTrack(
@@ -69,7 +69,6 @@ const History = (props) =>
     
 
     <div class="container  shadow">
-  
       <div class="row  m-3">  
             <div class = "container  border-top border-grey">
                  <div class="col">

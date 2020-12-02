@@ -69,15 +69,13 @@ const UserLikes = (props) =>
     
 
     <div class="container  shadow">
-  
-      <div class="row  m-3">  
+      <div class="row  m-2">  
             <div class = "container  border-top border-grey">
                  <div class="col">
                     {likes.reverse()}
                 </div>
             </div>    
-      </div>
-    
+      </div>  
     </div>
   
   );
