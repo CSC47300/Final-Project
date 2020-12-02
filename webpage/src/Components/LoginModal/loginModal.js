@@ -2,7 +2,8 @@
 import React, {useState} from 'react';
 import { Modal, Button} from 'react-bootstrap';
 import './loginModal.css';
-import {auth} from '../../firebase';
+import {auth, db} from '../../firebase';
+import { useHistory } from 'react-router';
 
 
 
@@ -15,6 +16,7 @@ const LoginModal = (props) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
+  const history = props.history;
 
   
 
@@ -24,6 +26,12 @@ const LoginModal = (props) => {
       auth.signInWithEmailAndPassword(email, password)
       .then(function(){
         console.log("success! " + auth.currentUser.uid)
+        db.collection('users').doc(auth.currentUser.uid).get()
+        .then(documentSnapshot=>{
+          let data = documentSnapshot.data();
+          window.location.href='/'+data.displayName;
+        })
+
       })
       .catch(error => {
       setError(error.message);
@@ -45,7 +53,6 @@ const LoginModal = (props) => {
     const onSubmit = (e) => {
       console.log('onSubmit()');
       signInWithEmailAndPasswordHandler(e, email, password)
-      
     }
 
     

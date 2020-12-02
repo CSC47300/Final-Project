@@ -37,7 +37,7 @@ const NavBar = () => {
 
     login =
         <Nav className="ml-auto login-container">
-            <LoginModal />
+            <LoginModal/>
             <RegisterModal />
         </Nav>
 
