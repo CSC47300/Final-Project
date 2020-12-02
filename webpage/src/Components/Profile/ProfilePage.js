@@ -59,7 +59,7 @@ const ProfilePage = (props) => {
             data.trackName,
             data.playCount,
             data.likeCount,
-            // data.commentCount,
+            //data.commentCount,
             data.repostCount,
             data.trackArt,
             setCurrent,
