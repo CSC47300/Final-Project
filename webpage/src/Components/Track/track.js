@@ -61,7 +61,6 @@ function Track({ ...props }) {
             id: trackId
         });
         if (!played && user != null) {
-            db.collection('tracks').doc(trackId).update({ playCount: props.playCount + 1 });
             db.collection('users').doc(user.uid).get().then(doc => {
                 const data = doc.data();
                 if (!data.playedTracks.includes(trackId)) {
@@ -69,6 +68,36 @@ function Track({ ...props }) {
                         playedTracks: firebase.firestore.FieldValue.arrayUnion(trackId)
                     })
                 }
+            })
+        }
+        if (!played) {
+            db.collection('tracks').doc(trackId).update({ playCount: props.playCount + 1 });
+            db.collection('tracks-data').doc('popular-uploads').get().then(doc => {
+                let popular = doc.data().popular;
+                let oldObject = {
+                    trackId: trackId,
+                    plays: props.playCount
+                };
+                let newObject = {
+                    trackId: trackId,
+                    plays: props.playCount + 1
+                }
+                if (popular.includes(oldObject)) { }
+                else if (popular.length < 25) {
+                    popular.push(newObject);
+                } else {
+                    for (let i = 0; i < popular.length; i++) {
+                        if (popular[i].plays < newObject.plays) {
+                            popular.splice(i, 1);
+                            popular.push(newObject);
+                            break;
+                        }
+                    }
+                }
+                popular.sort((a, b) => b.plays - a.plays);
+                db.collection('tracks-data').doc('popular-uploads').update({
+                    popular: popular
+                })
             })
         }
         setPlayed(true);
@@ -129,7 +158,7 @@ function Track({ ...props }) {
             <Row className="poster">
                 <Col className="">
                     <img className="user-avatar" src="https://i.imgur.com/p3vccAp.jpeg" alt="poster-avatar" />
-                    &nbsp;<a className="link" href={`/profile/${props.userName}`}>{props.userName}</a>
+                    &nbsp;<a className="link" href={`/${props.userName}`}>{props.userName}</a>
                     &nbsp;{post} a track {props.timeFrame} ago
                 </Col>
 
@@ -143,13 +172,13 @@ function Track({ ...props }) {
                 </Col>
                 <Col className="wave-col">
                     <Row><div>
-                        <a className="link artist" href={`/profile/${props.artistName}`}>{props.artistName}</a>
+                        <a className="link artist" href={`/${props.artistName}`}>{props.artistName}</a>
                     </div></Row>
-                    <Row><div>
+                    <Row className="track-song-name"><div>
                         {props.songName}
                     </div></Row>
                     <Row className="">
-                        <Col className="waveform wave-container" md={9}>
+                        <Col className="waveform wave-container">
                         </Col>
                     </Row>
                     <Row className="social">
@@ -159,9 +188,8 @@ function Track({ ...props }) {
                         <div ><button className="social-icon repost" onClick={handleRepost}>
                             <BsArrowRepeat /> {props.reposts}
                         </button></div>
-                        <Col md={6}>
-                        </Col>
-                        <div className="social-tag"><BsPlay /> {props.playCount}</div>
+
+                        <div className="social-tag play"><BsPlay /> {props.playCount}</div>
                         {/* <div className="social-tag">
                             <BsChatSquare /> {props.commentCount}
                         </div> */}
