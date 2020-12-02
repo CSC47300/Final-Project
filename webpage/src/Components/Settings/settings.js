@@ -6,7 +6,6 @@ import firebase from "firebase/app";
 
 function Settings(props){
    
-        const inputPhoto = useRef("https://mdbootstrap.com/img/Photos/Avatars/img(31).jpg");
         const inputFirstName = useRef(null);
         const inputLastName = useRef();
         const inputEmail = useRef();
@@ -15,11 +14,12 @@ function Settings(props){
         const inputDescription = useRef();
         const user = useContext(UserContext);
         const [selectedImage ,setImage] = useState(null);
-        const [selectedImagePreview ,setImagePrev] = useState("https://mdbootstrap.com/img/Photos/Avatars/img(31).jpg");
+        const [selectedImagePreview ,setImagePrev] = useState("https://cdn.pixabay.com/photo/2018/04/18/18/56/user-3331257__340.png");
         let ref = firebase.storage().ref();
    
     function imageSelectedHandler(event) {
       const file = event.target.files[0];
+      console.log(file);
       if (event.target.files.length == 0) {
         setImage(null);
         setImagePrev(null);
@@ -50,6 +50,7 @@ function Settings(props){
       if (selectedImage == null) {
         window.alert("You have not selected a Image");
       }
+      console.log(selectedImage);
       console.log(inputFirstName.current.value);
       console.log(inputLastName.current.value);
       console.log(inputEmail.current.value);

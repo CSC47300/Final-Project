@@ -16,19 +16,25 @@ const ProfilePage = (props) => {
   if (props.match.params.profileName) {
     name = props.match.params.profileName;
   } else { name = 'Guest'; }
-  
-  
+
+
+  const [userNow, setUser] = useState([]);
+const getUserNow = () => {
     db.collection('users').where('displayName', '==', name).get().then(querySnapshot => {
     const data = querySnapshot.docs.map(doc => doc.data());
     const values = data[0];
-    console.log(data, "user in db with this name", typeof data);
+   //console.log(data, "user in db with this name", typeof data);
    // console.log(values.displayName);
-    
+    setUser(values);
+      }
+    ) 
     }
-) 
+  //getUserNow();
+  useEffect(() => {
+    getUserNow();
+  }, [userNow])
   
-
-  const [tracks, setTracks] = useState([]);
+  const [tracks, setTracks] = useState();
   const [currentlyPlaying, setCurrent] = useState({
     current: "",
     id: ""
@@ -114,21 +120,16 @@ const ProfilePage = (props) => {
         <br></br>
         <MDBRow>
           <MDBCol xl="4" md="4" className="mb-3">
-            <img src="https://mdbootstrap.com/img/Photos/Avatars/img(31).jpg" className="img-fluid z-depth-1 rounded-circle" alt="" />
+            <img src={userNow.photoURL} className="img-fluid z-depth-1 rounded-circle" alt="poster-avatar" />
           </MDBCol>
           <MDBCol xl="5" md="4">
             <div>
-              <h1>{props.userName}</h1>
+              <h1>{userNow.displayName}</h1>
               <p>
-                <MDBIcon icon='quote-left' /> Lorem ipsum dolor sit amet,
-                consectetur adipisicing elit. Quod eos id officiis hic tenetur
-                quae quaerat ad velit ab. Lorem ipsum dolor sit amet,
-                consectetur adipisicing elit. Dolore cum accusamus eveniet
-                molestias voluptatum inventore laboriosam labore sit,
-                aspernatur praesentium iste impedit quidem dolor veniam.
+                <MDBIcon icon='quote-left' /> {userNow.description}
               </p>
 
-              <h6>email: google@gmail.com {props.email}</h6>
+              <h6>email: {userNow.email}</h6>
               <br></br>
               <div style={{ display: "flex", justifyContent: "space-between", width: "40%" }}>
                 <h6>posts: 0 {props.posts}</h6>
