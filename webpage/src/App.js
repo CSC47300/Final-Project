@@ -11,6 +11,7 @@ import Feed from './Components/Feed/feed';
 import { UserContext } from './Providers/UserProvider';
 
 
+
 function App() {
   const user = useContext(UserContext);
 
@@ -31,7 +32,6 @@ function App() {
             </Route>
           </Switch>
         </Router>
-
       </div>
     </>
   );

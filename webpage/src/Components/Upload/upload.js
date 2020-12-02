@@ -18,6 +18,11 @@ function Upload(props) {
   const history = useHistory();
   let ref = firebase.storage().ref();
 
+  function trackNameHandler(event){
+
+   // [event.target.name]: event.target.value
+  }
+
   function trackSelectedHandler(event) {
 
     const file = event.target.files[0];
@@ -34,7 +39,6 @@ function Upload(props) {
 
         }
         else {
-          setTrackName(event.target.files[0].name.split('.')[0]);
           let Trackref = ref.child('tracks/' + file.name);
           Trackref.put(file).then(function (snapshot) {
             console.log('Uploaded the track ' + file.name);
@@ -165,6 +169,16 @@ function Upload(props) {
             <div className="form-row justify-content-center">
               <div className="col-4">
                 <input type="file" onChange={trackSelectedHandler} required />
+              </div>
+            </div>
+            <div className="row pt-5 m-2">
+              <div className="col">
+                <h5 className="card-title text-center">Enter track name</h5>
+              </div>
+            </div>
+            <div className="form-row mt-4 justify-content-center">
+              <div className="col-4">
+                <input type="text" class="form-control" id="inputPassword2" placeholder="Track Name" onChange={trackNameHandler} required />
               </div>
             </div>
             <div className="row pt-5 m-2">
