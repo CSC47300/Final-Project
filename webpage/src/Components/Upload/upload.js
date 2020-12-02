@@ -117,15 +117,28 @@ function Upload(props) {
       })
         .then(function () {
           console.log("Document successfully written!");
-          updateRecentUploads(trackId);
-          db.collection("users").doc(user.uid).update({
-            trackIds: firebase.firestore.FieldValue.arrayUnion(trackId),
-            posts: firebase.firestore.FieldValue.arrayUnion({
-              postDate: time,
-              trackId: trackId
+          db.collection('tracks-data').doc('recent-uploads').get().then(doc => {
+            let recent = doc.data().recent;
+            if (recent.length < 25) {
+              recent.unshift(trackId);
+            } else {
+              recent.unshift(trackId);
+              recent.pop();
+            }
+            db.collection('tracks-data').doc('recent-uploads').set({
+              recent: recent
+            })
+          }).then(() => {
+            db.collection("users").doc(user.uid).update({
+              trackIds: firebase.firestore.FieldValue.arrayUnion(trackId),
+              posts: firebase.firestore.FieldValue.arrayUnion({
+                postDate: time,
+                trackId: trackId
+              })
+            }).then(() => {
+              history.goBack();
             })
           })
-          history.goBack();
         })
         .catch(function (error) {
           console.error("Error writing document: ", error);
