@@ -17,6 +17,7 @@ const ProfilePage = (props) => {
     name = props.match.params.profileName;
   } else { name = 'Guest'; }
 
+  const [showSettings,setShowSettings] = useState(false);
   const [tracks, setTracks] = useState([]);
   const [currentlyPlaying, setCurrent] = useState({
     current: "",
@@ -93,6 +94,12 @@ const ProfilePage = (props) => {
   }
 
   useEffect(() => {
+    if (user && user.displayName == props.match.params.profileName){
+      setShowSettings(true);
+    }
+    else{
+      setShowSettings(false);
+    }
     getUserTracks();
   }, [user])
 
@@ -137,9 +144,9 @@ const ProfilePage = (props) => {
           <Tab eventKey="tracks" title="Tracks">
             {tracks}
           </Tab>
-          <Tab eventKey="settings" title="Settings">
-            <Settings />
-          </Tab>
+          {showSettings ? <Tab eventKey="settings" title="Settings">
+                            <Settings />
+                          </Tab> : null}
         </Tabs>
       </div>
       <Player
