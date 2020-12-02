@@ -1,0 +1,20 @@
+.popular {
+    background-color: white;
+}
+
+.sidebar-header {
+    font-size: 20px;
+    color: rgb(160, 160, 160);
+    display: inline-block;
+}
+
+.record-icon {
+    color: rgb(160, 160, 160);
+    display: inline-block;
+    margin-right: 6px;
+}
+
+hr {
+    margin-bottom: 5px;
+    margin-top: 0;
+}
