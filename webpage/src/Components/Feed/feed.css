@@ -1,6 +1,8 @@
 .feed {
     background-color: rgb(255, 255, 255); 
     min-height: 100vh;
+    margin-left: 8%;
+    margin-right: 8%;
 }
 
 .latest-header {
@@ -13,5 +15,9 @@
 .track-column {
     border-right-style: solid;
     border-right-width: 1px;
-    border-right-color: rgb(219, 219, 219);
+    border-right-color: rgb(243, 243, 243);
+}
+
+.feed-row {
+    margin-right: 0;
 }
