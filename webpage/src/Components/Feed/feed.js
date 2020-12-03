@@ -69,6 +69,9 @@ const Feed = ({ user }) => {
         }).then(docs => {
             let tracks = [];
             let items = docs.map(doc => doc.data());
+            items = items.filter(function (element) {
+                return element !== undefined;
+            });
             for (let i = 0; i < items.length; i++) {
                 let data = items[i];      // Create tracks
                 tracks.push(
