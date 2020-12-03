@@ -82,7 +82,13 @@ function Track({ ...props }) {
                     trackId: trackId,
                     plays: props.playCount + 1
                 }
-                if (popular.includes(oldObject)) { }
+                let inPopular = false;
+                popular.forEach(el => {
+                    if (trackId === el.trackId) {
+                        inPopular = true;
+                    }
+                })
+                if (inPopular) { }
                 else if (popular.length < 25) {
                     popular.push(newObject);
                 } else {
