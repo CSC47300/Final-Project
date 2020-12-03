@@ -9,12 +9,12 @@ import Settings from './Components/Settings/settings';
 import History from './Components/ListenHistory/history';
 import Feed from './Components/Feed/feed';
 import { UserContext } from './Providers/UserProvider';
+import NotFound from './Components/NotFound';
 
 
 
 function App() {
   const user = useContext(UserContext);
-
   return (
     <>
       <div className="App">
@@ -26,7 +26,8 @@ function App() {
             <Route exact path='/upload' component={Upload} />
             <Route exact path='/likes' component={Likes} />
             <Route exact path='/history' component={History} />
-            <Route path='/:profileName' component={ProfilePage} />
+            <Route path='/:profileName' component={ProfilePage}/>
+            <Route exact path='/404' component={NotFound} />
             <Route path='/'>
               <Feed user={user} />
             </Route>

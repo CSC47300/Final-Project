@@ -6,38 +6,68 @@ import firebase from "firebase/app";
 
 function Settings(props){
    
-        const inputPhoto = useRef("https://mdbootstrap.com/img/Photos/Avatars/img(31).jpg");
         const inputFirstName = useRef(null);
         const inputLastName = useRef();
         const inputEmail = useRef();
         const inputUsername = useRef();
         const inputTimeZone = useRef();
+        const inputDescription = useRef();
         const user = useContext(UserContext);
-        const [ImagePreview ,setImagePreview] = useState("https://mdbootstrap.com/img/Photos/Avatars/img(31).jpg");
-    
-    
+        const [selectedImage ,setImage] = useState(null);
+        const [selectedImagePreview ,setImagePrev] = useState("https://cdn.pixabay.com/photo/2018/04/18/18/56/user-3331257__340.png");
+        let ref = firebase.storage().ref();
    
-    const handleChange= (event) => {
-        setImagePreview(URL.createObjectURL(event.target.files[0]));
+    function imageSelectedHandler(event) {
+      const file = event.target.files[0];
+      console.log(file);
+      if (event.target.files.length == 0) {
+        setImage(null);
+        setImagePrev(null);
+      }
+      else {
+        {
+          const fileType = file['type'];
+          const validImageTypes = ['image/gif', 'image/jpeg', 'image/png'];
+          if (!validImageTypes.includes(fileType)) {
+            setImage(null);
+            setImagePrev(null);
+            window.alert("This is not an Image file");
+          }
+          else {
+            setImagePrev(URL.createObjectURL(file));
+            let Imageref = ref.child('images/' + file.name);
+            Imageref.put(file).then(function(snapshot) {
+              console.log('Uploaded the image' + file.name);
+              Imageref.getDownloadURL().then((url) => {
+                setImage(url);
+            })
+            });
+          }
+        }
+      }
     }
-    
     const handleSubmit= (event) =>{
-      console.log(inputPhoto.current.value);
+      if (selectedImage == null) {
+        window.alert("You have not selected a Image");
+      }
+      console.log(selectedImage);
       console.log(inputFirstName.current.value);
       console.log(inputLastName.current.value);
       console.log(inputEmail.current.value);
       console.log(inputUsername.current.value);
       console.log(inputTimeZone.current.value);
+      console.log(inputDescription.current.value);
       event.preventDefault();
       
       db.collection('users').doc(user.uid
         ).update({
-          photoURL: inputPhoto.current.value,
+          photoURL: selectedImage,
           firstName: inputFirstName.current.value,
           lastName: inputLastName.current.value,
           email: inputEmail.current.value,
           displayName: inputUsername.current.value,
-          timeZone:inputTimeZone.current.value
+          timeZone:inputTimeZone.current.value,
+          description: inputDescription.current.value
     })
     .then(() => {
       console.log('User updated!');
@@ -57,10 +87,10 @@ function Settings(props){
               
               <div class="col-md-3">
                 <div class="text-center">
-                  <img src={ImagePreview}  class="img-fluid z-depth-1 rounded-circle" alt="avatar"/>
+                  <img src={selectedImagePreview}  class="img-fluid z-depth-1 rounded-circle" alt="avatar"/>
                   <h6>Upload a different photo...</h6>
                   
-                  <input type="file" class="form-control" onChange={handleChange} ref={inputPhoto}/>
+                  <input type="file" onChange={imageSelectedHandler} required/>
                 </div>
               </div>
             </div>
@@ -106,6 +136,12 @@ function Settings(props){
                   <label className="col-md-3 control-label">Username:</label>
                   <div className="col-md-8">
                     <input className="form-control" type="text" ref={inputUsername} />
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label className="col-md-3 control-label">Description:</label>
+                  <div className="col-md-8">
+                    <textarea className="form-control" type="text" rows={3} ref={inputDescription} />
                   </div>
                 </div>
                 <div className="form-group">
