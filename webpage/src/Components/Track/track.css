@@ -54,7 +54,7 @@
     padding-top: 20px;
 }
 .play-btn:hover {
-    opacity: 100%;
+    opacity: 1;
 }
 
 .pause-btn {
