@@ -20,35 +20,19 @@ const ProfilePage = (props) => {
   } else { name = 'Guest'; }
 
   const [showSettings, setShowSettings] = useState(false);
-  const [userNow, setUser] = useState([]);
+  const [userNow, setUser] = useState("");
   const getUserNow = () => {
 
     db.collection('users').where('displayName', '==', name).get().then(querySnapshot => {
       const data = querySnapshot.docs.map(doc => doc.data());
       const values = data[0];
-      //console.log(data, "user in db with this name", typeof data);
-      //console.log(values.displayName);
+      if (values == null) {
+        window.location.href = '/';
+      }
       setUser(values);
-      checkUser();
     }
     )
   }
-
-  const checkUser = () => {
-
-    if (!('displayName' in userNow)) {
-      console.log("lllllllllllllllll", userNow.email)
-      return (
-        <div>
-          <h3>404 page not found</h3>
-          <p>We are sorry but the page you are looking for does not exist.</p>
-        </div>
-      )
-    }
-  }
-  useEffect(() => {
-    getUserNow();
-  }, [userNow])
 
   const [tracks, setTracks] = useState();
   const [currentlyPlaying, setCurrent] = useState({
@@ -70,10 +54,8 @@ const ProfilePage = (props) => {
   }
 
   const getUserTracks = () => {
-    // if (user == null) return;
     let tracks = [];
 
-    console.log(props.match.params.profileName);
     db.collection('users').where('displayName', '==', name).get().then(querySnapshot => {
       return querySnapshot.docs[0].id;
     }).then(userId => {
@@ -126,6 +108,7 @@ const ProfilePage = (props) => {
   }
 
   useEffect(() => {
+    getUserNow();
     if (user && user.displayName == props.match.params.profileName) {
       setShowSettings(true);
     }
@@ -135,20 +118,20 @@ const ProfilePage = (props) => {
     getUserTracks();
   }, [user])
 
-  return (
+  let display = userNow != null ?
     <>
       <div className="profile-page">
         <h3>{props.match.params.profileName}</h3>
         <br></br>
         <MDBRow>
           <MDBCol xl="4" md="4" className="mb-3">
-            <img src={userNow.photoURL} className="img-fluid z-depth-1 rounded-circle" alt="poster-avatar" />
+            <img src={userNow != null ? userNow.photoURL : ''} className="img-fluid z-depth-1 rounded-circle" alt="poster-avatar" />
           </MDBCol>
           <MDBCol xl="5" md="4">
             <div>
-              <h1>{userNow.displayName}</h1>
+              <h1>{userNow != null ? userNow.displayName : 'User does not exist'}</h1>
               <p>
-                <MDBIcon icon='quote-left' /> {userNow.description}
+                <MDBIcon icon='quote-left' /> {userNow != null ? userNow.description : ''}
               </p>
               <br></br>
               <div style={{ display: "flex", justifyContent: "space-between", width: "40%" }}>
@@ -182,7 +165,8 @@ const ProfilePage = (props) => {
         artistName={currentInfo.artistName}
       />
     </>
-  )
+    : <h1>This page does not exist, redirecting...</h1>;
+  return display;
 }
 
 export default ProfilePage;
