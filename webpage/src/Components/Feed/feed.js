@@ -7,6 +7,7 @@ import UserLikes from '../Likes/likes';
 import Player from '../Player/player.js';
 import Track from '../Track/track';
 import './feed.css';
+import Popular from '../Popular/popular.js';
 
 const Feed = ({ user }) => {
     const [tracks, setTracks] = useState([]);
@@ -60,7 +61,7 @@ const Feed = ({ user }) => {
             posts.sort((a, b) => b.postDate - a.postDate);  // Sort by latest posts first
             requests = [];
             // Get all tracks from posts
-            for (let i = 0; i < posts.length && i < 25; i++) { // Hard limit on posts shown, this can be changed in future
+            for (let i = 0; i < posts.length && i < 20; i++) { // Hard limit on posts shown, this can be changed in future
                 requests.push(db.collection('tracks').doc(posts[i].trackId).get());
             }
             return Promise.all(requests);
@@ -147,25 +148,26 @@ const Feed = ({ user }) => {
     // const header = user !== undefined ? "Here are the latest posts from the artists you follow:" : "Most recently uploaded tracks:";
     return (
         <>
-            <Container className="feed">
-                <Row>
-                    <Col className="track-column" md={9} lg={9} sm="auto" xs="auto">
+            <div className="feed">
+                <Row className="feed-row">
+                    <Col className="track-column" md={9} lg={9} xl={9} sm="auto" xs="auto">
                         <h2 className="latest-header">
                             {header}
                         </h2>
                     </Col>
                 </Row>
-                <Row>
-                    <Col className="track-column" md={9} lg={9} sm="auto" xs="auto">
+                <Row className="feed-row">
+                    <Col className="track-column" md={9} lg={9} xl={9} sm="auto" xs="auto">
                         {tracks}
                     </Col>
-                    <Col lg={3} md={3}>
+                    <Col lg={3} md={3} xl={3}>
                         <div>Likes:</div>
                         {/* <UserLikes /> */}
                         <div>Listening History:</div>
+                        <Popular />
                     </Col>
                 </Row>
-            </Container>
+            </div>
             <Player
                 togglePlay={togglePlaying}
                 isPlaying={isPlaying}
