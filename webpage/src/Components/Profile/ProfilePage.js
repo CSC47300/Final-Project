@@ -29,29 +29,27 @@ const getUserNow = () => {
    //console.log(data, "user in db with this name", typeof data);
    //console.log(values.displayName);
     setUser(values);
+    checkUser();
       }
     ) 
   }
 
 const checkUser = () => {
-  console.log(userNow.length, "Here is user1")
-    if(userNow.length < 1)
-    {
-       //<Redirect to="/404" component = {NotFound}/>
-       //Or you can show some other component here itself.
-       return (
-      <div>
-        <h3>404 page not found</h3>
-        <p>We are sorry but the page you are looking for does not exist.</p>
-      </div>
-       )
+  
+    if (!('displayName' in userNow)) {
+      console.log("lllllllllllllllll", userNow.email)
+      return (
+        <div>
+          <h3>404 page not found</h3>
+          <p>We are sorry but the page you are looking for does not exist.</p>
+        </div>
+         )
     }
   }
   useEffect(() => {
-    checkUser();
     getUserNow();
   }, [userNow])
-  
+
   const [tracks, setTracks] = useState();
   const [currentlyPlaying, setCurrent] = useState({
     current: "",
@@ -131,7 +129,6 @@ const checkUser = () => {
     getUserTracks();
   }, [user])
 
-
   return (
     <>
       <div className="profile-page">
@@ -147,8 +144,6 @@ const checkUser = () => {
               <p>
                 <MDBIcon icon='quote-left' /> {userNow.description}
               </p>
-
-              <h6>email: {userNow.email}</h6>
               <br></br>
               <div style={{ display: "flex", justifyContent: "space-between", width: "40%" }}>
                 <h6>posts: 0 {props.posts}</h6>
