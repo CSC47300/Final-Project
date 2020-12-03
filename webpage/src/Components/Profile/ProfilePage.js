@@ -19,7 +19,7 @@ const ProfilePage = (props) => {
     name = props.match.params.profileName;
   } else { name = 'Guest'; }
 
-
+  const [showSettings,setShowSettings] = useState(false);
   const [userNow, setUser] = useState([]);
 const getUserNow = () => {
 
