@@ -8,9 +8,11 @@ import { createTrack, getElapsedTime } from '../../Helpers/helpers';
 import { UserContext } from '../../Providers/UserProvider';
 import Player from '../Player/player';
 import firebase from "firebase/app";
+import NotFound from '../NotFound';
+import { Redirect } from 'react-router-dom'
 
 const ProfilePage = (props) => {
-
+  
   let name;
   let user = useContext(UserContext);
   if (props.match.params.profileName) {
@@ -20,17 +22,33 @@ const ProfilePage = (props) => {
 
   const [userNow, setUser] = useState([]);
 const getUserNow = () => {
+
     db.collection('users').where('displayName', '==', name).get().then(querySnapshot => {
     const data = querySnapshot.docs.map(doc => doc.data());
     const values = data[0];
    //console.log(data, "user in db with this name", typeof data);
-   // console.log(values.displayName);
+   //console.log(values.displayName);
     setUser(values);
       }
     ) 
+  }
+
+const checkUser = () => {
+  console.log(userNow.length, "Here is user1")
+    if(userNow.length < 1)
+    {
+       //<Redirect to="/404" component = {NotFound}/>
+       //Or you can show some other component here itself.
+       return (
+      <div>
+        <h3>404 page not found</h3>
+        <p>We are sorry but the page you are looking for does not exist.</p>
+      </div>
+       )
     }
-  //getUserNow();
+  }
   useEffect(() => {
+    checkUser();
     getUserNow();
   }, [userNow])
   
@@ -112,6 +130,7 @@ const getUserNow = () => {
   useEffect(() => {
     getUserTracks();
   }, [user])
+
 
   return (
     <>
