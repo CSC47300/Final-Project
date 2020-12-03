@@ -97,7 +97,7 @@
     text-overflow: ellipsis;
 }
 
-.liked {
+.liked, .reposted {
     background-color: #c580e0;
 }
 .social-tag {
