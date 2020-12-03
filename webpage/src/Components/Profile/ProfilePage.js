@@ -92,7 +92,7 @@ const checkUser = () => {
             data.trackName,
             data.playCount,
             data.likeCount,
-            // data.commentCount,
+            //data.commentCount,
             data.repostCount,
             data.trackArt,
             setCurrent,
@@ -126,6 +126,12 @@ const checkUser = () => {
   }
 
   useEffect(() => {
+    if (user && user.displayName == props.match.params.profileName){
+      setShowSettings(true);
+    }
+    else{
+      setShowSettings(false);
+    }
     getUserTracks();
   }, [user])
 
@@ -163,9 +169,9 @@ const checkUser = () => {
           <Tab eventKey="tracks" title="Tracks">
             {tracks}
           </Tab>
-          <Tab eventKey="settings" title="Settings">
-            <Settings />
-          </Tab>
+          {showSettings ? <Tab eventKey="settings" title="Settings">
+                            <Settings />
+                          </Tab> : null}
         </Tabs>
       </div>
       <Player

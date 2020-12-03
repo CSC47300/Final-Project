@@ -35,6 +35,7 @@ const LoginModal = () => {
           })
         })
         console.log('success')
+        window.location.href='/'+displayName;
       }
       catch (error) {
         setError(error);

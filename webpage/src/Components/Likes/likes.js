@@ -1,83 +1,84 @@
-import React, {useState,useEffect } from 'react';
+import React, {useState,useEffect,useContext } from 'react';
 import { createTrack, getElapsedTime } from '../../Helpers/helpers';
-import Track from '../Track/track';
 import { db } from '../../firebase';
-
-
+import { UserContext } from '../../Providers/UserProvider';
 
 
 const UserLikes = (props) => 
-  {
-   
-    let name;
+{
 
-    if (props.match.params.profileName) {
-      name = props.match.params.profileName;} 
-    else{ name = 'Guest'; }
-  
-    const [tracks, setTracks] = useState([]);
-  
-    const getUserTracks = () => {
-      let tracks = [];
-  
-      console.log(props.match.params.profileName);
-      db.collection('tracks').where('userId', '==', name).get().then(querySnapshot => {
-        const data = querySnapshot.docs.map(doc => doc.data());
-        data.forEach(data => {
-          tracks.push(createTrack(
-            data.trackId,
-            data.userId,
-            data.userId,
-            getElapsedTime(data.uploadDate),
-            data.audio,
-            props.isPlaying,
-            props.togglePlay,
-            data.trackName,
-            data.playCount,
-            data.likeCount,
-            data.commentCount,
-            data.repostCount,
-            data.trackArt
-          ))
-          setTracks(tracks);
-        })
-      })
+    let user = useContext(UserContext);
+    const [likes, setLikes] = useState([]);
+    const [currentlyPlaying, setCurrent] = useState({
+      current: "",
+      id: ""
+  });
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentInfo, setInfo] = useState({
+      img: '',
+      songName: '',
+      artistName: ''
+  })
+  const togglePlaying = (item = currentlyPlaying) => {
+    if (item.current != "") {
+      item.current.playPause();
+      setIsPlaying(isPlaying => !isPlaying);
     }
+  }
   
+
+    const getUserLikes = () => {
+      if (user == null) return;
+      let tracks= [];
+    
+      
+      db.collection('users').doc(user.uid).get().then(doc => {
+        const data = doc.data();
+       db.collection('tracks').where('trackId', "in", data.likedTracks).get().then(querySnapshot => {
+          const track = querySnapshot.docs.map(doc => doc.data());
+          track.forEach(data => {
+            tracks.push(createTrack(
+              data.trackId,
+              data.userDisplayName,
+              data.userDisplayName,
+              getElapsedTime(data.uploadDate),
+              data.audio,
+              isPlaying,
+              togglePlaying,
+              data.trackName,
+              data.playCount,
+              data.likeCount,
+              data.repostCount,
+              data.trackArt,
+              setCurrent,
+              setInfo,
+              currentlyPlaying
+              ))
+              setLikes(tracks);
+            })
+          })
+        }).catch(err => console.error(err))
+      }
+    
     useEffect(() => {
-      getUserTracks();
-    }, [])
-
-
+      getUserLikes();
+    }, [user])
+    
 
   return(
     
 
-    <div class="container w-55  shadow">
-  
+    <div class="container  shadow">
       <div class="row  m-2">  
-              <h5>
-                <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-heart-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
-                </svg> Liked
-              </h5>
             <div class = "container  border-top border-grey">
                  <div class="col">
-                    {tracks}
+                    {likes.reverse()}
                 </div>
             </div>    
-      </div>
-    
+      </div>  
     </div>
   
   );
-
-
-
-
-
-
-
 
 };
 export default UserLikes;

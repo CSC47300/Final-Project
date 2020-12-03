@@ -60,6 +60,7 @@ export const generateUserDocument = async (user, additionalData) => {
   export const signOut = () => {
     firebase.auth().signOut().then(function() {
         console.log('signedOut')
+        window.location.href='/'
       }).catch(function(error) {
         // An error happened.
       });
