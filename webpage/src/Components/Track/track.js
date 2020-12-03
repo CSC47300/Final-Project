@@ -7,10 +7,11 @@ import { UserContext } from '../../Providers/UserProvider.js';
 import { db } from '../../firebase';
 import firebase from "firebase/app";
 
-function Track({ ...props }) {
+function Track(props) {
     const [played, setPlayed] = useState(false);
     const [likes, setLikes] = useState(props.likes);
     const [trackLiked, setTrackLiked] = useState(false);
+    const [reposted, setReposted] = useState(false);
     const [isPlaying, setIsPlaying] = useState(false);
     const waveform = useRef();
     const user = useContext(UserContext);
@@ -43,6 +44,18 @@ function Track({ ...props }) {
                 waveform.current.play();
         })
     }, [])
+
+    useEffect(() => {
+        if (props.currentlyPlaying.id !== trackId) {
+            setIsPlaying(false);
+        }
+    }, [props.currentlyPlaying])
+
+    useEffect(() => {
+        if (props.currentlyPlaying.id === trackId) {
+            setIsPlaying(props.isPlaying);
+        }
+    }, [props.isPlaying])
 
     const handlePlay = () => {
         if (props.currentlyPlaying !== waveform) {
@@ -153,11 +166,13 @@ function Track({ ...props }) {
                 }
             })
         }
+        setReposted(true);
     }
 
     const playBtn = !isPlaying && props.currentlyPlaying !== waveform ? <BsPlayFill /> : <BsPauseFill className="pause-btn" />;
     const post = props.userName === props.artistName ? "posted" : <>&nbsp;<BsArrowRepeat />reposted</>;
     const likeClass = trackLiked ? "social-icon liked" : "social-icon like";
+    const repostClass = reposted ? "social-icon reposted" : "social-icon repost";
 
     return (
         <Container className="track">
@@ -191,7 +206,7 @@ function Track({ ...props }) {
                         <div ><button className={likeClass} onClick={handleLike}>
                             <BsHeart /> {likes}
                         </button></div>
-                        <div ><button className="social-icon repost" onClick={handleRepost}>
+                        <div ><button className={repostClass} onClick={handleRepost}>
                             <BsArrowRepeat /> {props.reposts}
                         </button></div>
 

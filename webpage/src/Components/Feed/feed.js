@@ -26,17 +26,16 @@ const Feed = ({ user }) => {
     // const user = useContext(UserContext);
 
     const togglePlaying = (item = currentlyPlaying) => {
-        // console.log(currentlyPlaying.current)
-        // if (currentlyPlaying.current != "") {
-        //     console.log(currentlyPlaying.current.current, item.id != currentlyPlaying.id);
-        //     if (currentlyPlaying.current.current !== null && item.id != currentlyPlaying.id) currentlyPlaying.current.pause();
-        // }
-        // if (item.id != currentlyPlaying.id && item.id !== "") {
-        //     currentlyPlaying.current.pause();
-        // }
+        if (currentlyPlaying.current !== '') {
+            if (item.id != currentlyPlaying.id) {
+                currentlyPlaying.current.pause();
+            }
+        }
         if (item.current != "") {
             item.current.playPause();
-            setIsPlaying(isPlaying => !isPlaying);
+            if (item.current.isPlaying()) {
+                setIsPlaying(true)
+            } else setIsPlaying(false);
         }
     }
 
@@ -62,7 +61,7 @@ const Feed = ({ user }) => {
             posts.sort((a, b) => b.postDate - a.postDate);  // Sort by latest posts first
             requests = [];
             // Get all tracks from posts
-            for (let i = 0; i < posts.length && i < 20; i++) { // Hard limit on posts shown, this can be changed in future
+            for (let i = 0; i < posts.length && i < 15; i++) { // Hard limit on posts shown, this can be changed in future
                 requests.push(db.collection('tracks').doc(posts[i].trackId).get());
             }
             return Promise.all(requests);
@@ -75,25 +74,24 @@ const Feed = ({ user }) => {
             for (let i = 0; i < items.length; i++) {
                 let data = items[i];      // Create tracks
                 tracks.push(
-                    <Track
-                        key={`${data.trackId}_inst_${i}`}
-                        isPlaying={isPlaying}
-                        likes={data.likeCount}
-                        reposts={data.repostCount}
-                        playCount={data.playCount}
-                        // commentCount={commentCount}
-                        songName={data.trackName}
-                        artistName={posts[i]["postedBy"]}
-                        userName={data.userDisplayName}
-                        albumArt={data.trackArt}
-                        timeFrame={getElapsedTime(data.uploadDate)}
-                        track={data.audio}
-                        id={`${data.trackId}_inst_${i}`}
-                        togglePlaying={togglePlaying}
-                        setCurrent={setCurrent}
-                        setInfo={setInfo}
-                        currentlyPlaying={currentlyPlaying}
-                    />
+                    {
+                        key: `${data.trackId}_inst_${i}`,
+                        isPlaying: isPlaying,
+                        likes: data.likeCount,
+                        reposts: data.repostCount,
+                        playCount: data.playCount,
+                        songName: data.trackName,
+                        artistName: posts[i]["postedBy"],
+                        userName: data.userDisplayName,
+                        albumArt: data.trackArt,
+                        timeFrame: getElapsedTime(data.uploadDate),
+                        track: data.audio,
+                        id: `${data.trackId}_inst_${i}`,
+                        togglePlaying: togglePlaying,
+                        setCurrent: setCurrent,
+                        setInfo: setInfo,
+                        currentlyPlaying: currentlyPlaying
+                    }
                 )
             }
             setTracks(tracks);      // Push tracks to state
@@ -116,23 +114,24 @@ const Feed = ({ user }) => {
             for (let i = 0; i < items.length; i++) {
                 let data = items[i];      // Create tracks
                 tracks.push(
-                    createTrack(
-                        `${data.trackId}_inst_${i}`,
-                        data.userDisplayName,
-                        data.userDisplayName,
-                        getElapsedTime(data.uploadDate),
-                        data.audio,
-                        isPlaying,
-                        togglePlaying,
-                        data.trackName,
-                        data.playCount,
-                        data.likeCount,
-                        data.repostCount,
-                        data.trackArt,
-                        setCurrent,
-                        setInfo,
-                        currentlyPlaying
-                    )
+                    {
+                        key: `${data.trackId}_inst_${i}`,
+                        isPlaying: isPlaying,
+                        likes: data.likeCount,
+                        reposts: data.repostCount,
+                        playCount: data.playCount,
+                        songName: data.trackName,
+                        artistName: data.userDisplayName,
+                        userName: data.userDisplayName,
+                        albumArt: data.trackArt,
+                        timeFrame: getElapsedTime(data.uploadDate),
+                        track: data.audio,
+                        id: `${data.trackId}_inst_${i}`,
+                        togglePlaying: togglePlaying,
+                        setCurrent: setCurrent,
+                        setInfo: setInfo,
+                        currentlyPlaying: currentlyPlaying
+                    }
                 )
             }
             setTracks(tracks);      // Push tracks to state
@@ -149,7 +148,26 @@ const Feed = ({ user }) => {
         }
     }, [user])
 
-    // const header = user !== undefined ? "Here are the latest posts from the artists you follow:" : "Most recently uploaded tracks:";
+    const display = tracks.map(track => {
+        return <Track
+            key={track.key}
+            isPlaying={isPlaying}
+            likes={track.likes}
+            reposts={track.reposts}
+            playCount={track.playCount}
+            songName={track.songName}
+            artistName={track.artistName}
+            userName={track.userName}
+            albumArt={track.albumArt}
+            timeFrame={track.timeFrame}
+            track={track.track}
+            id={track.id}
+            togglePlaying={togglePlaying}
+            setCurrent={setCurrent}
+            setInfo={setInfo}
+            currentlyPlaying={currentlyPlaying}
+        />
+    })
     return (
         <>
             <div className="feed">
@@ -162,17 +180,17 @@ const Feed = ({ user }) => {
                 </Row>
                 <Row className="feed-row">
                     <Col className="track-column" md={9} lg={9} xl={9} sm="auto" xs="auto">
-                        {tracks}
+                        {display}
                     </Col>
                     <Col lg={3} md={3}>
                         <div><svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-heart-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z" />
                         </svg>Likes:</div>
-                        {<UserLikes />}
+                        {/* {<UserLikes />} */}
                         <div> <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-calendar-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                             <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V5h16V4H0V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5z" />
                         </svg> Listening History:</div>
-                        {< History />}
+                        {/* {< History />} */}
                         <Popular />
                     </Col>
                 </Row>
