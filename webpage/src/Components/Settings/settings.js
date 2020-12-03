@@ -3,6 +3,7 @@ import { Container } from 'react-bootstrap';
 import { UserContext } from '../../Providers/UserProvider.js';
 import { db, getUserDocument } from '../../firebase';
 import firebase from "firebase/app";
+import './settings.css';
 
 function Settings(props) {
 
@@ -79,14 +80,12 @@ function Settings(props) {
   }
   return (
     <Container fluid>
-      <br></br>
-      <div className="container">
-        <h5>Change User Profile Image</h5>
+      <div className="setting-container">
 
-        <div className="row">
-
-          <div className="col-md-3">
-            <div className="text-center">
+        <div className="row user-img">
+          <div className="col-3">
+            <h5>Change User Profile Image</h5>
+            <div className="">
               <img src={selectedImagePreview} className="img-fluid z-depth-1 rounded-circle" alt="avatar" />
               <h6>Upload a different photo...</h6>
 
@@ -94,7 +93,7 @@ function Settings(props) {
             </div>
           </div>
         </div>
-        <div className="col-md-9 personal-info">
+        <div className="col-9 personal-info">
           <h3>Personal info</h3>
           <form className="form-horizontal" role="form" >
             <div className="form-group">

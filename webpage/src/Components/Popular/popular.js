@@ -17,6 +17,9 @@ const Popular = (props) => {
             return Promise.all(requests);
         }).then(docs => {
             let items = docs.map(doc => doc.data());
+            items = items.filter(function (element) {
+                return element !== undefined;
+            });
             let tracks = [];
             items.forEach(track => {
                 tracks.push(createSongDisplay(track.trackArt, track.trackName, track.userDisplayName,

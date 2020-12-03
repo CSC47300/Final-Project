@@ -4,12 +4,11 @@ import './ProfilePage.css';
 import { MDBIcon, MDBRow, MDBCol } from "mdbreact";
 import Settings from '../Settings/settings';
 import { db } from '../../firebase';
-import { createTrack, getElapsedTime } from '../../Helpers/helpers';
+import { getElapsedTime } from '../../Helpers/helpers';
 import { UserContext } from '../../Providers/UserProvider';
 import Player from '../Player/player';
 import firebase from "firebase/app";
-import NotFound from '../NotFound';
-import { Redirect } from 'react-router-dom'
+import Track from '../Track/track';
 
 const ProfilePage = (props) => {
 
@@ -34,7 +33,7 @@ const ProfilePage = (props) => {
     )
   }
 
-  const [tracks, setTracks] = useState();
+  const [tracks, setTracks] = useState([]);
   const [currentlyPlaying, setCurrent] = useState({
     current: "",
     id: ""
@@ -47,9 +46,16 @@ const ProfilePage = (props) => {
   })
 
   const togglePlaying = (item = currentlyPlaying) => {
+    if (currentlyPlaying.current !== '') {
+      if (item.id != currentlyPlaying.id) {
+        currentlyPlaying.current.pause();
+      }
+    }
     if (item.current != "") {
       item.current.playPause();
-      setIsPlaying(isPlaying => !isPlaying);
+      if (item.current.isPlaying()) {
+        setIsPlaying(true)
+      } else setIsPlaying(false);
     }
   }
 
@@ -63,24 +69,26 @@ const ProfilePage = (props) => {
         const data = querySnapshot.docs.map(doc => doc.data());
         data.sort((a, b) => b.uploadDate - a.uploadDate);
         data.forEach(data => {
-          tracks.push(createTrack(
-            data.trackId,
-            name,
-            name,
-            getElapsedTime(data.uploadDate),
-            data.audio,
-            isPlaying,
-            togglePlaying,
-            data.trackName,
-            data.playCount,
-            data.likeCount,
-            //data.commentCount,
-            data.repostCount,
-            data.trackArt,
-            setCurrent,
-            setInfo,
-            currentlyPlaying
-          ))
+          tracks.push(
+            {
+              key: data.trackId,
+              isPlaying: isPlaying,
+              likes: data.likeCount,
+              reposts: data.repostCount,
+              playCount: data.playCount,
+              songName: data.trackName,
+              artistName: name,
+              userName: name,
+              albumArt: data.trackArt,
+              timeFrame: getElapsedTime(data.uploadDate),
+              track: data.audio,
+              id: data.trackId,
+              togglePlaying: togglePlaying,
+              setCurrent: setCurrent,
+              setInfo: setInfo,
+              currentlyPlaying: currentlyPlaying
+            }
+          )
         })
         setTracks(tracks);
       })
@@ -118,44 +126,67 @@ const ProfilePage = (props) => {
     getUserTracks();
   }, [user])
 
+  const displayTracks = tracks.map(track => {
+    return <Track
+      key={track.key}
+      isPlaying={isPlaying}
+      likes={track.likes}
+      reposts={track.reposts}
+      playCount={track.playCount}
+      songName={track.songName}
+      artistName={track.artistName}
+      userName={track.userName}
+      albumArt={track.albumArt}
+      timeFrame={track.timeFrame}
+      track={track.track}
+      id={track.id}
+      togglePlaying={togglePlaying}
+      setCurrent={setCurrent}
+      setInfo={setInfo}
+      currentlyPlaying={currentlyPlaying}
+    />
+  })
+
   let display = userNow != null ?
     <>
-      <div className="profile-page">
-        <h3>{props.match.params.profileName}</h3>
-        <br></br>
-        <MDBRow>
-          <MDBCol xl="4" md="4" className="mb-3">
-            <img src={userNow != null ? userNow.photoURL : ''} className="img-fluid z-depth-1 rounded-circle" alt="poster-avatar" />
-          </MDBCol>
-          <MDBCol xl="5" md="4">
-            <div>
-              <h1>{userNow != null ? userNow.displayName : 'User does not exist'}</h1>
-              <p>
-                <MDBIcon icon='quote-left' /> {userNow != null ? userNow.description : ''}
-              </p>
-              <br></br>
-              <div style={{ display: "flex", justifyContent: "space-between", width: "40%" }}>
-                <h6>posts: 0 {props.posts}</h6>
-                <h6>followers : 0 {props.followers}</h6>
-                <h6>following: 0 {props.following}</h6>
+      <div className="profile-container">
+        <div className="profile-page">
+          <h3>{props.match.params.profileName}</h3>
+          <br></br>
+          <MDBRow>
+            <MDBCol xl="4" md="4" className="mb-3">
+              <img src={userNow != null ? userNow.photoURL : ''} className="img-fluid z-depth-1 rounded-circle" alt="poster-avatar" />
+            </MDBCol>
+            <MDBCol xl="5" md="4">
+              <div>
+                <h1>{userNow != null ? userNow.displayName : 'User does not exist'}</h1>
+                <p>
+                  <MDBIcon icon='quote-left' /> {userNow != null ? userNow.description : ''}
+                </p>
+                <br></br>
+                <div style={{ display: "flex", justifyContent: "space-between", width: "40%" }}>
+                  <h6>posts: 0 {props.posts}</h6>
+                  <h6>followers : 0 {props.followers}</h6>
+                  <h6>following: 0 {props.following}</h6>
+                </div>
+                <Button onClick={follow}>Follow</Button>
               </div>
-              <Button onClick={follow}>Follow</Button>
-            </div>
 
-          </MDBCol>
+            </MDBCol>
 
-        </MDBRow>
+          </MDBRow>
 
-        <br></br>
+          <br></br>
 
-        <Tabs defaultActiveKey="tracks" id="tab">
-          <Tab eventKey="tracks" title="Tracks">
-            {tracks}
-          </Tab>
-          {showSettings ? <Tab eventKey="settings" title="Settings">
-            <Settings />
-          </Tab> : null}
-        </Tabs>
+          <Tabs defaultActiveKey="tracks" id="tab">
+            <Tab eventKey="tracks" title="Tracks">
+              {displayTracks}
+            </Tab>
+            {showSettings ? <Tab eventKey="settings" title="Settings">
+              <Settings />
+            </Tab> : null}
+          </Tabs>
+        </div>
       </div>
       <Player
         togglePlay={togglePlaying}
