@@ -11,7 +11,7 @@ const Popular = (props) => {
         db.collection('tracks-data').doc('popular-uploads').get().then(doc => {
             return doc.data().popular;
         }).then(popular => {
-            for (let i = 0; i < 5; i++) {
+            for (let i = 0; i < 5 && i < popular.length; i++) {
                 requests.push(db.collection('tracks').doc(popular[i].trackId).get());
             }
             return Promise.all(requests);
