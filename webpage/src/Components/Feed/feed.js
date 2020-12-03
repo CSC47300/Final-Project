@@ -8,6 +8,7 @@ import History from '../ListenHistory/history'
 import Player from '../Player/player.js';
 import Track from '../Track/track';
 import './feed.css';
+import Popular from '../Popular/popular.js';
 
 const Feed = ({ user }) => {
     const [tracks, setTracks] = useState([]);
@@ -61,13 +62,16 @@ const Feed = ({ user }) => {
             posts.sort((a, b) => b.postDate - a.postDate);  // Sort by latest posts first
             requests = [];
             // Get all tracks from posts
-            for (let i = 0; i < posts.length && i < 25; i++) { // Hard limit on posts shown, this can be changed in future
+            for (let i = 0; i < posts.length && i < 20; i++) { // Hard limit on posts shown, this can be changed in future
                 requests.push(db.collection('tracks').doc(posts[i].trackId).get());
             }
             return Promise.all(requests);
         }).then(docs => {
             let tracks = [];
             let items = docs.map(doc => doc.data());
+            items = items.filter(function (element) {
+                return element !== undefined;
+            });
             for (let i = 0; i < items.length; i++) {
                 let data = items[i];      // Create tracks
                 tracks.push(
@@ -148,30 +152,31 @@ const Feed = ({ user }) => {
     // const header = user !== undefined ? "Here are the latest posts from the artists you follow:" : "Most recently uploaded tracks:";
     return (
         <>
-            <Container className="feed">
-                <Row>
-                    <Col className="track-column" md={9} lg={9} sm="auto" xs="auto">
+            <div className="feed">
+                <Row className="feed-row">
+                    <Col className="track-column" md={9} lg={9} xl={9} sm="auto" xs="auto">
                         <h2 className="latest-header">
                             {header}
                         </h2>
                     </Col>
                 </Row>
-                <Row>
-                    <Col className="track-column" md={9} lg={9} sm="auto" xs="auto">
+                <Row className="feed-row">
+                    <Col className="track-column" md={9} lg={9} xl={9} sm="auto" xs="auto">
                         {tracks}
                     </Col>
                     <Col lg={3} md={3}>
                         <div><svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-heart-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
+                            <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z" />
                         </svg>Likes:</div>
-                        { <UserLikes /> }
+                        {<UserLikes />}
                         <div> <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-calendar-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                              <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V5h16V4H0V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5z"/>
-                              </svg> Listening History:</div>
-                         { < History /> }
+                            <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V5h16V4H0V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5z" />
+                        </svg> Listening History:</div>
+                        {< History />}
+                        <Popular />
                     </Col>
                 </Row>
-            </Container>
+            </div>
             <Player
                 togglePlay={togglePlaying}
                 isPlaying={isPlaying}
