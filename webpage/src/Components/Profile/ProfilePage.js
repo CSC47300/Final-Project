@@ -20,8 +20,8 @@ const ProfilePage = (props) => {
 
   const [showSettings, setShowSettings] = useState(false);
   const [userNow, setUser] = useState("");
-  const getUserNow = () => {
 
+  const getUserNow = () => {
     db.collection('users').where('displayName', '==', name).get().then(querySnapshot => {
       const data = querySnapshot.docs.map(doc => doc.data());
       const values = data[0];
@@ -44,6 +44,8 @@ const ProfilePage = (props) => {
     songName: '',
     artistName: ''
   })
+  const [followers, setFollowers] = useState(0);
+  const [following, setFollowing] = useState(0);
 
   const togglePlaying = (item = currentlyPlaying) => {
     if (currentlyPlaying.current !== '') {
@@ -91,6 +93,11 @@ const ProfilePage = (props) => {
           )
         })
         setTracks(tracks);
+        db.collection('users').doc(userId).get().then(doc => {
+          const data = doc.data();
+          setFollowers(data.followers.length);
+          setFollowing(data.following.length);
+        })
       })
     }).catch(err => console.error(err))
   }
@@ -107,8 +114,11 @@ const ProfilePage = (props) => {
         else return false;
       }).then(isFollwing => {
         if (!isFollwing) {
-          db.collection('users').doc(user.uid).update({
+          db.collection('users').doc(user.uid).update({   // Update current user following
             following: firebase.firestore.FieldValue.arrayUnion(userId)
+          })
+          db.collection('users').doc(userId).update({   // Update user who is being followed
+            followers: firebase.firestore.FieldValue.arrayUnion(user.uid)
           })
         }
       })
@@ -151,11 +161,15 @@ const ProfilePage = (props) => {
     <>
       <div className="profile-container">
         <div className="profile-page">
-          <h3>{props.match.params.profileName}</h3>
           <br></br>
           <MDBRow>
             <MDBCol xl="4" md="4" className="mb-3">
-              <img src={userNow != null ? userNow.photoURL : ''} className="img-fluid z-depth-1 rounded-circle" alt="poster-avatar" />
+
+              <img
+                src={userNow != null ? userNow.photoURL == null ? "765-default-avatar copy.png" : userNow.photoURL : ''}
+                className="img-fluid z-depth-1 rounded-circle"
+                alt="poster-avatar"
+              />
             </MDBCol>
             <MDBCol xl="5" md="4">
               <div>
@@ -165,9 +179,9 @@ const ProfilePage = (props) => {
                 </p>
                 <br></br>
                 <div style={{ display: "flex", justifyContent: "space-between", width: "40%" }}>
-                  <h6>posts: 0 {props.posts}</h6>
-                  <h6>followers : 0 {props.followers}</h6>
-                  <h6>following: 0 {props.following}</h6>
+                  <h6 className="h6-header">Posts: {tracks.length}</h6>
+                  <h6 className="h6-header">Followers: {followers}</h6>
+                  <h6 className="h6-header">Following: {following}</h6>
                 </div>
                 <Button onClick={follow}>Follow</Button>
               </div>
