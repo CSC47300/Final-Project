@@ -25,6 +25,8 @@ function Settings(props) {
       const data = doc.data();
       console.log("Current user info: ",data)
       setUser(data);
+      setImage(data.photoURL)
+      setImagePrev(data.photoURL)
     }
     )
   }
