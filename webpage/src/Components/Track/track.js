@@ -31,7 +31,6 @@ function Track(props) {
             height: 70,
             progressColor: '#398cd4',
             backgroundColor: '#f7f7f7',
-            responsive: true,
             waveColor: '#b5b5b5',
             cursorColor: '#398cd4',
             normalize: true,
