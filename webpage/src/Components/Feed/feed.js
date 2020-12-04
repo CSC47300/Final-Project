@@ -84,7 +84,7 @@ const Feed = ({ user }) => {
                         artistName: posts[i]["postedBy"],
                         userName: data.userDisplayName,
                         albumArt: data.trackArt,
-                        timeFrame: getElapsedTime(data.uploadDate),
+                        timeFrame: getElapsedTime(posts[i].postDate),
                         track: data.audio,
                         id: `${data.trackId}_inst_${i}`,
                         togglePlaying: togglePlaying,
