@@ -20,12 +20,11 @@ const UserLikes = (props) => {
       const data = doc.data();
       let liked = data.likedTracks.reverse();
       let requests = [];
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < 5 && i < liked.length; i++) {
         requests.push(db.collection('tracks').doc(liked[i]).get())
       }
       return Promise.all(requests);
     }).then(docs => {
-
       let items = docs.map(doc => doc.data());
       let tracks = [];
       items.forEach(data => {

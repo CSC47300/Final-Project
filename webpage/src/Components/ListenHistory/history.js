@@ -12,11 +12,10 @@ const History = (props) => {
 
   const getUserHistory = () => {
     if (user == null) return;
-
     db.collection('users').doc(user.uid).get().then(doc => {
       const data = doc.data();
       let requests = [];
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < 5 && i < data.playedTracks.length; i++) {
         requests.push(db.collection('tracks').doc(data.playedTracks[i]).get())
       }
       return Promise.all(requests);
