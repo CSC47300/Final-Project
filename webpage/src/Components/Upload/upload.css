@@ -1,3 +1,15 @@
 .tall{
-    min-height: 100vh;
+}
+
+.name-input {
+    margin-top: 0 !important;
+}
+
+.track-name {
+    margin: 0 !important;
+}
+
+.upload-container {
+    margin: 0 8% 0 8% !important;
+    background-color: white;
 }
