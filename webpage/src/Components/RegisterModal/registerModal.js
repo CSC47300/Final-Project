@@ -32,10 +32,11 @@ const LoginModal = () => {
             playedTracks: [],
             posts: [],
             trackIds: []
+          }).then(() => {
+            window.location.href = '/' + displayName;
           })
         })
         console.log('success')
-        window.location.href='/'+displayName;
       }
       catch (error) {
         setError(error);
