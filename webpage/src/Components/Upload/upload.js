@@ -5,22 +5,24 @@ import { db } from '../../firebase';
 import firebase from 'firebase'
 import { updateRecentUploads } from '../../Helpers/helpers.js';
 import { useHistory } from 'react-router-dom';
+import { Button } from 'react-bootstrap';
 
 /* eslint-disable no-unused-expressions */
 
 function Upload(props) {
 
   const user = useContext(UserContext);
-  const [trackName, setTrackName] = useState("temp");
+  const [trackName, setTrackName] = useState("");
   const [selectedTrack, setTrack] = useState(null);
   const [selectedImage, setImage] = useState(null);
+  const [wait, setWait] = useState("");
+  const [wait2, setWait2] = useState("");
   const [selectedImagePreview, setImagePrev] = useState("765-default-avatar copy.png");
   const history = useHistory();
   let ref = firebase.storage().ref();
 
-  function trackNameHandler(event){
-
-   // [event.target.name]: event.target.value
+  function trackNameHandler(event) {
+    setTrackName(event.target.value);
   }
 
   function trackSelectedHandler(event) {
@@ -40,10 +42,12 @@ function Upload(props) {
         }
         else {
           let Trackref = ref.child('tracks/' + file.name);
+          setWait("Uploading, please wait...")
           Trackref.put(file).then(function (snapshot) {
             console.log('Uploaded the track ' + file.name);
             Trackref.getDownloadURL().then((url) => {
               setTrack(url);
+              setWait("Finished uploading")
               console.log('Track Set')
             })
 
@@ -79,12 +83,14 @@ function Upload(props) {
         else {
 
           setImagePrev(URL.createObjectURL(file));
+          setWait2("Uploading, please wait...")
           console.log(file.name);
           let Imageref = ref.child('images/' + file.name);
           Imageref.put(file).then(function (snapshot) {
             console.log('Uploaded the image' + file.name);
             Imageref.getDownloadURL().then((url) => {
               setImage(url);
+              setWait2("Finished uploading")
               console.log('Image set')
             })
           });
@@ -100,6 +106,9 @@ function Upload(props) {
     }
     else if (selectedTrack == null) {
       window.alert("You have not selected an Track");
+    }
+    else if (trackName == null) {
+      window.alert("Track name must not be blank");
     }
     else {
       const time = Date.now();
@@ -154,79 +163,62 @@ function Upload(props) {
 
   return (
 
-    <div className="container-fluid min-height bg-light">
-
-      <div className="container tall bg-white">
-        {/* In Page Nav-bar */}
-        <nav className="navbar navbar-expand-lg navbar-light border-bottom border-secondary ">
-          <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span className="navbar-toggler-icon"></span>
-          </button>
-          <div className="collapse navbar-collapse" id="navbarNav">
-            <ul className="navbar-nav">
-              <li className="nav-item active">
-                <a className="nav-link" href="#">Upload <span className="sr-only">(current)</span></a>
-              </li>
-            </ul>
+    <div className="container tall bg-white outer-container">
+      {/* main containter   */}
+      <div className="container mt-5 w-75 p-3 upload-container">
+        <div className="form">
+          <div className="row pt-5 m-2">
+            <div className="col">
+              <h5 className="card-title text-center">Select your track</h5>
+            </div>
           </div>
-        </nav>
-
-        {/* main containter   */}
-        <div className="container mt-5 w-75 p-3 border shadow">
-          <div className="form">
-            <div className="row pt-5 m-2">
-              <div className="col">
-                <h5 className="card-title text-center">Select your track</h5>
-              </div>
+          <div className="form-row justify-content-center">
+            <div className="col-4">
+              <input type="file" onChange={trackSelectedHandler} required />
+              {wait}
             </div>
-            <div className="form-row justify-content-center">
-              <div className="col-4">
-                <input type="file" onChange={trackSelectedHandler} required />
-              </div>
+          </div>
+          <div className="row pt-5 m-2 track-name">
+            <div className="col">
+              <h5 className="card-title text-center">Enter track name</h5>
             </div>
-            <div className="row pt-5 m-2">
-              <div className="col">
-                <h5 className="card-title text-center">Enter track name</h5>
-              </div>
+          </div>
+          <div className="form-row mt-4 justify-content-center name-input">
+            <div className="col-4">
+              <input type="text" class="form-control" id="inputPassword2" placeholder="Track Name" onChange={evt => trackNameHandler(evt)} required />
+            </div>
+          </div>
+          <div className="row pt-5 m-2">
+            <div className="col">
+              <h5 className="card-title text-center">Select your Image</h5>
+            </div>
+          </div>
+          <div className="form-row justify-content-center">
+            <div className="col-4">
+              <input type="file" onChange={imageSelectedHandler} required />
+              {wait2}
             </div>
             <div className="form-row mt-4 justify-content-center">
               <div className="col-4">
-                <input type="text" class="form-control" id="inputPassword2" placeholder="Track Name" onChange={trackNameHandler} required />
+                <img src={selectedImagePreview} className="img-thumbnail" />
               </div>
             </div>
-            <div className="row pt-5 m-2">
-              <div className="col">
-                <h5 className="card-title text-center">Select your Image</h5>
-              </div>
-            </div>
-            <div className="form-row justify-content-center">
-              <div className="col-4">
-                <input type="file" onChange={imageSelectedHandler} required />
-              </div>
-              <div className="form-row mt-4 justify-content-center">
-                <div className="col-4">
-                  <img src={selectedImagePreview} className="img-thumbnail" />
-                </div>
-              </div>
-            </div>
+          </div>
 
-            <div className="form-group row m-2">
-              <div className="col">
-                <div className="d-flex justify-content-center">
-                  <div className="form-group row mt-3">
-                    <button type="submit" onClick={fileSubmitHandler} className="btn btn-lg btn-success">Upload</button>
-                  </div>
+          <div className="form-group row m-2">
+            <div className="col">
+              <div className="d-flex justify-content-center">
+                <div className="form-group row mt-3">
+                  <Button onClick={fileSubmitHandler}>Upload</Button>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div className="text-center border-bottom border-light pb-5" >
-          <small> By uploading, you confirm that your sounds comply with our Terms of Use and you don't infringe anyone else's rights.</small>
-        </div>
       </div>
-
-
+      <div className="text-center border-light pb-5" >
+        <small> By uploading, you confirm that your sounds comply with our Terms of Use and you don't infringe anyone else's rights.</small>
+      </div>
     </div>
 
 

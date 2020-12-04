@@ -6,7 +6,7 @@ import firebase from "firebase/app";
 import './settings.css';
 
 function Settings(props) {
-  
+
   const inputFirstName = useRef(null);
   const inputLastName = useRef();
   const inputEmail = useRef();
@@ -15,7 +15,7 @@ function Settings(props) {
   const inputDescription = useRef();
   const user = useContext(UserContext);
   const [selectedImage, setImage] = useState(null);
-  const [selectedImagePreview, setImagePrev] = useState("https://cdn.pixabay.com/photo/2018/04/18/18/56/user-3331257__340.png");
+  const [selectedImagePreview, setImagePrev] = useState("765-default-avatar copy.png");
   let ref = firebase.storage().ref();
 
   const [userNow, setUser] = useState("");
@@ -23,7 +23,6 @@ function Settings(props) {
 
     db.collection('users').doc(user.uid).get().then(doc => {
       const data = doc.data();
-      console.log("Current user info: ",data)
       setUser(data);
       setImage(data.photoURL)
       setImagePrev(data.photoURL)
@@ -31,11 +30,11 @@ function Settings(props) {
     )
   }
   useEffect(() => {
-    if (user === null) return;
+    if (user == null) return;
     else {
       getUserNow();
     }
-}, [])
+  }, [user])
 
   function imageSelectedHandler(event) {
     const file = event.target.files[0];
@@ -67,6 +66,7 @@ function Settings(props) {
     }
   }
   const handleSubmit = (event) => {
+    if (user == null) return;
     if (selectedImage == null) {
       window.alert("You have not selected a Image, Your avatar image is same as before!");
     }
@@ -106,7 +106,6 @@ function Settings(props) {
             <h5>Change User Profile Image</h5>
             <div className="">
               <img src={selectedImagePreview} className="img-fluid z-depth-1 rounded-circle" alt="avatar" />
-              <h6>Upload a different photo...</h6>
 
               <input type="file" onChange={imageSelectedHandler} required />
             </div>
@@ -124,13 +123,13 @@ function Settings(props) {
             <div className="form-group">
               <label className="col-lg-3 control-label">Last name:</label>
               <div className="col-lg-8">
-                <input className="form-control" type="text" ref={inputLastName} defaultValue={userNow.lastName}/>
+                <input className="form-control" type="text" ref={inputLastName} defaultValue={userNow.lastName} />
               </div>
             </div>
             <div className="form-group">
               <label className="col-lg-3 control-label">Email:</label>
               <div className="col-lg-8">
-                <input className="form-control" type="text" ref={inputEmail} defaultValue={userNow.email}/>
+                <input className="form-control" type="text" ref={inputEmail} defaultValue={userNow.email} />
               </div>
             </div>
             <div className="form-group">
@@ -153,13 +152,13 @@ function Settings(props) {
             <div className="form-group">
               <label className="col-md-3 control-label">Username:</label>
               <div className="col-md-8">
-                <input className="form-control" type="text" ref={inputUsername} defaultValue={userNow.displayName}/>
+                <input className="form-control" type="text" ref={inputUsername} defaultValue={userNow.displayName} />
               </div>
             </div>
             <div className="form-group">
               <label className="col-md-3 control-label">Description:</label>
               <div className="col-md-8">
-                <textarea className="form-control" type="text" rows={3} ref={inputDescription} defaultValue={userNow.description}/>
+                <textarea className="form-control" type="text" rows={3} ref={inputDescription} defaultValue={userNow.description} />
               </div>
             </div>
             <div className="form-group">

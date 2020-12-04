@@ -83,14 +83,10 @@ function Track(props) {
                 }
             })
         }
-        if (!played) {
+        if (!played) {  // Update popular
             db.collection('tracks').doc(trackId).update({ playCount: props.playCount + 1 });
             db.collection('tracks-data').doc('popular-uploads').get().then(doc => {
                 let popular = doc.data().popular;
-                let oldObject = {
-                    trackId: trackId,
-                    plays: props.playCount
-                };
                 let newObject = {
                     trackId: trackId,
                     plays: props.playCount + 1
@@ -99,9 +95,11 @@ function Track(props) {
                 popular.forEach(el => {
                     if (trackId === el.trackId) {
                         inPopular = true;
+                        el.plays = props.playCount + 1;
                     }
                 })
-                if (inPopular) { }
+                if (inPopular) {
+                }
                 else if (popular.length < 25) {
                     popular.push(newObject);
                 } else {
