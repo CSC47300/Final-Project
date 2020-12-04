@@ -76,9 +76,11 @@ function Track(props) {
         if (!played && user != null) {
             db.collection('users').doc(user.uid).get().then(doc => {
                 const data = doc.data();
-                if (!data.playedTracks.includes(trackId)) {
+                let newArray = data.playedTracks;
+                if (newArray[newArray.length - 1] !== trackId) {
+                    newArray.push(trackId)
                     db.collection('users').doc(user.uid).update({
-                        playedTracks: firebase.firestore.FieldValue.arrayUnion(trackId)
+                        playedTracks: newArray
                     })
                 }
             })
