@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState, createRef } from 'react';
+import React, { useContext, useRef, useState, useEffect } from 'react';
 import { Container } from 'react-bootstrap';
 import { UserContext } from '../../Providers/UserProvider.js';
 import { db, getUserDocument } from '../../firebase';
@@ -6,7 +6,7 @@ import firebase from "firebase/app";
 import './settings.css';
 
 function Settings(props) {
-
+  
   const inputFirstName = useRef(null);
   const inputLastName = useRef();
   const inputEmail = useRef();
@@ -17,6 +17,23 @@ function Settings(props) {
   const [selectedImage, setImage] = useState(null);
   const [selectedImagePreview, setImagePrev] = useState("https://cdn.pixabay.com/photo/2018/04/18/18/56/user-3331257__340.png");
   let ref = firebase.storage().ref();
+
+  const [userNow, setUser] = useState("");
+  const getUserNow = () => {
+
+    db.collection('users').doc(user.uid).get().then(doc => {
+      const data = doc.data();
+      console.log("Current user info: ",data)
+      setUser(data);
+    }
+    )
+  }
+  useEffect(() => {
+    if (user === null) return;
+    else {
+      getUserNow();
+    }
+}, [])
 
   function imageSelectedHandler(event) {
     const file = event.target.files[0];
@@ -49,7 +66,7 @@ function Settings(props) {
   }
   const handleSubmit = (event) => {
     if (selectedImage == null) {
-      window.alert("You have not selected a Image");
+      window.alert("You have not selected a Image, Your avatar image is same as before!");
     }
     console.log(selectedImage);
     console.log(inputFirstName.current.value);
@@ -99,26 +116,26 @@ function Settings(props) {
             <div className="form-group">
               <label className="col-lg-3 control-label">First name:</label>
               <div className="col-lg-8">
-                <input className="form-control" type="text" ref={inputFirstName} />
+                <input className="form-control" type="text" ref={inputFirstName} defaultValue={userNow.firstName} />
               </div>
             </div>
             <div className="form-group">
               <label className="col-lg-3 control-label">Last name:</label>
               <div className="col-lg-8">
-                <input className="form-control" type="text" ref={inputLastName} />
+                <input className="form-control" type="text" ref={inputLastName} defaultValue={userNow.lastName}/>
               </div>
             </div>
             <div className="form-group">
               <label className="col-lg-3 control-label">Email:</label>
               <div className="col-lg-8">
-                <input className="form-control" type="text" ref={inputEmail} />
+                <input className="form-control" type="text" ref={inputEmail} defaultValue={userNow.email}/>
               </div>
             </div>
             <div className="form-group">
               <label className="col-lg-3 control-label">Time Zone:</label>
               <div className="col-lg-8">
                 <div className="ui-select">
-                  <select id="user_time_zone" className="form-control" ref={inputTimeZone}>
+                  <select id="user_time_zone" className="form-control" ref={inputTimeZone} defaultValue={userNow.timeZone}>
                     <option value="Hawaii"  >(GMT-10:00) Hawaii</option>
                     <option value="Alaska"  >(GMT-09:00) Alaska</option>
                     <option value="Pacific Time (US &amp; Canada)"  >(GMT-08:00) Pacific Time (US &amp; Canada)</option>
@@ -134,13 +151,13 @@ function Settings(props) {
             <div className="form-group">
               <label className="col-md-3 control-label">Username:</label>
               <div className="col-md-8">
-                <input className="form-control" type="text" ref={inputUsername} />
+                <input className="form-control" type="text" ref={inputUsername} defaultValue={userNow.displayName}/>
               </div>
             </div>
             <div className="form-group">
               <label className="col-md-3 control-label">Description:</label>
               <div className="col-md-8">
-                <textarea className="form-control" type="text" rows={3} ref={inputDescription} />
+                <textarea className="form-control" type="text" rows={3} ref={inputDescription} defaultValue={userNow.description}/>
               </div>
             </div>
             <div className="form-group">
