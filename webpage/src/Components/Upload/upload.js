@@ -198,10 +198,10 @@ function Upload(props) {
               <input type="file" onChange={imageSelectedHandler} required />
               {wait2}
             </div>
-            <div className="form-row mt-4 justify-content-center">
-              <div className="col-4">
-                <img src={selectedImagePreview} className="img-thumbnail" />
-              </div>
+          </div>
+          <div className="form-row mt-4 justify-content-center">
+            <div className="col-4">
+              <img src={selectedImagePreview} className="img-thumbnail" />
             </div>
           </div>
 
