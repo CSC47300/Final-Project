@@ -4,7 +4,6 @@ import "./upload.css";
 import { db } from '../../firebase';
 import firebase from 'firebase'
 import { updateRecentUploads } from '../../Helpers/helpers.js';
-import { useHistory } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
 
 /* eslint-disable no-unused-expressions */
@@ -18,7 +17,6 @@ function Upload(props) {
   const [wait, setWait] = useState("");
   const [wait2, setWait2] = useState("");
   const [selectedImagePreview, setImagePrev] = useState("765-default-avatar copy.png");
-  const history = useHistory();
   let ref = firebase.storage().ref();
 
   function trackNameHandler(event) {
@@ -149,7 +147,7 @@ function Upload(props) {
                 trackId: trackId
               })
             }).then(() => {
-              history.goBack();
+              window.location.href = `/${user.displayName}`;
             })
           })
         })
