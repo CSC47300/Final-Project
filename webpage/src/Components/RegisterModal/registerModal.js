@@ -143,10 +143,7 @@ const LoginModal = () => {
               <div className="invalid-feedback d-block"> {error.toString()}</div>
               <Button className="btn btn-primary btn-block" type='submit'>
                 Sign Up
-            </Button>
-              <p className="forgot-password text-right">
-                Already registered <a href="#">sign in?</a>
-              </p>
+              </Button>
             </form>
           </Modal.Body>
         </Modal>

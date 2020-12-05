@@ -12,6 +12,7 @@ const LoginModal = (props) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
+  const [forgotPassword,setForgotPassword] = useState(false);
  
 
   const signInWithEmailAndPasswordHandler = (event,email, password) => {
@@ -32,23 +33,30 @@ const LoginModal = (props) => {
       });
     };
     
-    const onChangeHandler = (event) => {
-        const {name, value} = event.currentTarget;
-      
-        if(name === 'userEmail') {
-            setEmail(value);
-        }
-        else if(name === 'userPassword'){
-          setPassword(value);
-        }
-    };
-
-    const onSubmit = (e) => {
-      console.log('onSubmit()');
-      signInWithEmailAndPasswordHandler(e, email, password)
-    }
-
+  const onChangeHandler = (event) => {
+      const {name, value} = event.currentTarget;
     
+      if(name === 'userEmail') {
+          setEmail(value);
+      }
+      else if(name === 'userPassword'){
+        setPassword(value);
+      }
+  };
+
+  const onSubmit = (e) => {
+    console.log('onSubmit()');
+    signInWithEmailAndPasswordHandler(e, email, password)
+  }
+
+  const sendEmail = (Email) => {
+    auth.sendPasswordResetEmail(Email)
+      .then(function (user) {
+        alert('Please check your email...')
+      }).catch(function (e) {
+        console.log(e)
+      })
+  }
 
 
   return (
@@ -60,43 +68,62 @@ const LoginModal = (props) => {
           onHide={() => setShow(false)}
           size='md'
           centered>
+          {!forgotPassword ? 
+            <Modal.Body>
+              <form onSubmit={(event) => {onSubmit(event)}}>
+                <h3 className ='font-weight-bold text-center' closeButton>Sign In</h3>
 
-          <Modal.Body>
-            <form onSubmit={(event) => {onSubmit(event)}}>
-              <h3 className ='font-weight-bold text-center' closeButton>Sign In</h3>
+                <div className="form-group">
+                  <label>Email address</label>
+                  <input type="email" 
+                          name = "userEmail"
+                          id = "userEmail"
+                          value = {email}
+                          className="form-control" 
+                          placeholder={"Enter email"}
+                          onChange = {(event) => onChangeHandler(event)}
 
-              <div className="form-group">
-                <label>Email address</label>
-                <input type="email" 
-                        name = "userEmail"
-                        id = "userEmail"
-                        value = {email}
-                        className="form-control" 
-                        placeholder={"Enter email"}
-                        onChange = {(event) => onChangeHandler(event)}
+                  />
+                </div>
 
-                />
-              </div>
+                <div className="form-group">
+                  <label>Password</label>
+                  <input type="password" 
+                          name="userPassword"
+                          id="userPassword"
+                          value = {password} 
+                          className="form-control" 
+                          placeholder="Enter password"
+                          onChange = {(event) => onChangeHandler(event)} />
+                </div>
+                <div className="invalid-feedback d-block"> {error}</div>
+                <div>
+                    <Button type='submit' class='padding-top'> Submit </Button>
+                    <div className="forgot-password text-right">
+                    <Button className = "forgot-pw" onClick={() => {setForgotPassword(true)}}>ForgotPassword</Button>
+                    </div>
+                </div>
+              </form>
+            </Modal.Body>
+            :
+            <Modal.Body>
+              <form onSubmit={(event) => {sendEmail(email)}}>
+                <h3 className ='font-weight-bold text-center' closeButton>Sign In</h3>
 
-              <div className="form-group">
-                <label>Password</label>
-                <input type="password" 
-                        name="userPassword"
-                        id="userPassword"
-                        value = {password} 
-                        className="form-control" 
-                        placeholder="Enter password"
-                        onChange = {(event) => onChangeHandler(event)} />
-              </div>
-              <div className="invalid-feedback d-block"> {error}</div>
-              <div>
-                  <Button type='submit' class='padding-top'> Submit </Button>
-                  <p className="forgot-password text-right">
-                  <a href="#">Forgot password?</a>
-                </p>
-              </div>
-            </form>
-          </Modal.Body>
+                <div className="form-group">
+                  <label>Email address</label>
+                  <input type="email" 
+                          name = "userEmail"
+                          id = "userEmail"
+                          value = {email}
+                          className="form-control" 
+                          placeholder={"Enter email"}
+                          onChange = {(event) => onChangeHandler(event)}
+                  />
+                </div>
+                <Button type='submit' class='padding-top'> Submit </Button>
+              </form>
+            </Modal.Body>}
         </Modal>
       </div>
     </div>
