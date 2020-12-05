@@ -10,7 +10,6 @@ import firebase from "firebase/app";
 function Track(props) {
     const [played, setPlayed] = useState(false);
     const [likes, setLikes] = useState(props.likes);
-    const [trackLiked, setTrackLiked] = useState(false);
     const [reposted, setReposted] = useState(false);
     const [isPlaying, setIsPlaying] = useState(false);
     const waveform = useRef();
@@ -121,6 +120,17 @@ function Track(props) {
         setPlayed(true);
         setIsPlaying(isPlaying => !isPlaying);
     };
+    const [isLiked, setIsliked] = useState(false);
+
+    useEffect(() => {
+        if (user == null) return;
+        else {
+            db.collection('users').doc(user.uid).get().then(doc => {
+                const liked = doc.data().likedTracks;
+                if (liked.includes(trackId)) setIsliked(true);
+            })
+        }
+    }, [user])
 
     const handleLike = () => {
         if (user != null) {
@@ -129,19 +139,28 @@ function Track(props) {
                 if (data.likedBy.includes(user.uid)) return true;
                 else return false;
             }).then(likedByCurrentUser => {
-                db.collection('tracks').doc(trackId).update({
-                    likeCount: likedByCurrentUser === false ? firebase.firestore.FieldValue.increment(1) : props.likes,
-                    likedBy: firebase.firestore.FieldValue.arrayUnion(user.uid)
-                });
-                db.collection('users').doc(user.uid).update({
-                    likedTracks: firebase.firestore.FieldValue.arrayUnion(trackId)
-                });
                 if (!likedByCurrentUser) {
+                    db.collection('tracks').doc(trackId).update({
+                        likeCount: firebase.firestore.FieldValue.increment(1),
+                        likedBy: firebase.firestore.FieldValue.arrayUnion(user.uid)
+                    });
+                    db.collection('users').doc(user.uid).update({
+                        likedTracks: firebase.firestore.FieldValue.arrayUnion(trackId)
+                    });
                     setLikes(likes => likes + 1);
+                } else {
+                    db.collection('tracks').doc(trackId).update({
+                        likeCount: firebase.firestore.FieldValue.increment(-1),
+                        likedBy: firebase.firestore.FieldValue.arrayRemove(user.uid)
+                    });
+                    db.collection('users').doc(user.uid).update({
+                        likedTracks: firebase.firestore.FieldValue.arrayRemove(trackId)
+                    });
+                    setLikes(likes => likes - 1);
                 }
             })
         }
-        setTrackLiked(() => !trackLiked);
+        setIsliked(liked => !liked);
     }
 
     const handleRepost = () => {
@@ -165,13 +184,14 @@ function Track(props) {
                 }
             })
         }
-        setReposted(true);
+        if (user == null) setReposted(repost => !repost);
+        else setReposted(true);
     }
 
     const playBtn = !isPlaying && props.currentlyPlaying !== waveform ? <BsPlayFill /> : <BsPauseFill className="pause-btn" />;
     let post = props.userName === props.artistName ? "posted" : <>&nbsp;<BsArrowRepeat />reposted</>;
     if (props.repostOwn) post = <>&nbsp;<BsArrowRepeat />reposted</>;
-    const likeClass = trackLiked ? "social-icon liked" : "social-icon like";
+    const likeClass = isLiked ? "social-icon liked" : "social-icon like";
     const repostClass = reposted ? "social-icon reposted" : "social-icon repost";
 
     return (
