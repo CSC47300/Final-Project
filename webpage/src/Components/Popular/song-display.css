@@ -6,7 +6,7 @@
 .text {
     font-size: 12px;
     width: 140px;
-    overflow: scroll;
+    overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
     padding-right: 5px;
