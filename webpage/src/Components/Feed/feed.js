@@ -55,6 +55,7 @@ const Feed = ({ user }) => {
                 let newPosts = items[i].posts;
                 newPosts.forEach(post => {          // Get all posts by user and add the userName to the post object
                     post["postedBy"] = items[i].displayName;
+                    post["userPhoto"] = items[i].photoURL;
                 })
                 posts = posts.concat(newPosts);
             }
@@ -86,6 +87,7 @@ const Feed = ({ user }) => {
                         songName: data.trackName,
                         artistName: data.userDisplayName,
                         userName: posts[i]["postedBy"],
+                        userPhoto: posts[i]["userPhoto"],
                         albumArt: data.trackArt,
                         timeFrame: getElapsedTime(posts[i].postDate),
                         track: data.audio,
@@ -106,6 +108,7 @@ const Feed = ({ user }) => {
 
     const getDefaultPosts = () => {
         let requests = [];
+        let items = [];
         db.collection('tracks-data').doc('recent-uploads').get().then(doc => {
             let recents = doc.data().recent;
             recents.forEach(track => {
@@ -114,7 +117,15 @@ const Feed = ({ user }) => {
             return Promise.all(requests);
         }).then(docs => {
             let tracks = [];
-            let items = docs.map(doc => doc.data());
+            items = docs.map(doc => doc.data());
+            requests = [];
+            for (let i = 0; i < items.length; i++) {
+                requests.push(db.collection('users').doc(items[i].userId).get())
+            }
+            return Promise.all(requests);
+        }).then(returnData => {
+            let tracks = [];
+            let userPhotos = returnData.map(doc => doc.data().photoURL);
             for (let i = 0; i < items.length; i++) {
                 let data = items[i];      // Create tracks
                 tracks.push(
@@ -127,6 +138,7 @@ const Feed = ({ user }) => {
                         songName: data.trackName,
                         artistName: data.userDisplayName,
                         userName: data.userDisplayName,
+                        userPhoto: userPhotos[i],
                         albumArt: data.trackArt,
                         timeFrame: getElapsedTime(data.uploadDate),
                         track: data.audio,
@@ -163,6 +175,7 @@ const Feed = ({ user }) => {
             songName={track.songName}
             artistName={track.artistName}
             userName={track.userName}
+            userPhoto={track.userPhoto}
             albumArt={track.albumArt}
             timeFrame={track.timeFrame}
             track={track.track}

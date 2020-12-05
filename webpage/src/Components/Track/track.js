@@ -198,7 +198,7 @@ function Track(props) {
         <Container className="track">
             <Row className="poster">
                 <Col className="">
-                    <img className="user-avatar" src="https://i.imgur.com/p3vccAp.jpeg" alt="poster-avatar" />
+                    <img className="user-avatar" src={props.userPhoto != null ? props.userPhoto : "765-default-avatar copy.png"} alt="poster-avatar" />
                     &nbsp;<a className="link" href={`/${props.userName}`}>{props.userName}</a>
                     &nbsp;{post} a track {props.timeFrame} ago
                 </Col>

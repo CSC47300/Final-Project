@@ -65,8 +65,9 @@ const ProfilePage = (props) => {
     let tracks = [];
 
     db.collection('users').where('displayName', '==', name).get().then(querySnapshot => {
-      return querySnapshot.docs[0].id;
-    }).then(userId => {
+      return [querySnapshot.docs[0].id, querySnapshot.docs[0].data().photoURL];
+    }).then(returnData => {
+      const userId = returnData[0];
       db.collection('tracks').where('userId', '==', userId).get().then(querySnapshot => {
         const data = querySnapshot.docs.map(doc => doc.data());
         data.sort((a, b) => b.uploadDate - a.uploadDate);
@@ -81,6 +82,7 @@ const ProfilePage = (props) => {
               songName: data.trackName,
               artistName: name,
               userName: name,
+              userPhoto: returnData[1],
               albumArt: data.trackArt,
               timeFrame: getElapsedTime(data.uploadDate),
               track: data.audio,
@@ -174,6 +176,7 @@ const ProfilePage = (props) => {
       artistName={track.artistName}
       userName={track.userName}
       albumArt={track.albumArt}
+      userPhoto={track.userPhoto}
       timeFrame={track.timeFrame}
       track={track.track}
       id={track.id}
