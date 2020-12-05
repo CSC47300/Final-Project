@@ -1,83 +1,58 @@
-import React, {useState,useEffect,useContext } from 'react';
-import { createTrack, getElapsedTime } from '../../Helpers/helpers';
+import React, { useState, useEffect, useContext } from 'react';
 import { db } from '../../firebase';
 import { UserContext } from '../../Providers/UserProvider';
+import { createSongDisplay } from '../Popular/song-display';
+import { BsHeart } from 'react-icons/bs';
 
 
-const UserLikes = (props) => 
-{
 
-    let user = useContext(UserContext);
-    const [likes, setLikes] = useState([]);
-    const [currentlyPlaying, setCurrent] = useState({
-      current: "",
-      id: ""
-  });
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentInfo, setInfo] = useState({
-      img: '',
-      songName: '',
-      artistName: ''
-  })
-  const togglePlaying = (item = currentlyPlaying) => {
-    if (item.current != "") {
-      item.current.playPause();
-      setIsPlaying(isPlaying => !isPlaying);
-    }
-  }
-  
+const UserLikes = (props) => {
 
-    const getUserLikes = () => {
-      if (user == null) return;
-      let tracks= [];
-    
-      
-      db.collection('users').doc(user.uid).get().then(doc => {
-        const data = doc.data();
-       db.collection('tracks').where('trackId', "in", data.likedTracks).get().then(querySnapshot => {
-          const track = querySnapshot.docs.map(doc => doc.data());
-          track.forEach(data => {
-            tracks.push(createTrack(
-              data.trackId,
-              data.userDisplayName,
-              data.userDisplayName,
-              getElapsedTime(data.uploadDate),
-              data.audio,
-              isPlaying,
-              togglePlaying,
-              data.trackName,
-              data.playCount,
-              data.likeCount,
-              data.repostCount,
-              data.trackArt,
-              setCurrent,
-              setInfo,
-              currentlyPlaying
-              ))
-              setLikes(tracks);
-            })
-          })
-        }).catch(err => console.error(err))
+  let user = useContext(UserContext);
+  const [likes, setLikes] = useState([]);
+
+  const getUserLikes = () => {
+    if (user == null) return;
+    let tracks = [];
+
+
+    db.collection('users').doc(user.uid).get().then(doc => {
+      const data = doc.data();
+      let liked = data.likedTracks.reverse();
+      let requests = [];
+      for (let i = 0; i < 5 && i < liked.length; i++) {
+        requests.push(db.collection('tracks').doc(liked[i]).get())
       }
-    
-    useEffect(() => {
-      getUserLikes();
-    }, [user])
-    
+      return Promise.all(requests);
+    }).then(docs => {
+      let items = docs.map(doc => doc.data());
+      let tracks = [];
+      items.forEach(data => {
+        tracks.push(createSongDisplay(data.trackArt, data.trackName, data.userDisplayName,
+          data.playCount, data.repostCount, data.likeCount));
+      })
+      setLikes(tracks);
+    }).catch(err => console.error(err))
+  }
 
-  return(
-    
+  useEffect(() => {
+    getUserLikes();
+  }, [user])
 
-    <div class="container  shadow">
-      <div class="row  m-2">  
-            <div class = "container  border-top border-grey">
-                 <div class="col">
-                    {likes.reverse()}
-                </div>
-            </div>    
-      </div>  
-    </div>
-  
+
+  return (
+
+    <>
+      <div className="popular">
+        <span>
+          <BsHeart className="record-icon" />
+          <h3 className="sidebar-header">Recently liked:</h3>
+        </span>
+        <hr className="line" />
+        {likes}
+      </div>
+    </>
+
   );
 
 };

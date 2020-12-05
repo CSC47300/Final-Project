@@ -55,6 +55,7 @@ const Feed = ({ user }) => {
                 let newPosts = items[i].posts;
                 newPosts.forEach(post => {          // Get all posts by user and add the userName to the post object
                     post["postedBy"] = items[i].displayName;
+                    post["userPhoto"] = items[i].photoURL;
                 })
                 posts = posts.concat(newPosts);
             }
@@ -73,6 +74,9 @@ const Feed = ({ user }) => {
             });
             for (let i = 0; i < items.length; i++) {
                 let data = items[i];      // Create tracks
+                let repostOwn = false;
+                if (data.userDisplayName === posts[i]["postedBy"] && posts[i].postDate !== data.uploadDate)
+                    repostOwn = true;
                 tracks.push(
                     {
                         key: `${data.trackId}_inst_${i}`,
@@ -81,8 +85,9 @@ const Feed = ({ user }) => {
                         reposts: data.repostCount,
                         playCount: data.playCount,
                         songName: data.trackName,
-                        artistName: posts[i]["postedBy"],
-                        userName: data.userDisplayName,
+                        artistName: data.userDisplayName,
+                        userName: posts[i]["postedBy"],
+                        userPhoto: posts[i]["userPhoto"],
                         albumArt: data.trackArt,
                         timeFrame: getElapsedTime(posts[i].postDate),
                         track: data.audio,
@@ -90,7 +95,8 @@ const Feed = ({ user }) => {
                         togglePlaying: togglePlaying,
                         setCurrent: setCurrent,
                         setInfo: setInfo,
-                        currentlyPlaying: currentlyPlaying
+                        currentlyPlaying: currentlyPlaying,
+                        repostOwn: repostOwn
                     }
                 )
             }
@@ -102,6 +108,7 @@ const Feed = ({ user }) => {
 
     const getDefaultPosts = () => {
         let requests = [];
+        let items = [];
         db.collection('tracks-data').doc('recent-uploads').get().then(doc => {
             let recents = doc.data().recent;
             recents.forEach(track => {
@@ -110,7 +117,15 @@ const Feed = ({ user }) => {
             return Promise.all(requests);
         }).then(docs => {
             let tracks = [];
-            let items = docs.map(doc => doc.data());
+            items = docs.map(doc => doc.data());
+            requests = [];
+            for (let i = 0; i < items.length; i++) {
+                requests.push(db.collection('users').doc(items[i].userId).get())
+            }
+            return Promise.all(requests);
+        }).then(returnData => {
+            let tracks = [];
+            let userPhotos = returnData.map(doc => doc.data().photoURL);
             for (let i = 0; i < items.length; i++) {
                 let data = items[i];      // Create tracks
                 tracks.push(
@@ -123,6 +138,7 @@ const Feed = ({ user }) => {
                         songName: data.trackName,
                         artistName: data.userDisplayName,
                         userName: data.userDisplayName,
+                        userPhoto: userPhotos[i],
                         albumArt: data.trackArt,
                         timeFrame: getElapsedTime(data.uploadDate),
                         track: data.audio,
@@ -130,7 +146,8 @@ const Feed = ({ user }) => {
                         togglePlaying: togglePlaying,
                         setCurrent: setCurrent,
                         setInfo: setInfo,
-                        currentlyPlaying: currentlyPlaying
+                        currentlyPlaying: currentlyPlaying,
+                        repostOwn: false
                     }
                 )
             }
@@ -158,6 +175,7 @@ const Feed = ({ user }) => {
             songName={track.songName}
             artistName={track.artistName}
             userName={track.userName}
+            userPhoto={track.userPhoto}
             albumArt={track.albumArt}
             timeFrame={track.timeFrame}
             track={track.track}
@@ -166,6 +184,7 @@ const Feed = ({ user }) => {
             setCurrent={setCurrent}
             setInfo={setInfo}
             currentlyPlaying={currentlyPlaying}
+            repostOwn={track.repostOwn}
         />
     })
     return (
@@ -183,14 +202,12 @@ const Feed = ({ user }) => {
                         {display}
                     </Col>
                     <Col lg={3} md={3}>
-                        <div><svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-heart-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z" />
-                        </svg>Likes:</div>
-                        {/* {<UserLikes />} */}
-                        <div> <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-calendar-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V5h16V4H0V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5z" />
-                        </svg> Listening History:</div>
-                        {/* {< History />} */}
+                        {user != null ?
+                            <>
+                                <UserLikes />
+                                <History />
+                            </>
+                            : ''}
                         <Popular />
                     </Col>
                 </Row>

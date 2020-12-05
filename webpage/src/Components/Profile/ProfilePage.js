@@ -65,8 +65,9 @@ const ProfilePage = (props) => {
     let tracks = [];
 
     db.collection('users').where('displayName', '==', name).get().then(querySnapshot => {
-      return querySnapshot.docs[0].id;
-    }).then(userId => {
+      return [querySnapshot.docs[0].id, querySnapshot.docs[0].data().photoURL];
+    }).then(returnData => {
+      const userId = returnData[0];
       db.collection('tracks').where('userId', '==', userId).get().then(querySnapshot => {
         const data = querySnapshot.docs.map(doc => doc.data());
         data.sort((a, b) => b.uploadDate - a.uploadDate);
@@ -81,6 +82,7 @@ const ProfilePage = (props) => {
               songName: data.trackName,
               artistName: name,
               userName: name,
+              userPhoto: returnData[1],
               albumArt: data.trackArt,
               timeFrame: getElapsedTime(data.uploadDate),
               track: data.audio,
@@ -102,27 +104,54 @@ const ProfilePage = (props) => {
     }).catch(err => console.error(err))
   }
 
-
+  const [followButton, setFollowButton] = useState('Follow');
+  useEffect(() => {
+    if (user != null) {
+      db.collection('users').where('displayName', '==', name).get().then(querySnapshot => {
+        return querySnapshot.docs[0].id;
+      }).then(userId => {
+        db.collection('users').doc(user.uid).get().then(doc => {
+          const following = doc.data().following;
+          if (following.includes(userId)) {
+            setFollowButton("Unfollow")
+          }
+        })
+      })
+    }
+  }, [user])
   const follow = () => {
+    if (user == null) {
+      window.alert("You must be signed in to follow the user.");
+      return;
+    }
     const name = props.match.params.profileName;
     db.collection('users').where('displayName', '==', name).get().then(querySnapshot => {
       return querySnapshot.docs[0].id;
     }).then(userId => {
       db.collection('users').doc(user.uid).get().then(doc => {
         const data = doc.data();
-        if (data.following.includes(userId)) return true;
-        else return false;
-      }).then(isFollwing => {
-        if (!isFollwing) {
+        let following = doc.data().following;
+        if (following.includes(userId)) {
+          db.collection('users').doc(user.uid).update({ // Remove from following
+            following: firebase.firestore.FieldValue.arrayRemove(userId)
+          })
+          db.collection('users').doc(userId).update({ // Remove from followers
+            followers: firebase.firestore.FieldValue.arrayRemove(user.uid)
+          })
+          setFollowButton("Follow")
+        } else {
           db.collection('users').doc(user.uid).update({   // Update current user following
             following: firebase.firestore.FieldValue.arrayUnion(userId)
           })
           db.collection('users').doc(userId).update({   // Update user who is being followed
             followers: firebase.firestore.FieldValue.arrayUnion(user.uid)
           })
+          setFollowButton("Unfollow")
         }
-      })
-    })
+        if (data.following.includes(userId)) return true;
+        else return false;
+      }).catch(err => console.error(err))
+    }).catch(err => console.error(err))
   }
 
   useEffect(() => {
@@ -147,6 +176,7 @@ const ProfilePage = (props) => {
       artistName={track.artistName}
       userName={track.userName}
       albumArt={track.albumArt}
+      userPhoto={track.userPhoto}
       timeFrame={track.timeFrame}
       track={track.track}
       id={track.id}
@@ -183,7 +213,7 @@ const ProfilePage = (props) => {
                   <h6 className="h6-header">Followers: {followers}</h6>
                   <h6 className="h6-header">Following: {following}</h6>
                 </div>
-                <Button onClick={follow}>Follow</Button>
+                <Button onClick={follow}>{followButton}</Button>
               </div>
 
             </MDBCol>

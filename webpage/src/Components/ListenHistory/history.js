@@ -1,84 +1,53 @@
-import React, {useState,useEffect,useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 
-import { createTrack, getElapsedTime } from '../../Helpers/helpers';
 import { db } from '../../firebase';
 import { UserContext } from '../../Providers/UserProvider';
+import { createSongDisplay } from '../Popular/song-display';
+import { AiFillCalendar } from 'react-icons/ai'
 
+const History = (props) => {
 
+  let user = useContext(UserContext);
+  const [history, setHistory] = useState([]);
 
-const History = (props) => 
-  {
-   
-    let user = useContext(UserContext);
-    const [history, setHistory] = useState([]);
-    const [currentlyPlaying, setCurrent] = useState({
-      current: "",
-      id: ""
-  });
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentInfo, setInfo] = useState({
-      img: '',
-      songName: '',
-      artistName: ''
-  })
-  const togglePlaying = (item = currentlyPlaying) => {
-    if (item.current != "") {
-      item.current.playPause();
-      setIsPlaying(isPlaying => !isPlaying);
-    }
-  }
-  
-    const getUserHistory = () => {
-      if (user == null) return;
-      let tracks= [];
-      
-      db.collection('users').doc(user.uid).get().then(doc => {
-        const data = doc.data();
-       console.log(data.playedTracks);
-       db.collection('tracks').where('trackId', "in", data.playedTracks).get().then(querySnapshot => {
-          const track = querySnapshot.docs.map(doc => doc.data());
-          track.forEach(data => {
-            tracks.push(createTrack(
-              data.trackId,
-              data.userDisplayName,
-              data.userDisplayName,
-              getElapsedTime(data.uploadDate),
-              data.audio,
-              isPlaying,
-              togglePlaying,
-              data.trackName,
-              data.playCount,
-              data.likeCount,
-              data.repostCount,
-              data.trackArt,
-              setCurrent,
-              setInfo,
-              currentlyPlaying
-              ))
-              setHistory(tracks);
-            })
-          })
-        }).catch(err => console.error(err))
+  const getUserHistory = () => {
+    if (user == null) return;
+    db.collection('users').doc(user.uid).get().then(doc => {
+      const data = doc.data();
+      let requests = [];
+      for (let i = 0; i < 5 && i < data.playedTracks.length; i++) {
+        requests.push(db.collection('tracks').doc(data.playedTracks[i]).get())
       }
-    
-    useEffect(() => {
-      getUserHistory();
-    }, [user])
-    
-  return(
-    
+      return Promise.all(requests);
+    }).then(docs => {
+      let items = docs.map(doc => doc.data());
+      let tracks = [];
+      let i = 0;
+      items.forEach(data => {
+        tracks.push(createSongDisplay(data.trackArt, data.trackName, data.userDisplayName,
+          data.playCount, data.repostCount, data.likeCount, `${data.trackName}-${i++}`));
+      })
+      tracks.reverse();
+      setHistory(tracks);
+    }).catch(err => console.error(err))
+  }
 
-    <div class="container  shadow">
-      <div class="row  m-3">  
-            <div class = "container  border-top border-grey">
-                 <div class="col">
-                    {history.reverse()}
-                </div>
-            </div>    
+  useEffect(() => {
+    getUserHistory();
+  }, [user])
+
+  return (
+    <>
+      <div className="popular">
+        <span>
+          <AiFillCalendar className="record-icon" />
+          <h3 className="sidebar-header">Listening History:</h3>
+        </span>
+        <hr className="line" />
+        {history}
       </div>
-    </div>
-    
-  
+    </>
+
   );
 };
 export default History;
