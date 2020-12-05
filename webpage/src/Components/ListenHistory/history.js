@@ -15,6 +15,7 @@ const History = (props) => {
     db.collection('users').doc(user.uid).get().then(doc => {
       const data = doc.data();
       let requests = [];
+      data.playedTracks.reverse();
       for (let i = 0; i < 5 && i < data.playedTracks.length; i++) {
         requests.push(db.collection('tracks').doc(data.playedTracks[i]).get())
       }
@@ -27,7 +28,6 @@ const History = (props) => {
         tracks.push(createSongDisplay(data.trackArt, data.trackName, data.userDisplayName,
           data.playCount, data.repostCount, data.likeCount, `${data.trackName}-${i++}`));
       })
-      tracks.reverse();
       setHistory(tracks);
     }).catch(err => console.error(err))
   }
