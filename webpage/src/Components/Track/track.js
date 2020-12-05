@@ -10,7 +10,6 @@ import firebase from "firebase/app";
 function Track(props) {
     const [played, setPlayed] = useState(false);
     const [likes, setLikes] = useState(props.likes);
-    const [trackLiked, setTrackLiked] = useState(false);
     const [reposted, setReposted] = useState(false);
     const [isPlaying, setIsPlaying] = useState(false);
     const waveform = useRef();
@@ -31,7 +30,6 @@ function Track(props) {
             height: 70,
             progressColor: '#398cd4',
             backgroundColor: '#f7f7f7',
-            responsive: true,
             waveColor: '#b5b5b5',
             cursorColor: '#398cd4',
             normalize: true,
@@ -76,21 +74,19 @@ function Track(props) {
         if (!played && user != null) {
             db.collection('users').doc(user.uid).get().then(doc => {
                 const data = doc.data();
-                if (!data.playedTracks.includes(trackId)) {
+                let newArray = data.playedTracks;
+                if (newArray[newArray.length - 1] !== trackId) {
+                    newArray.push(trackId)
                     db.collection('users').doc(user.uid).update({
-                        playedTracks: firebase.firestore.FieldValue.arrayUnion(trackId)
+                        playedTracks: newArray
                     })
                 }
             })
         }
-        if (!played) {
+        if (!played) {  // Update popular
             db.collection('tracks').doc(trackId).update({ playCount: props.playCount + 1 });
             db.collection('tracks-data').doc('popular-uploads').get().then(doc => {
                 let popular = doc.data().popular;
-                let oldObject = {
-                    trackId: trackId,
-                    plays: props.playCount
-                };
                 let newObject = {
                     trackId: trackId,
                     plays: props.playCount + 1
@@ -99,9 +95,11 @@ function Track(props) {
                 popular.forEach(el => {
                     if (trackId === el.trackId) {
                         inPopular = true;
+                        el.plays = props.playCount + 1;
                     }
                 })
-                if (inPopular) { }
+                if (inPopular) {
+                }
                 else if (popular.length < 25) {
                     popular.push(newObject);
                 } else {
@@ -122,6 +120,17 @@ function Track(props) {
         setPlayed(true);
         setIsPlaying(isPlaying => !isPlaying);
     };
+    const [isLiked, setIsliked] = useState(false);
+
+    useEffect(() => {
+        if (user == null) return;
+        else {
+            db.collection('users').doc(user.uid).get().then(doc => {
+                const liked = doc.data().likedTracks;
+                if (liked.includes(trackId)) setIsliked(true);
+            })
+        }
+    }, [user])
 
     const handleLike = () => {
         if (user != null) {
@@ -130,19 +139,28 @@ function Track(props) {
                 if (data.likedBy.includes(user.uid)) return true;
                 else return false;
             }).then(likedByCurrentUser => {
-                db.collection('tracks').doc(trackId).update({
-                    likeCount: likedByCurrentUser === false ? firebase.firestore.FieldValue.increment(1) : props.likes,
-                    likedBy: firebase.firestore.FieldValue.arrayUnion(user.uid)
-                });
-                db.collection('users').doc(user.uid).update({
-                    likedTracks: firebase.firestore.FieldValue.arrayUnion(trackId)
-                });
                 if (!likedByCurrentUser) {
+                    db.collection('tracks').doc(trackId).update({
+                        likeCount: firebase.firestore.FieldValue.increment(1),
+                        likedBy: firebase.firestore.FieldValue.arrayUnion(user.uid)
+                    });
+                    db.collection('users').doc(user.uid).update({
+                        likedTracks: firebase.firestore.FieldValue.arrayUnion(trackId)
+                    });
                     setLikes(likes => likes + 1);
+                } else {
+                    db.collection('tracks').doc(trackId).update({
+                        likeCount: firebase.firestore.FieldValue.increment(-1),
+                        likedBy: firebase.firestore.FieldValue.arrayRemove(user.uid)
+                    });
+                    db.collection('users').doc(user.uid).update({
+                        likedTracks: firebase.firestore.FieldValue.arrayRemove(trackId)
+                    });
+                    setLikes(likes => likes - 1);
                 }
             })
         }
-        setTrackLiked(() => !trackLiked);
+        setIsliked(liked => !liked);
     }
 
     const handleRepost = () => {
@@ -166,19 +184,21 @@ function Track(props) {
                 }
             })
         }
-        setReposted(true);
+        if (user == null) setReposted(repost => !repost);
+        else setReposted(true);
     }
 
     const playBtn = !isPlaying && props.currentlyPlaying !== waveform ? <BsPlayFill /> : <BsPauseFill className="pause-btn" />;
-    const post = props.userName === props.artistName ? "posted" : <>&nbsp;<BsArrowRepeat />reposted</>;
-    const likeClass = trackLiked ? "social-icon liked" : "social-icon like";
+    let post = props.userName === props.artistName ? "posted" : <>&nbsp;<BsArrowRepeat />reposted</>;
+    if (props.repostOwn) post = <>&nbsp;<BsArrowRepeat />reposted</>;
+    const likeClass = isLiked ? "social-icon liked" : "social-icon like";
     const repostClass = reposted ? "social-icon reposted" : "social-icon repost";
 
     return (
         <Container className="track">
             <Row className="poster">
                 <Col className="">
-                    <img className="user-avatar" src="https://i.imgur.com/p3vccAp.jpeg" alt="poster-avatar" />
+                    <img className="user-avatar" src={props.userPhoto != null ? props.userPhoto : "765-default-avatar copy.png"} alt="poster-avatar" />
                     &nbsp;<a className="link" href={`/${props.userName}`}>{props.userName}</a>
                     &nbsp;{post} a track {props.timeFrame} ago
                 </Col>

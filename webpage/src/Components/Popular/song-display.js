@@ -37,9 +37,9 @@ const SongDisplay = (props) => {
     )
 }
 
-const createSongDisplay = (img, songName, artistName, playCount, repostCount, likeCount) => {
+const createSongDisplay = (img, songName, artistName, playCount, repostCount, likeCount, key = `${artistName}-${songName}-${playCount}`) => {
     return <SongDisplay
-        key={`${artistName}-${songName}-${playCount}`}
+        key={key}
         img={img}
         songName={songName}
         artistName={artistName}

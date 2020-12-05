@@ -20,8 +20,8 @@ const ProfilePage = (props) => {
 
   const [showSettings, setShowSettings] = useState(false);
   const [userNow, setUser] = useState("");
-  const getUserNow = () => {
 
+  const getUserNow = () => {
     db.collection('users').where('displayName', '==', name).get().then(querySnapshot => {
       const data = querySnapshot.docs.map(doc => doc.data());
       const values = data[0];
@@ -44,6 +44,8 @@ const ProfilePage = (props) => {
     songName: '',
     artistName: ''
   })
+  const [followers, setFollowers] = useState(0);
+  const [following, setFollowing] = useState(0);
 
   const togglePlaying = (item = currentlyPlaying) => {
     if (currentlyPlaying.current !== '') {
@@ -63,8 +65,9 @@ const ProfilePage = (props) => {
     let tracks = [];
 
     db.collection('users').where('displayName', '==', name).get().then(querySnapshot => {
-      return querySnapshot.docs[0].id;
-    }).then(userId => {
+      return [querySnapshot.docs[0].id, querySnapshot.docs[0].data().photoURL];
+    }).then(returnData => {
+      const userId = returnData[0];
       db.collection('tracks').where('userId', '==', userId).get().then(querySnapshot => {
         const data = querySnapshot.docs.map(doc => doc.data());
         data.sort((a, b) => b.uploadDate - a.uploadDate);
@@ -79,6 +82,7 @@ const ProfilePage = (props) => {
               songName: data.trackName,
               artistName: name,
               userName: name,
+              userPhoto: returnData[1],
               albumArt: data.trackArt,
               timeFrame: getElapsedTime(data.uploadDate),
               track: data.audio,
@@ -91,28 +95,63 @@ const ProfilePage = (props) => {
           )
         })
         setTracks(tracks);
+        db.collection('users').doc(userId).get().then(doc => {
+          const data = doc.data();
+          setFollowers(data.followers.length);
+          setFollowing(data.following.length);
+        })
       })
     }).catch(err => console.error(err))
   }
 
-
+  const [followButton, setFollowButton] = useState('Follow');
+  useEffect(() => {
+    if (user != null) {
+      db.collection('users').where('displayName', '==', name).get().then(querySnapshot => {
+        return querySnapshot.docs[0].id;
+      }).then(userId => {
+        db.collection('users').doc(user.uid).get().then(doc => {
+          const following = doc.data().following;
+          if (following.includes(userId)) {
+            setFollowButton("Unfollow")
+          }
+        })
+      })
+    }
+  }, [user])
   const follow = () => {
+    if (user == null) {
+      window.alert("You must be signed in to follow the user.");
+      return;
+    }
     const name = props.match.params.profileName;
     db.collection('users').where('displayName', '==', name).get().then(querySnapshot => {
       return querySnapshot.docs[0].id;
     }).then(userId => {
       db.collection('users').doc(user.uid).get().then(doc => {
         const data = doc.data();
-        if (data.following.includes(userId)) return true;
-        else return false;
-      }).then(isFollwing => {
-        if (!isFollwing) {
-          db.collection('users').doc(user.uid).update({
+        let following = doc.data().following;
+        if (following.includes(userId)) {
+          db.collection('users').doc(user.uid).update({ // Remove from following
+            following: firebase.firestore.FieldValue.arrayRemove(userId)
+          })
+          db.collection('users').doc(userId).update({ // Remove from followers
+            followers: firebase.firestore.FieldValue.arrayRemove(user.uid)
+          })
+          setFollowButton("Follow")
+        } else {
+          db.collection('users').doc(user.uid).update({   // Update current user following
             following: firebase.firestore.FieldValue.arrayUnion(userId)
           })
+          db.collection('users').doc(userId).update({   // Update user who is being followed
+            followers: firebase.firestore.FieldValue.arrayUnion(user.uid)
+          })
+          setFollowButton("Unfollow")
         }
-      })
-    })
+        if (data.following.includes(userId)) return true;
+        else return false;
+      }).catch(err => console.error(err))
+    }).catch(err => console.error(err))
   }
 
   useEffect(() => {
@@ -137,6 +176,7 @@ const ProfilePage = (props) => {
       artistName={track.artistName}
       userName={track.userName}
       albumArt={track.albumArt}
+      userPhoto={track.userPhoto}
       timeFrame={track.timeFrame}
       track={track.track}
       id={track.id}
@@ -151,11 +191,15 @@ const ProfilePage = (props) => {
     <>
       <div className="profile-container">
         <div className="profile-page">
-          <h3>{props.match.params.profileName}</h3>
           <br></br>
           <MDBRow>
             <MDBCol xl="4" md="4" className="mb-3">
-              <img src={userNow != null ? userNow.photoURL : ''} className="img-fluid z-depth-1 rounded-circle" alt="poster-avatar" />
+
+              <img
+                src={userNow != null ? userNow.photoURL == null ? "765-default-avatar copy.png" : userNow.photoURL : ''}
+                className="img-fluid z-depth-1 rounded-circle"
+                alt="poster-avatar"
+              />
             </MDBCol>
             <MDBCol xl="5" md="4">
               <div>
@@ -165,11 +209,11 @@ const ProfilePage = (props) => {
                 </p>
                 <br></br>
                 <div style={{ display: "flex", justifyContent: "space-between", width: "40%" }}>
-                  <h6>posts: 0 {props.posts}</h6>
-                  <h6>followers : 0 {props.followers}</h6>
-                  <h6>following: 0 {props.following}</h6>
+                  <h6 className="h6-header">Posts: {tracks.length}</h6>
+                  <h6 className="h6-header">Followers: {followers}</h6>
+                  <h6 className="h6-header">Following: {following}</h6>
                 </div>
-                <Button onClick={follow}>Follow</Button>
+                <Button onClick={follow}>{followButton}</Button>
               </div>
 
             </MDBCol>
