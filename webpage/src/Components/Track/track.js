@@ -169,7 +169,8 @@ function Track(props) {
     }
 
     const playBtn = !isPlaying && props.currentlyPlaying !== waveform ? <BsPlayFill /> : <BsPauseFill className="pause-btn" />;
-    const post = props.userName === props.artistName ? "posted" : <>&nbsp;<BsArrowRepeat />reposted</>;
+    let post = props.userName === props.artistName ? "posted" : <>&nbsp;<BsArrowRepeat />reposted</>;
+    if (props.repostOwn) post = <>&nbsp;<BsArrowRepeat />reposted</>;
     const likeClass = trackLiked ? "social-icon liked" : "social-icon like";
     const repostClass = reposted ? "social-icon reposted" : "social-icon repost";
 

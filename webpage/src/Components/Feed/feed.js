@@ -73,6 +73,9 @@ const Feed = ({ user }) => {
             });
             for (let i = 0; i < items.length; i++) {
                 let data = items[i];      // Create tracks
+                let repostOwn = false;
+                if (data.userDisplayName === posts[i]["postedBy"] && posts[i].postDate !== data.uploadDate)
+                    repostOwn = true;
                 tracks.push(
                     {
                         key: `${data.trackId}_inst_${i}`,
@@ -81,8 +84,8 @@ const Feed = ({ user }) => {
                         reposts: data.repostCount,
                         playCount: data.playCount,
                         songName: data.trackName,
-                        artistName: posts[i]["postedBy"],
-                        userName: data.userDisplayName,
+                        artistName: data.userDisplayName,
+                        userName: posts[i]["postedBy"],
                         albumArt: data.trackArt,
                         timeFrame: getElapsedTime(posts[i].postDate),
                         track: data.audio,
@@ -90,7 +93,8 @@ const Feed = ({ user }) => {
                         togglePlaying: togglePlaying,
                         setCurrent: setCurrent,
                         setInfo: setInfo,
-                        currentlyPlaying: currentlyPlaying
+                        currentlyPlaying: currentlyPlaying,
+                        repostOwn: repostOwn
                     }
                 )
             }
@@ -130,7 +134,8 @@ const Feed = ({ user }) => {
                         togglePlaying: togglePlaying,
                         setCurrent: setCurrent,
                         setInfo: setInfo,
-                        currentlyPlaying: currentlyPlaying
+                        currentlyPlaying: currentlyPlaying,
+                        repostOwn: false
                     }
                 )
             }
@@ -166,6 +171,7 @@ const Feed = ({ user }) => {
             setCurrent={setCurrent}
             setInfo={setInfo}
             currentlyPlaying={currentlyPlaying}
+            repostOwn={track.repostOwn}
         />
     })
     return (
