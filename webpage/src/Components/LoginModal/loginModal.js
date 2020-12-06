@@ -108,10 +108,10 @@ const LoginModal = (props) => {
             :
             <Modal.Body>
               <form onSubmit={(event) => {sendEmail(email)}}>
-                <h3 className ='font-weight-bold text-center' closeButton>Sign In</h3>
+                <h3 className ='font-weight-bold text-center' closeButton>Forgot Password</h3>
 
                 <div className="form-group">
-                  <label>Email address</label>
+                  <label>Email of account:</label>
                   <input type="email" 
                           name = "userEmail"
                           id = "userEmail"
@@ -121,7 +121,7 @@ const LoginModal = (props) => {
                           onChange = {(event) => onChangeHandler(event)}
                   />
                 </div>
-                <Button type='submit' class='padding-top'> Submit </Button>
+                <Button type='submit' class='padding-top'> Send Email </Button>
               </form>
             </Modal.Body>}
         </Modal>
